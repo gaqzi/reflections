@@ -1,4 +1,4 @@
-# Write Git Commit Messages Properly
+# Write git commit messages properly
 
 Writing consistent commit messages helps you to weave a coherent story with your git history. Recently, I've started paying attention to my commit messages. Before this, my commit messages in this repository used to look like this:
 

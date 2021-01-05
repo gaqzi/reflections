@@ -19,7 +19,7 @@ print(x is y)  # prints True
 
 Running this will print `True` on the console. The `is` operator in Python is used to check whether two objects refer to the same memory location or not. If it returns `True`, it means, the two objects surrounding the operator are actually the same object.
 
-This is kind of neat if you think about it. In the above snippet, instead of creating a new copy when `y` is assigned to a string that has the same value as `x`, internally, Python points to the same string that is assigned to `x`. This is only true for smaller strings and larger strings will create individual copies as usual. The exact length that determines whether a string will be interned or not depends on the implementation and you shouldn't rely on this implicit behavior if your code needs interning. See this example:
+This is kind of neat if you think about it. In the above snippet, instead of creating a new copy when `y` is assigned to a string that has the same value as `x`, internally, Python points to the same string that is assigned to `x`. This is only true for smaller strings; larger strings will create individual copies as usual. The exact length that determines whether a string will be interned or not depends on the implementation and you shouldn't rely on this implicit behavior if your code needs interning. See this example:
 
 ```python
 # src.py
@@ -47,11 +47,11 @@ y = sys.intern("This is a string" * 300)
 print(x is y)  # prints True
 ```
 
-Here the strings are interned and running the snippet will print `True` on the console.
+Here, the strings are interned and running the snippet will print `True` on the console.
 
 ## What strings are interned?
 
-CPython performs String Interning on constants such as Function Names, Variable Names, String Literals, etc. This [snippet](https://github.com/python/cpython/blob/7d7817cf0f826e566d8370a0e974bbfed6611d91/Objects/codeobject.c#L537) from the CPython codebase suggests that when a new Python object is created, the interpreter is interning all the compile-time constants, names, and literals. Also, Dictionary Keys and Object Attributes are interned.
+CPython performs string interning on constants such as Function Names, Variable Names, String Literals, etc. This [snippet](https://github.com/python/cpython/blob/7d7817cf0f826e566d8370a0e974bbfed6611d91/Objects/codeobject.c#L537) from the CPython codebase suggests that when a new Python object is created, the interpreter is interning all the compile-time constants, names, and literals. Also, Dictionary Keys and Object Attributes are interned.
 Notice this:
 
 ```python
