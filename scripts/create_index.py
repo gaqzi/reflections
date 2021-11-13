@@ -14,6 +14,12 @@ from dataclasses import dataclass
 seen_headers = set()
 
 
+class TitleNotFound(Exception):
+    """Markdown file missing a title that starts with a '#' sign."""
+
+    pass
+
+
 @dataclass(slots=True)  # type: ignore
 class Index:
     """Dataclass to represent an index element.
@@ -55,16 +61,20 @@ def get_index(src_filepath: str) -> Index:
     with open(src_filepath, "r") as f:
         for line in f.readlines():
             if not re.match("^# ", line):
-                raise Exception(f"no title found in file '{src_filepath}'")
+                raise TitleNotFound(
+                    f"no title found in file '{src_filepath}'; make sure there is no blank line before the title",
+                )
 
             markdown_title = line.replace("\n", "").replace("#", "").strip()
             body = f"* [{markdown_title}]({src_filepath})"
 
-            matched = re.search("./til/\W*(\w+)", src_filepath)
+            matched = re.search(r"./til/\W*(\w+)", src_filepath)
             if matched:
                 header = matched.group(1)
             else:
-                raise Exception(f"no header matched for file '{src_filepath}'")
+                raise TitleNotFound(
+                    f"no title found for file '{src_filepath}'; make sure the markdown file lives under the 'til' folder",
+                )
 
             header_formatted = f"\n## {header.title()}\n"
             body_formatted = f"{body}\n\n"
@@ -88,7 +98,7 @@ def save_index_header(index: Index, dest_filepath: str = "./README.md") -> None:
 
 
 def sort_index_header(dest_filepath: str) -> None:
-    subprocess.run(f"awk '$1' {dest_filepath} | sort -o {dest_filepath}" , shell=True)
+    subprocess.run(f"awk '$1' {dest_filepath} | sort -o {dest_filepath}", shell=True)
 
 
 def save_index_body(index: Index, dest_filepath: str) -> None:
@@ -121,6 +131,7 @@ def main(root_dir: str, dest_filepath: str = "./README.md") -> None:
 
     # Extract indexes from the files found in the 'src_filepaths'.
     indexes = [get_index(src_filepath) for src_filepath in src_filepaths]
+    indexes = [index for index in indexes if index]
 
     # Only save the headers of the indexes.
     for index in indexes:
