@@ -196,30 +196,39 @@ def test_main_real(til_dir, markdown_file):
     assert "* [Test Topic A Header]" in markdown_file.read_text()
 
 
-# NOTE: Find out why the nested 'get_index' mocks are not being called!
 @patch.object(main, "seen_headers", {"header 1", "header 2"})
+@patch("scripts.create_index.save_index_body", autospec=True)
 @patch("scripts.create_index.sort_index_header", autospec=True)
+@patch("scripts.create_index.save_index_header", autospec=True)
 @patch("scripts.create_index.get_index", autospec=True)
 @patch("scripts.create_index.discover_markdowns", autospec=True)
 @patch("scripts.create_index.clear_destination", autospec=True)
 def test_main_mock(
+    # mocks
     mock_clear_destination,
     mock_discover_markdowns,
     mock_get_index,
+    mock_save_index_header,
     mock_sort_index_header,
+    mock_save_index_body,
+    # fixtures
     til_dir,
     markdown_file,
     index,
 ):
     """Test nain function with mocked methods."""
+
     # Arrange
-    mock_discover_markdowns.return_values = ["hello.md", "world.md"]
-    mock_get_index.return_values = index
+    mock_discover_markdowns.return_value = ["hello.md", "world.md"]
+    mock_get_index.return_value = index
 
     # Act
     main.main(root_dir=til_dir, dest_filepath=markdown_file)
 
     # Assert
-    mock_clear_destination.assert_called_once()
-    mock_discover_markdowns.assert_called_once()
-    mock_sort_index_header.assert_called_once()
+    mock_clear_destination.assert_called_once_with(markdown_file)
+    mock_discover_markdowns.assert_called_once_with(til_dir)
+    mock_sort_index_header.assert_called_once_with(markdown_file)
+    mock_get_index.assert_called_with("world.md")
+    mock_save_index_header.assert_called_with(index, markdown_file)
+    mock_save_index_body.assert_called_with(index, markdown_file)
