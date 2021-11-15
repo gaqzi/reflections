@@ -1,4 +1,4 @@
-# Functools.partial Flattens Nestings Automatically
+# functools.partial flattens nestings automatically
 
 The constructor for `functools.partial()` detects nesting and automatically flattens
 itself to a more efficient form. For example:
@@ -27,6 +27,6 @@ functools.partial(<function f at 0x7f4fd16c11f0>, a=1, b=2, c=3)
 Args are 1-2-3
 ```
 
-## Reference
+## References
 
 * Raymond Hettinger's [tweet](https://twitter.com/raymondh/status/1454865294120325124).

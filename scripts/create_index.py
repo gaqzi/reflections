@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import os
 import re
-import subprocess
 import time
 from dataclasses import dataclass
 
@@ -32,10 +31,10 @@ class Index:
     * ...
     """
 
-    header: str
-    header_formatted: str
-    body: str
-    body_formatted: str
+    header: str = "example header"
+    header_formatted: str = "## Example Header\n"  # title cased formatted header
+    body: str = "example body"
+    body_formatted: str = "example body\n"  # no change other than the appended '\n'
 
 
 def discover_markdowns(root_dir: str) -> set[str]:
@@ -65,7 +64,7 @@ def get_index(src_filepath: str) -> Index:
                     f"no title found in file '{src_filepath}'; make sure there is no blank line before the title",
                 )
 
-            markdown_title = line.replace("\n", "").replace("#", "").strip()
+            markdown_title = line.replace("#", "").strip()
             body = f"* [{markdown_title}]({src_filepath})"
 
             matched = re.search(r"./til/\W*(\w+)", src_filepath)
@@ -76,8 +75,8 @@ def get_index(src_filepath: str) -> Index:
                     f"no title found for file '{src_filepath}'; make sure the markdown file lives under the 'til' folder",
                 )
 
-            header_formatted = f"\n## {header.title()}\n"
-            body_formatted = f"{body}\n\n"
+            header_formatted = f"## {header.title()}\n"
+            body_formatted = f"{body}\n"
 
             index = Index(
                 header=header,
@@ -98,7 +97,12 @@ def save_index_header(index: Index, dest_filepath: str = "./README.md") -> None:
 
 
 def sort_index_header(dest_filepath: str) -> None:
-    subprocess.run(f"awk '$1' {dest_filepath} | sort -o {dest_filepath}", shell=True)
+    with open(dest_filepath, "r+") as f:
+        sorted_contents = "\n".join(sorted(f.readlines()))
+
+        f.seek(0)  # moves the pointer to the start of the file
+        f.truncate(0)  # truncates the file
+        f.writelines(sorted_contents)  # write the new data to the file
 
 
 def save_index_body(index: Index, dest_filepath: str) -> None:
@@ -107,17 +111,18 @@ def save_index_body(index: Index, dest_filepath: str) -> None:
     with open(dest_filepath, "r+") as f:
         lines = f.readlines()
         for idx, line in enumerate(lines):
-            if index.header_formatted.strip() in line:
+            if index.header_formatted in line:
                 lines.insert(idx + 1, index.body_formatted)
 
-        f.truncate(0)  # truncates the file
         f.seek(0)  # moves the pointer to the start of the file
+        f.truncate(0)  # truncates the file
         f.writelines(lines)  # write the new data to the file
 
 
 def clear_destination(dest_filepath: str) -> None:
     """Clear the 'README.md' file before start writing to it."""
-    subprocess.run(f" > {dest_filepath}", shell=True)
+    with open(dest_filepath, "r+") as f:
+        f.truncate()
 
 
 def main(root_dir: str, dest_filepath: str = "./README.md") -> None:

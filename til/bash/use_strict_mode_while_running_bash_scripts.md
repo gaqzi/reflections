@@ -1,4 +1,4 @@
-# Use Strict Mode While Running Bash Scripts
+# Use strict mode while running Bash scripts
 
 Use unofficial bash strict mode while writing scripts. Bash has a few gotchas and this helps you to avoid that. For example:
 
@@ -20,6 +20,6 @@ Where,
                 or zero if no command exited with a non-zero status.
 ```
 
-## Reference
+## References
 
 *  The idea is a less radical version of this [post](http://redsymbol.net/articles/unofficial-bash-strict-mode/). I don't recommend messing with the IFS without a valid reason.
