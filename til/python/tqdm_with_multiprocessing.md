@@ -14,7 +14,7 @@ Run `pip install tqdm` before running the script.
 The function `foo` is going to be executed 100 times across
 `MAX_WORKERS=5` processes. In a single pass, each process will
 get an iterable of size `CHUNK_SIZE=5`. So 5 processes each consuming
-5 elements of an iterable will require (100 / (5*5)) 25 passes to finish
+5 elements of an iterable will require (100 / (5*5)) 4 passes to finish
 consuming the entire iterable of 100 elements.
 
 Tqdm progress bar will be updated after every `MAX_WORKERS*CHUNK_SIZE` iterations.
@@ -54,7 +54,7 @@ def main():
             pool.imap_unordered(foo, inputs, chunksize=CHUNK_SIZE),
             total=len(inputs),
         )   # 'total' is redundant here but can be useful
-            # when the size of the iterable is non-obvious
+            # when the size of the iterable is unobvious
 
         for result in results:
             print(result)
