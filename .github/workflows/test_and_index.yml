@@ -53,7 +53,7 @@ jobs:
 
     - name: Generate Index
       run: |
-        python3.10 -m scripts.create_index.py
+        python3.10 -m scripts.create_index
 
     - name: Commit Index
       run: |
