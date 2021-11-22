@@ -7,37 +7,46 @@ Wrote a fancy Python 3.6+ `__init_subclasshook__` to validate the subclasses as 
 
 ```python
 # main.py
-
 from collections.abc import Mapping
 from typing import Any
 
 
 class Base:
-    def __init_subclass__(cls, validate_config: bool=False, **kwargs: Any,) ->None:
+    def __init_subclass__(
+        cls,
+        validate_config: bool = False,
+        **kwargs: Any,
+    ) -> None:
         if validate_config:
             cls._raise_error_for_invalid_condfig(cls)
 
     @staticmethod
     def _raise_error_for_invalid_condfig(cls) -> None:
         if not "config" in cls.__dict__:
-            raise Exception(f"'{cls.__name__}' should define a class attribute named 'config'",)
+            raise Exception(
+                f"'{cls.__name__}' should define a class attribute named 'config'",
+            )
 
         if not isinstance(cls.config, Mapping):
-            raise Exception("attribute 'config' should be of 'Mapping' type")
+            raise Exception(
+                "attribute 'config' should be of 'Mapping' type",
+            )
 
         config = cls.config
         config_keys = config.keys()
         expected_keys = ("foo", "bar", "bazz")
 
         if not tuple(config_keys) == expected_keys:
-            raise Exception(f"'config' map should have only '{', '.join(expected_keys)}' keys")
+            raise Exception(
+                f"'config' map should have only '{', '.join(expected_keys)}' keys",
+            )
 
     def __repr__(self):
-      return f'{self.config}'
+        return f"{self.config}"
 
 
 class Sub(Base, validate_config=True):
-  config = {'foo': 1, 'bar': 2, 'bazz': 3}
+    config = {"foo": 1, "bar": 2, "bazz": 3}
 
 
 s = Sub()
