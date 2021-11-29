@@ -1,6 +1,6 @@
 # Automatic attribute delegation in composition
 
-While trying to avoid inheritance in an API that I was working on, I came across this neat trick to perform method delegation on composed classes. Let's say there's a class called `Engine` and you want to put an engine instance in a `Car`. In this case, the car has a classic 'has a' (inheritance usually refers to 'is a' relationships) relationship with the engine. So, composition makes more sense than inheritance here:
+While trying to avoid inheritance in an API that I was working on, I came across this neat trick to perform attribute delegation on composed classes. Let's say there's a class called `Engine` and you want to put an engine instance in a `Car`. In this case, the car has a classic 'has a' (inheritance usually refers to 'is a' relationships) relationship with the engine. So, composition makes more sense than inheritance here. Consider this example:
 
 
 ```python
@@ -27,7 +27,7 @@ class Car:
         return {"tier": self.tier, "price": self.price}
 ```
 
-This works perfectly and ideally, you'd to use the class as a good citizen as follows:
+Ideally, you'd to use the classes as a good citizen as follows:
 
 ```python
 
@@ -82,7 +82,7 @@ class Car:
 
 ```
 
-This snippet is exactly the same as before and the only thing that was added here is the `__getattr__` method in the `Car` class. Whenever you'll try to access an attribute or a method on an instance of the `Car` class, the `__getattr__` will intervene. It'll first look for the attribute in the instance of the `Car` class and if it can't find it there, then it'll look for the attribute in the instance of the `Engine` class; just like type inheritance. So you can now use the classes as follows:
+This snippet is exactly the same as before and the only thing that was added here is the `__getattr__` method in the `Car` class. Whenever you'll try to access an attribute or a method on an instance of the `Car` class, the `__getattr__` will intervene. It'll first look for the attribute in the instance of the `Car` class and if it can't find it there, then it'll look for the attribute in the instance of the `Engine` class; just like type inheritance. This will work in case of method access as well. So now you can use the classes as below:
 
 ```python
 
