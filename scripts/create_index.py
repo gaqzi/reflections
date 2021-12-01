@@ -8,6 +8,7 @@ import os
 import re
 import time
 from dataclasses import dataclass
+from typing import Protocol, runtime_checkable
 
 # Index header that has been seen by a thread.
 seen_headers = set()
@@ -17,6 +18,23 @@ class TitleNotFound(Exception):
     """Markdown file missing a title that starts with a '#' sign."""
 
     pass
+
+
+@runtime_checkable
+class ProtoIndex(Protocol):
+    """Interface that represents an index entry."""
+
+    index_header: str = "example header"
+    markdown_title: str = "# some markdown title"
+    markdown_path: str = "./notes/header/path/to/markdown/file.md"
+
+    @property
+    def header_formatted(self):
+        ...
+
+    @property
+    def entry_formatted(self):
+        ...
 
 
 @dataclass(slots=True)  # type: ignore
@@ -31,10 +49,19 @@ class Index:
     * ...
     """
 
-    header: str = "example header"
-    header_formatted: str = "## Example Header\n"  # title cased formatted header
-    body: str = "example body"
-    body_formatted: str = "example body\n"  # no change other than the appended '\n'
+    index_header: str = "example header"
+    markdown_title: str = "# some markdown title"
+    markdown_path: str = "./notes/header/path/to/markdown/file.md"
+
+    @property
+    def header_formatted(self):
+        return f"## {self.index_header.title()}\n"
+
+    @property
+    def entry_formatted(self):
+        markdown_title = self.markdown_title.replace("#", "").strip()
+        index_entry = f"* [{markdown_title}]({self.markdown_path})\n"
+        return index_entry
 
 
 def discover_markdowns(root_dir: str) -> set[str]:
@@ -64,25 +91,18 @@ def get_index(src_filepath: str) -> Index:
                     f"no title found in file '{src_filepath}'; make sure there is no blank line before the title",
                 )
 
-            markdown_title = line.replace("#", "").strip()
-            body = f"* [{markdown_title}]({src_filepath})"
-
-            matched = re.search(r"./til/\W*(\w+)", src_filepath)
+            matched = re.search(r"./notes/\W*(\w+)", src_filepath)
             if matched:
-                header = matched.group(1)
+                index_header = matched.group(1)
             else:
                 raise TitleNotFound(
-                    f"no title found for file '{src_filepath}'; make sure the markdown file lives under the 'til' folder",
+                    f"no title found for file '{src_filepath}'; make sure the markdown file lives under the 'notes' folder",
                 )
 
-            header_formatted = f"## {header.title()}\n"
-            body_formatted = f"{body}\n"
-
             index = Index(
-                header=header,
-                header_formatted=header_formatted,
-                body=body,
-                body_formatted=body_formatted,
+                index_header=index_header,
+                markdown_title=line,
+                markdown_path=src_filepath,
             )
             return index
 
@@ -91,9 +111,9 @@ def save_index_header(index: Index, dest_filepath: str = "./README.md") -> None:
     """Save a single index header to the 'dest_file'."""
 
     with open(dest_filepath, "a+") as f:
-        if index.header not in seen_headers:
+        if index.index_header not in seen_headers:
             f.write(index.header_formatted)
-            seen_headers.add(index.header)
+            seen_headers.add(index.index_header)
 
 
 def sort_index_header(dest_filepath: str) -> None:
@@ -105,14 +125,14 @@ def sort_index_header(dest_filepath: str) -> None:
         f.writelines(sorted_contents)  # write the new data to the file
 
 
-def save_index_body(index: Index, dest_filepath: str) -> None:
+def save_index_entry(index: Index, dest_filepath: str) -> None:
     """Save a single index body to the 'dest_file'."""
 
     with open(dest_filepath, "r+") as f:
         lines = f.readlines()
         for idx, line in enumerate(lines):
             if index.header_formatted in line:
-                lines.insert(idx + 1, index.body_formatted)
+                lines.insert(idx + 1, index.entry_formatted)
 
         f.seek(0)  # moves the pointer to the start of the file
         f.truncate(0)  # truncates the file
@@ -148,14 +168,14 @@ def main(root_dir: str, dest_filepath: str = "./README.md") -> None:
     # Save the index elements under the appropriate headers.
     # This function is quite slow now and threading doesn't work with it as of now.
     for index in indexes:
-        save_index_body(index, dest_filepath=dest_filepath)
+        save_index_entry(index, dest_filepath=dest_filepath)
 
 
 if __name__ == "__main__":
 
     start = time.monotonic()
 
-    main(root_dir="./til")
+    main(root_dir="./notes")
 
     end = time.monotonic()
 
