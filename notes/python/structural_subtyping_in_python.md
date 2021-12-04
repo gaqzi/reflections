@@ -117,7 +117,7 @@ def contains(haystack: dict | set, needle: T):
 
 This will make mypy happy. However, it's still not bulletproof. If you try to pass a `list` object as the value of `haystack`, mypy will complain again. So, nominal typing can get a bit tedious in this kind of situation, as you'd have to explicitly tell the type checker about every type that a variable can expect. There's a better way!
 
-Enter [structural subtyping](https://www.python.org/dev/peps/pep-0544/#nominal-vs-structural-subtyping). We know that the value of `haystack` can be anything that has the `__contains__` method. So, instead of explicitly definining the name of all the allowed types—we can create a class, add the `__contains__` method to it, and signal mypy the fact that `haystack` can be anything that has the `__contains__` method. Python's `typing.Protocol` class allows us do that. Let's use that:
+Enter [structural subtyping](https://www.python.org/dev/peps/pep-0544/#nominal-vs-structural-subtyping). We know that the value of `haystack` can be anything that has the `__contains__` method. So, instead of explicitly defining the name of all the allowed types—we can create a class, add the `__contains__` method to it, and signal mypy the fact that `haystack` can be anything that has the `__contains__` method. Python's `typing.Protocol` class allows us to do that. Let's use that:
 
 
 ```python
@@ -168,9 +168,100 @@ def find(haystack: Container, needle: T):
 
 ## Avoid `abc` inheritance
 
-**TODO:**
+Abstract base classes in Python let you validate the structure of subclasses in runtime. Python's standard library APIs uses `abc.ABC` in many places. See this example:
 
-## Another complete example with tests
+```python
+from abc import ABC, abstractmethod, abstractclassmethod, abstractproperty
+
+
+class FooInterface(ABC):
+    @abstractmethod
+    def bar(self):
+        pass
+
+    @abstractclassmethod
+    def baz(cls):
+        pass
+
+    @abstractproperty
+    def qux(self):
+        pass
+
+
+class Foo(FooInterface):
+    """Foo implements FooInterface."""
+
+    def bar(self) -> str:
+        return "from instance method"
+
+    @classmethod
+    def baz(cls) -> str:
+        return "from class method"
+
+    @property
+    def qux(self) -> str:
+        return "from property method"
+
+```
+
+Here, the class `FooInterface` inherits from `abc.ABC` and then the methods are decorated with `abstract*` decorators. The combination of `abc.ABC` class and these decorators make sure that any class that inherits from `FooInterface` will have to implement the `bar`, `baz`, and `qux` methods. Failing to do so will raise a `TypeError`. The `Foo` class implements the `FooInterface`.
+
+This works well in theory and practice but often time, people inadvertently start to use the `*Interface` classes to share implementation methods with the subclasses. When you pollute your interface with implementation methods, theoretically, it no longer stays and **interface** class. Go doesn't even allow you to add implementation methods to interfaces. Abstract base classes have their places and often time, you can't avoid them if you need a dependable runtime interface conformity check.
+
+However, more often than not, using `Protocol` classes with `@runtime_checkable` decorator works really well. Here, the `Protocol` class implicitly (just like Go interfaces) makes sure that your subclasses conform to the structure that you want, and the decorator, along with `isinstance` check can guarantee the conformity in runtime. Let's replace the `abc.ABC` and the shenanigans with the decorators with `typing.Protocol`:
+
+
+```python
+from __future__ import annotations
+
+from typing import Protocol, runtime_checkable
+
+
+@runtime_checkable
+class ProtoFoo(Protocol):
+    def bar(self) -> str:
+        ...
+
+    @classmethod
+    def baz(cls) -> str:
+        ...
+
+    @property
+    def qux(self) -> str:
+        ...
+
+
+class Foo:
+    def bar(self) -> str:
+        return "from instance method"
+
+    @classmethod
+    def baz(cls) -> str:
+        return "from class method"
+
+    @property
+    def qux(self) -> str:
+        return "from property method"
+
+
+def run(foo: ProtoFoo) -> None:
+    if not isinstance(foo, ProtoFoo):
+        raise Exception("Foo do not conform to Protofoo interface")
+
+    print(foo.bar())
+    print(foo.baz())
+    print(foo.qux)
+
+
+if __name__ == "__main__":
+    foo = Foo()
+    run(foo)
+
+```
+Notice that `Foo` is not inheriting from `ProtoFoo` and when you run mypy against the snippet, it'll statically check whether `Foo` conforms to the `ProtoFoo` interface or not. Voila, we avoided inheritance. The `isinstance` in the `run` function later checks whether `foo` is an instance of `ProtoFoo` or not.
+
+
+## Complete example with tests
 
 This example employs static duck-typing to check the type of `WebhookPayload` where the class represents the structure of the payload that is going to be sent to an URL by the `send_webhook` function.
 
