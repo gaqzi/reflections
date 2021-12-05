@@ -54,7 +54,7 @@ You can play around with the example [here](https://go.dev/play/p/RG82v5Ubdlc). 
 ```
 
 Even if you don't speak Go, you can just take a look at the `Geometry` interface and
-instantly know that the function `measure` expects a struct that implements the `Geometry` interface where the `Geometry` interface will be satisfied if the struct implements two methods—`area` and `perim`. The function `measure` doesn't care whether the struct is a rectangle, a circle, or a square. As long as it implements the interface `Geometry`, `measure` can work on it and calculate the area and the perimeter.
+instantly know that the function `measure` expects a struct that implements the `Geometry` interface where the `Geometry` interface is satisfied when the struct implements two methods—`area` and `perim`. The function `measure` doesn't care whether the struct is a rectangle, a circle, or a square. As long as it implements the interface `Geometry`, `measure` can work on it and calculate the area and the perimeter.
 
 This is extremely powerful as it allows you to achieve polymorphism like dynamic languages without letting go of type safety. If you try to pass a struct that doesn't fully implement the interface, the compiler will throw a type error.
 
@@ -65,9 +65,9 @@ def find(haystack, needle):
     return needle in haystack
 ```
 
-Here, the type of the `haystack` can be anything that supports the `in` operation. It can be a list, tuple, set, or dictionary; basically, any type that has the `__contains__` method. Python's duck typing is more flexible than any static typing as you won't have to tell the function anything about the type of the parameters and it'll work spectacularly; it's a dynamically typed language, duh! The only problem is the lack of type safety. Since there's no compilation step in Python, it won't stop you from accidentally putting a type that `haystack` doesn't support and Python will only raise a `TypeError` when your try to run the code.
+Here, the type of the `haystack` can be anything that supports the `in` operation. It can be a `list`, `tuple`, `set`, or `dict`; basically, any type that has the `__contains__` method. Python's duck typing is more flexible than any static typing as you won't have to tell the function anything about the type of the parameters and it'll work spectacularly; it's a dynamically typed language, duh! The only problem is the lack of type safety. Since there's no compilation step in Python, it won't stop you from accidentally putting a type that `haystack` doesn't support and Python will only raise a `TypeError` when your try to run the code.
 
-In bigger codebases, this can often become tricky as it is difficult to tell the type of these uber-dynamic function parameters without reading through all the methods that are being called on them. In this situation, we want the best of the bost world; we want the flexibility of dynamic polymorphism and at the same time, we want some sort of type safety. Moreover, the Go code is self-documented to some extent and I'd love this kind of safety in Python. Let's try to use nominal type hinting to statically type the following example:
+In bigger codebases, this can often become tricky as it's difficult to tell the type of these uber-dynamic function parameters without reading through all the methods that are being called on them. In this situation, we want the best of the bost world; we want the flexibility of dynamic polymorphism and at the same time, we want some sort of type safety. Moreover, the Go code is self-documented to some extent and I'd love this kind of `polymorphic | type-safe | self-documented` trio in Python. Let's try to use nominal type hinting to statically type the following example:
 
 
 ```python
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     print(contains(haystack, needle))
 ```
 
-In this snippet, we're declaring haystack to be a `dict` and then passing a `set` in the main function. If you try to run this function it'll happily print `True`. However, if you run mypy against this file, it'll complain as follows:
+In this snippet, we're declaring `haystack` to be a `dict` and then passing a `set` to the function parameter. If you try to run this function, it'll happily print `True`. However, if you run [mypy](https://mypy.readthedocs.io/en/stable/) against this file, it'll complain as follows:
 
 ```
 src.py:17: error: Argument 1 to "find" has incompatible type "Set[int]"; expected
@@ -101,7 +101,7 @@ Found 1 error in 1 file (checked 4 source files)
 make: *** [makefile:61: mypy] Error 1
 ```
 
-That's because mypy expects the type to be a dict but we're passing a set and that's incompatible. During runtime, Python doesn't raise any error because we're passing a `set` instance as the value of `haystack` and it supports `in` operation. To fix this mypy error, we can use Union type.
+That's because mypy expects the type to be a dict but we're passing a `set` which is incompatible. During runtime, Python doesn't raise any error because the `set` that we're passing as the value of `haystack`, supports `in` operation. But we're not communicating that with the type checker properly and mypy isn't happy about that. To fix this mypy error, we can use Union type.
 
 
 ```python
@@ -123,14 +123,17 @@ Enter [structural subtyping](https://www.python.org/dev/peps/pep-0544/#nominal-v
 ```python
 # src.py
 from __future__ import annotations
-from typing import TypeVar, Protocol, runtime_checkable
+
+from typing import Protocol, TypeVar, runtime_checkable
 
 T = TypeVar("T")
+
 
 @runtime_checkable
 class ProtoHaystack(Protocol):
     def __contains__(self, obj) -> bool:
         ...
+
 
 def find(haystack: ProtoHaystack, needle: T):
     return needle in haystack
@@ -140,7 +143,7 @@ if __name__ == "__main__":
     haystack = {1, 2, 3, 4}
     needle = 3
 
-    print(contains(haystack, needle))
+    print(find(haystack, needle))
     print(isinstance(ProtoHaystack, haystack))
 
 ```
@@ -163,9 +166,13 @@ def find(haystack: Container, needle: T):
 
 ```
 
-## Another Complete Example with Tests
+## Avoid `abc` inheritance
 
-This example employs static duck-typing to check the type of `WebhookPayload` where the class represents the structure of the payload that is going to be posted to an URL by the `send_webhook` function.
+**TODO:**
+
+## Another complete example with tests
+
+This example employs static duck-typing to check the type of `WebhookPayload` where the class represents the structure of the payload that is going to be sent to an URL by the `send_webhook` function.
 
 
 ```python
@@ -229,7 +236,7 @@ if __name__ == "__main__":
 
 ## Disclaimer
 
-All the code snippets here use Python 3.10's type annotation syntax. However, if you're using `from __future__ import annotations`, you'll be able to run all of them in earlier Python versions, back to Python 3.7.
+All the code snippets here are using Python 3.10's type annotation syntax. However, if you're using `from __future__ import annotations`, you'll be able to run all of them in earlier Python versions, going as far back as Python 3.7.
 
 
 ## References
