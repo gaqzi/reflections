@@ -18,10 +18,10 @@ class Base:
         **kwargs: Any,
     ) -> None:
         if validate_config:
-            cls._raise_error_for_invalid_condfig(cls)
+            cls._raise_error_for_invalid_config(cls)
 
     @staticmethod
-    def _raise_error_for_invalid_condfig(cls) -> None:
+    def _raise_error_for_invalid_config(cls) -> None:
         if not "config" in cls.__dict__:
             raise Exception(
                 f"'{cls.__name__}' should define a class attribute named 'config'",
@@ -41,7 +41,7 @@ class Base:
                 f"'config' map should have only '{', '.join(expected_keys)}' keys",
             )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.config}"
 
 
@@ -74,8 +74,8 @@ Traceback (most recent call last):
   File "main.py", line 29, in <module>
     class Sub(Base, validate_config=True):
   File "main.py", line 8, in __init_subclass__
-    cls._raise_error_for_invalid_condfig(cls)
-  File "main.py", line 23, in _raise_error_for_invalid_condfig
+    cls._raise_error_for_invalid_config(cls)
+  File "main.py", line 23, in _raise_error_for_invalid_config
     raise Exception(f"'config' map should have only '{', '.join(expected_keys)}' keys")
 Exception: 'config' map should have only 'foo, bar, bazz' keys
 ```
