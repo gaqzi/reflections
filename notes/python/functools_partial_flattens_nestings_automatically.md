@@ -1,4 +1,4 @@
-# functools.partial flattens nestings automatically
+# `functools.partial` flattens nestings automatically
 
 The constructor for `functools.partial()` detects nesting and automatically flattens
 itself to a more efficient form. For example:

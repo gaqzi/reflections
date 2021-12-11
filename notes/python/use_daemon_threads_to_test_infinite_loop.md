@@ -14,7 +14,7 @@ from unittest.mock import patch
 import pytest
 
 
-async def hello():
+async def hello() -> None:
     while True:
         await asyncio.sleep(1)
         print("hello")
