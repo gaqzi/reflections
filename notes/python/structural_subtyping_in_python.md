@@ -296,7 +296,7 @@ class WebhookPayload:
         return json.dumps(asdict(self))
 
 
-# Noticie the type accepted by the function.
+# Notice the type accepted by the function.
 # Go-like static polymorphism right there!
 def send_webhook(payload: ProtoPayload) -> None:
     """
