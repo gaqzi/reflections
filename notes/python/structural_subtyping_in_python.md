@@ -105,14 +105,14 @@ That's because mypy expects the type to be a dict but we're passing a `set` whic
 
 
 ```python
-
 ...
+
 
 def contains(haystack: dict | set, needle: T):
     return needle in haystack
 
-...
 
+...
 ```
 
 This will make mypy happy. However, it's still not bulletproof. If you try to pass a `list` object as the value of `haystack`, mypy will complain again. So, nominal typing can get a bit tedious in this kind of situation, as you'd have to explicitly tell the type checker about every type that a variable can expect. There's a better way!
@@ -145,7 +145,6 @@ if __name__ == "__main__":
 
     print(find(haystack, needle))
     print(isinstance(ProtoHaystack, haystack))
-
 ```
 
 Here, the `ProtoHaystack` class statically defines the structure of the type of objects that are allowed to be passed as the value of `haystack`. The instance method `__contains__` accepts an object (obj) as the second parameter and returns a boolean value based on the fact whether that `obj` exists in the `self` instance or not. Now if you run mypy on this snippet, it'll be satisfied.
@@ -159,11 +158,12 @@ This pattern of strurctural duck typing is so common, that the mixins in the `co
 
 from collections.abc import Container
 
+
 def find(haystack: Container, needle: T):
     return needle in haystack
 
-...
 
+...
 ```
 
 ## Avoid `abc` inheritance
@@ -201,7 +201,6 @@ class Foo(FooInterface):
     @property
     def qux(self) -> str:
         return "from property method"
-
 ```
 
 Here, the class `FooInterface` inherits from `abc.ABC` and then the methods are decorated with `abstract*` decorators. The combination of `abc.ABC` class and these decorators make sure that any class that inherits from `FooInterface` will have to implement the `bar`, `baz`, and `qux` methods. Failing to do so will raise a `TypeError`. The `Foo` class implements the `FooInterface`.
@@ -256,7 +255,6 @@ def run(foo: ProtoFoo) -> None:
 if __name__ == "__main__":
     foo = Foo()
     run(foo)
-
 ```
 Notice that `Foo` is not inheriting from `ProtoFoo` and when you run mypy against the snippet, it'll statically check whether `Foo` conforms to the `ProtoFoo` interface or not. Voila, we avoided inheritance. The `isinstance` in the `run` function later checks whether `foo` is an instance of `ProtoFoo` or not.
 

@@ -44,8 +44,8 @@ import time
 t0 = time.perf_counter()
 
 for _ in range(10000):
-    d = {"#"*4096 : "Interned"}
-    d["#"*4096]
+    d = {"#" * 4096: "Interned"}
+    d["#" * 4096]
 
 t1 = time.perf_counter()
 
@@ -53,17 +53,17 @@ t1 = time.perf_counter()
 # Explicitly interned.
 t2 = time.perf_counter()
 
-k1 = sys.intern("#"*4097)
-k2 = sys.intern("#"*4097)
+k1 = sys.intern("#" * 4097)
+k2 = sys.intern("#" * 4097)
 for _ in range(10000):
-    d = {k1 : "Interned"}
+    d = {k1: "Interned"}
     d[k2]
 
 t3 = time.perf_counter()
 
 
-print(t1-t0)
-print((t3-t2)/ (t1-t0))
+print(t1 - t0)
+print((t3 - t2) / (t1 - t0))
 print(f"Implicitly interned dict creation & access: {t1-t0} seconds")
 print(f"Explicitly interned dict creation & access: {t3-t2} seconds")
 print(f"Explicitly interned creation & access is {(t3-t2)/(t1-t0)} times slower")

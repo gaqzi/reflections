@@ -7,7 +7,6 @@ The following example attempts to make tqdm work with `multiprocessing.imap_unor
 
 
 ```python
-
 """
 Run `pip install tqdm` before running the script.
 
@@ -53,8 +52,8 @@ def main():
         results = tqdm(
             pool.imap_unordered(foo, inputs, chunksize=CHUNK_SIZE),
             total=len(inputs),
-        )   # 'total' is redundant here but can be useful
-            # when the size of the iterable is unobvious
+        )  # 'total' is redundant here but can be useful
+        # when the size of the iterable is unobvious
 
         for result in results:
             print(result)

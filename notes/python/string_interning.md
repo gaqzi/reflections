@@ -14,7 +14,7 @@ Consider this example:
 x = "This is a string"
 y = "This is a string"
 
-print(x is y) # prints True
+print(x is y)  # prints True
 ```
 
 Running this will print `True` on the console. The `is` operator in Python is used to check whether two objects refer to the same memory location or not. If it returns `True`, it means, the two objects surrounding the operator are actually the same object.
@@ -27,7 +27,7 @@ This is kind of neat if you think about it. In the above snippet, instead of cre
 x = "This is a string" * 300
 y = "This is a string" * 300
 
-print(x is y) # prints False
+print(x is y)  # prints False
 ```
 
 This will print `False` on the console and the strings are not interned.
@@ -44,7 +44,7 @@ import sys
 x = sys.intern("This is a string" * 300)
 y = sys.intern("This is a string" * 300)
 
-print(x is y) # prints True
+print(x is y)  # prints True
 ```
 
 Here the strings are interned and running the snippet will print `True` on the console.
@@ -59,7 +59,7 @@ Notice this:
 
 # Dict key interning.
 d = {"hello": "world"}
-print(d.popitem()[0] is "hello") # prints True
+print(d.popitem()[0] is "hello")  # prints True
 
 
 # Object attribute interning.
@@ -70,7 +70,7 @@ class Foo:
 
 
 foo = Foo("hello", "hello")
-print(foo.bar is foo.baz) # prints True
+print(foo.bar is foo.baz)  # prints True
 ```
 
 In both of these above cases, the print statement will print `True` on the console—confirming the fact that dictionary keys and object attributes are interned. Having interned attributes and keys means that the access operation is faster since the string comparison operation is now just doing a pointer comparison.
@@ -87,7 +87,7 @@ d = {}
 k = "#" * 4097
 d["#" * 4097] = 1
 
-print(d.popitem()[0] is k) # prints False
+print(d.popitem()[0] is k)  # prints False
 ```
 
 This will print `False` as the key in this case, will not be interned. Dictionary value access is slower if the key isn't interned. Let's test that out:
@@ -106,7 +106,7 @@ for _ in range(10000):
 t1 = time.perf_counter()
 
 
-# Non-interned interned.
+# Non-interned.
 t2 = time.perf_counter()
 
 for _ in range(10000):

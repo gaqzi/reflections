@@ -21,6 +21,7 @@ class Planets(Enum, metaclass=PlanetsMeta):
     EARTH = "earth"
     MARS = "mars"
 
+
 # This can be accessed as follows.
 print(Planets.choices)
 ```
@@ -45,6 +46,7 @@ class ModernPlanets(Enum):
     @property
     def choices(cls):
         return [(v.name, v.value) for v in cls]
+
 
 # This can be accessed as follows.
 print(ModernPlanets.choices)
