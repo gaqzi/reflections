@@ -1,4 +1,4 @@
-# Text formatting with `textwrap.shorten`
+# Text cropping with `textwrap.shorten`
 
 ## Problem
 
