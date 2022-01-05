@@ -37,33 +37,48 @@
 
 # print(timeit.timeit(explicitly_interned)/timeit.timeit(implicitly_interned))
 
-import sys
-import time
-
-# Implicitly interned.
-t0 = time.perf_counter()
-
-for _ in range(10000):
-    d = {"#" * 4096: "Interned"}
-    d["#" * 4096]
-
-t1 = time.perf_counter()
+# src.py
+import textwrap
+import unittest
 
 
-# Explicitly interned.
-t2 = time.perf_counter()
+def crop(text: str, limit: int) -> str:
+    cropped_text = textwrap.shorten(
+        text,
+        width=limit,
+        initial_indent="",
+        subsequent_indent="",
+        break_long_words=False,
+        break_on_hyphens=False,
+        placeholder="",
+    )
+    return cropped_text
 
-k1 = sys.intern("#" * 4097)
-k2 = sys.intern("#" * 4097)
-for _ in range(10000):
-    d = {k1: "Interned"}
-    d[k2]
 
-t3 = time.perf_counter()
+class TestCrop(unittest.TestCase):
+    def setUp(self):
+        self.text = "This is an example of speech synthesis in English."
+        self.text_complex = """
+        wrap(), fill() and shorten() work by creating a TextWrapper instance
+        and calling a single method on it.
+        """
+
+    def test_ok(self):
+        cropped_text = crop(self.text, limit=10)
+        self.assertEqual(cropped_text, "This is an")
+
+    def test_ok_complex(self):
+        cropped_text = crop(self.text_complex, limit=15)
+        self.assertEqual(cropped_text, "wrap(), fill()")
+
+    def test_no_word_break(self):
+        cropped_text = crop(self.text, limit=9)
+        self.assertNotEqual(cropped_text, "This is a")
+
+    def test_no_trailing_space(self):
+        cropped_text = crop(self.text, limit=8)
+        self.assertNotEqual(cropped_text, "This is ")
 
 
-print(t1 - t0)
-print((t3 - t2) / (t1 - t0))
-print(f"Implicitly interned dict creation & access: {t1-t0} seconds")
-print(f"Explicitly interned dict creation & access: {t3-t2} seconds")
-print(f"Explicitly interned creation & access is {(t3-t2)/(t1-t0)} times slower")
+if __name__ == "__main__":
+    unittest.main()
