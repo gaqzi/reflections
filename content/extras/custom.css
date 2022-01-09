@@ -1,0 +1,30 @@
+html {
+  font-size:105%;
+}
+
+/* Make landing page text bigger */
+div.recent-posts-article {
+  padding: 0.5rem;
+  margin: 0rem;
+  font-size: 130%;
+}
+div.recent-posts-article time{
+  font-size: 105%;
+}
+
+div.recent-posts-posted {
+  padding: 0.5rem -0.5rem;
+  font-size: 80%;
+}
+
+#recent-posts {
+  padding: 0.5rem;
+}
+
+div.blog-archives div {
+  font-size: 130%;
+}
+
+div.blog-archives time {
+  font-size: 90%;
+}
