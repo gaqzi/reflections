@@ -1,4 +1,5 @@
-# Use `__init_subclass__` hook to validate subclasses
+Title: Use '__init_subclass__' Hook to Validate Subclasses in Python
+Date: 2021-11-20
 
 At my workplace, we have a fairly large Celery config file where you're expected to subclass from a base class and extend that if there's a new domain. However, the subclass expects the configuration in a specific schema. So, having a way to enforce that schema in the subclasses and raising appropriate runtime exceptions is nice.
 
