@@ -1,19 +1,75 @@
+#################################
+### Pelican
+#################################
+PY?=python3
+PELICAN?=pelican
+PELICANOPTS=
+
+BASEDIR=$(CURDIR)
+INPUTDIR=$(BASEDIR)/content
+OUTPUTDIR=$(BASEDIR)/output
+CONFFILE=$(BASEDIR)/pelicanconf.py
+PUBLISHCONF=$(BASEDIR)/publishconf.py
+
+GITHUB_PAGES_BRANCH=gh-pages
+
+
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+	PELICANOPTS += -D
+endif
+
+RELATIVE ?= 0
+ifeq ($(RELATIVE), 1)
+	PELICANOPTS += --relative-urls
+endif
+
+SERVER ?= "0.0.0.0"
+
+PORT ?= 0
+ifneq ($(PORT), 0)
+	PELICANOPTS += -p $(PORT)
+endif
+
+help: ## Show this help message.
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
+
+html: ## (Re)generate the web site
+	"$(PELICAN)" "$(INPUTDIR)" -o "$(OUTPUTDIR)" -s "$(CONFFILE)" $(PELICANOPTS)
+
+clean: ## Remove the generated files.
+	[ ! -d "$(OUTPUTDIR)" ] || rm -rf "$(OUTPUTDIR)"
+
+regenerate: ## Regenerate and serve on '0.0.0.0'
+	"$(PELICAN)" -r "$(INPUTDIR)" -o "$(OUTPUTDIR)" -s "$(CONFFILE)" $(PELICANOPTS)
+
+serve: ## Serve site at 'http://localhost:5000'.
+	"$(PELICAN)" -l "$(INPUTDIR)" -o "$(OUTPUTDIR)" -s "$(CONFFILE)" $(PELICANOPTS)
+
+serve-global: ## Serve (as root) to '$(SERVER):80'
+	"$(PELICAN)" -l "$(INPUTDIR)" -o "$(OUTPUTDIR)" -s "$(CONFFILE)" $(PELICANOPTS) -b $(SERVER)
+
+devserver: ## Serve and regenerate together.
+	"$(PELICAN)" -lr "$(INPUTDIR)" -o "$(OUTPUTDIR)" -s "$(CONFFILE)" $(PELICANOPTS)
+
+devserver-global: ## regenerate and serve on '0.0.0.0'.
+	$(PELICAN) -lr $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS) -b 0.0.0.0
+
+publish: ## Generate using production settings.
+	"$(PELICAN)" "$(INPUTDIR)" -o "$(OUTPUTDIR)" -s "$(PUBLISHCONF)" $(PELICANOPTS)
+
+github: publish ## Upload the web site via gh-pages.
+	ghp-import -m "Generate Pelican site" -b $(GITHUB_PAGES_BRANCH) "$(OUTPUTDIR)"
+	git push origin $(GITHUB_PAGES_BRANCH)
+
+
+#################################
+### Lint
+#################################
 path := .
 
-define Comment
-	- Run `make help` to see all the available options.
-	- Run `make lint` to run the linter.
-	- Run `make lint-check` to check linter conformity.
-	- Run `dep-lock` to lock the deps in 'requirements.txt' and 'requirements-dev.txt'.
-	- Run `dep-sync` to sync current environment up to date with the locked deps.
-endef
-
-
-.PHONY: lint
 lint: black isort flake mypy	## Apply all the linters.
-
-
-.PHONY: lint-check
 lint-check:  ## Check whether the codebase satisfies the linter rules.
 	@echo
 	@echo "Checking linter rules..."
@@ -24,8 +80,6 @@ lint-check:  ## Check whether the codebase satisfies the linter rules.
 	@flake8 $(path)
 	@mypy $(path)
 
-
-.PHONY: black
 black: ## Apply black.
 	@echo
 	@echo "Applying black..."
@@ -34,16 +88,12 @@ black: ## Apply black.
 	@black --fast $(path)
 	@echo
 
-
-.PHONY: isort
 isort: ## Apply isort.
 	@echo "Applying isort..."
 	@echo "================="
 	@echo
 	@isort $(path)
 
-
-.PHONY: flake
 flake: ## Apply flake8.
 	@echo
 	@echo "Applying flake8..."
@@ -51,8 +101,6 @@ flake: ## Apply flake8.
 	@echo
 	@flake8 $(path)
 
-
-.PHONY: mypy
 mypy: ## Apply mypy.
 	@echo
 	@echo "Applying mypy..."
@@ -61,22 +109,11 @@ mypy: ## Apply mypy.
 	@mypy $(path)
 
 
-.PHONY: help
-help: ## Show this help message.
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-
-
-.PHONY: test
-test: ## Run the tests against the current version of Python.
-	pytest
-
-
-.PHONY: dep-lock
 dep-lock: ## Freeze deps in 'requirements.txt' file.
 	@pip-compile requirements.in -o requirements.txt
 	@pip-compile requirements-dev.in -o requirements-dev.txt
 
 
-.PHONY: dep-sync
-dep-sync: ## Sync venv installation with 'requirements.txt' file.
-	@pip-sync
+.PHONY: html help clean regenerate serve serve-global devserver \
+        publish github lint lint-check black isort flake mypy \
+        dep-lock
