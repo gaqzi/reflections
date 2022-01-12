@@ -1,6 +1,7 @@
-Title: Use Strict Mode While Running Bash Scripts
-Date: 2021-11-08
-
+---
+title: Use Strict Mode While Running Bash Scripts
+date: 2021-11-08
+---
 
 Use unofficial bash strict mode while writing scripts. Bash has a few gotchas and this helps you to avoid that. For example:
 

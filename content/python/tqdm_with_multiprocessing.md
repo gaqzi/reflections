@@ -1,6 +1,7 @@
-Title: Running Tqdm With Python Multiprocessing
-Date: 2021-11-18
-
+---
+title: Running Tqdm With Python Multiprocessing
+date: 2021-11-18
+---
 
 Making tqdm play nice with multiprocessing requires some additional work. It's not always obvious and I don't want to add another third-party dependency just for this purpose.
 

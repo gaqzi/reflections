@@ -1,6 +1,7 @@
-Title: Structural Subtyping in Python
-Date: 2021-12-04
-
+---
+title: Structural Subtyping in Python
+date: 2021-12-04
+---
 
 I love using Go's interface feature to declaratively define my public API structure. Consider this example:
 

@@ -1,6 +1,7 @@
-Title: Don't Add Extensions to Bash Executables
-Date: 2021-11-23
-
+---
+title: Don't Add Extensions to Bash Executables
+date: 2021-11-23
+---
 
 I was browsing through the source code of [Tom Christie's](https://github.com/tomchristie) `typesystem` library and discovered that the shell [scripts](https://github.com/encode/typesystem/tree/master/scripts) of the project don't have any extensions attached to them. At first, I found it odd, and then it all started to make sense.
 

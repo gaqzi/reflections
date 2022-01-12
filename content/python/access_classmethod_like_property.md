@@ -1,6 +1,7 @@
-Title: Access 'classmethod's Like 'property' Methods in Python
-Date: 2021-11-26
-
+---
+title: Access 'classmethod's Like 'property' Methods in Python
+date: 2021-11-26
+---
 
 I wanted to add a helper method to an Enum class. However, I didn't want to make it a `classmethod` as `property` method made more sense in this particular case. Problem is, you aren't supposed to initialize an enum class, and `property` methods can only be accessed from the instances of a class; not from the class itself.
 

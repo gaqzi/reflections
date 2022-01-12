@@ -1,5 +1,5 @@
 AUTHOR = "Redowan Delowar"
-SITENAME = "Redowan's Notes"
+SITENAME = "Redowan's Reflections"
 SITEURL = ""
 PORT = 5000
 
@@ -55,3 +55,10 @@ CUSTOM_CSS = "theme/css/custom.css"
 
 # Elegant theme specific
 RECENT_ARTICLES_COUNT = 10
+SITE_DESCRIPTION = """
+        Redowan's ruminations on software.
+        Python, Go, Django, Flask, FastAPI, Microservices, PostgreSQL, Redis,
+        AWS, Open Source, Github
+"""
+
+LANDING_PAGE_TITLE = ""

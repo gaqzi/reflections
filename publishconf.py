@@ -8,7 +8,7 @@ sys.path.append(os.curdir)
 from pelicanconf import *  # noqa
 
 # If your site is available via HTTPS, make sure SITEURL begins with https://
-SITEURL = "https://rednafi.github.io/notes"
+SITEURL = "https://rednafi.github.io/reflections"
 RELATIVE_URLS = True
 
 FEED_ALL_ATOM = "feeds/all.atom.xml"
@@ -19,4 +19,4 @@ DELETE_OUTPUT_DIRECTORY = False
 # Following items are often useful when publishing
 
 # DISQUS_SITENAME = ""
-# GOOGLE_ANALYTICS = ""
+GOOGLE_ANALYTICS = ""

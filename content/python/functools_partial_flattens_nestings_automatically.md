@@ -1,6 +1,7 @@
-Title: Python's 'functools.partial' Flattens Nestings Automatically
-Date: 2021-11-08
-
+---
+title: Python's 'functools.partial' Flattens Nestings Automatically
+date: 2021-11-08
+---
 
 The constructor for `functools.partial()` detects nesting and automatically flattens
 itself to a more efficient form. For example:
