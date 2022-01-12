@@ -24,31 +24,15 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Get pip cache dir
-        id: pip-cache
-        run: |
-          echo "::set-output name=dir::$(pip cache dir)"
-
-      - name: Pip cache
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
       - name: Install the dependencies
         run: |
-          echo "Upgrading pip ...."
+          python3.10 -m venv .venv && source .venv/bin/activate
+          echo "Upgrading pip..."
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Build the site
+      - name: Build & Deploy to gh-pages
         run: |
-          make publish
-
-      - name: Deploy
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-page
+          source .venv/bin/activate
+          pelican-themes --install theme/elegant/
+          make github
