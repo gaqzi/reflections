@@ -28,3 +28,14 @@ div.blog-archives div {
 div.blog-archives time {
   font-size: 90%;
 }
+
+/* Header */
+.page-header {
+  border-bottom: 2px solid  #1261A0;
+  color: #1261A0;
+  margin: 10px 0 30px 0;
+}
+.page-header h1 {
+  border: none;
+  line-height: 1em;
+}

@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-11]
+        os: [ubuntu-latest]
         python-version: ["3.10"]
 
     steps:
@@ -37,20 +37,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Install the test dependencies
+      - name: Install the dependencies
         run: |
           echo "Upgrading pip ...."
           python -m pip install --upgrade pip
-          python -m pip install -r requirements-dev.txt
-
-      - name: Check linter
-        run: |
-          echo "Checking black formatting..."
-          python3 -m black --check .
-          echo "Checking isort formatting..."
-          python3 -m isort --check .
-          echo "Checking flake8 formatting..."
-          python3 -m flake8 .
+          python -m pip install -r requirements.txt
 
       - name: Run the tests
         run: |

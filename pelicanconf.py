@@ -1,5 +1,5 @@
 AUTHOR = "Redowan Delowar"
-SITENAME = "notes"
+SITENAME = "Redowan's Notes"
 SITEURL = ""
 PORT = 5000
 
