@@ -73,13 +73,10 @@ test: ## Run the tests against the current version of Python.
 
 .PHONY: dep-lock
 dep-lock: ## Freeze deps in 'requirements.txt' file.
+	@pip-compile requirements.in -o requirements.txt
 	@pip-compile requirements-dev.in -o requirements-dev.txt
 
 
 .PHONY: dep-sync
 dep-sync: ## Sync venv installation with 'requirements.txt' file.
 	@pip-sync
-
-.PHONY: gen-index
-gen-index: ## Generate index from the markdown files.
-	@./.venv/bin/python3.10 -m scripts.create_index
