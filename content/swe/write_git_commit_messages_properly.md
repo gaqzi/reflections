@@ -1,7 +1,7 @@
 ---
 title: Write Git Commit Messages Properly
 date: 2021-11-11
-tags: swe, general
+tags: General
 ---
 
 Writing consistent commit messages helps you to weave a coherent story with your git history. Recently, I've started paying attention to my commit messages. Before this, my commit messages in this repository used to look like this:

@@ -1,7 +1,7 @@
 ---
 title: Deciphering Python's Metaclasses
 date: 2020-06-26
-tags: python
+tags: Python
 ---
 
 ***Updated on 2020-11-27***: *Refactoring arg names and testing on Python 3.9*
