@@ -1,6 +1,7 @@
 ---
 title: No Really, Python's Pathlib is Great
 date: 2020-04-13
+tags: python
 ---
 
 When I first encountered Python's `pathlib` module for path manipulation, I brushed it aside assuming it to be just an OOP way of doing what `os.path` already does quite well. The official doc also dubs it as the `Object-oriented filesystem paths`. However, back in 2019 when [this](https://code.djangoproject.com/ticket/29983) ticket confirmed that Django was replacing `os.path` with `pathlib`, I got curious.

@@ -1,6 +1,7 @@
 ---
 title: Running Python Linters with Pre-commit Hooks
 date: 2020-04-06
+tags: python
 ---
 
 [Pre-commit hooks](https://pre-commit.com/#introduction) can be a neat way to run automated ad-hoc *tasks* before submitting a new git commit. These tasks may include linting, trimming trailing whitespaces, running code formatter before code reviews etc. Let's see how multiple Python linters and formatters can be applied automatically before each commit to impose strict conformity on your codebase.

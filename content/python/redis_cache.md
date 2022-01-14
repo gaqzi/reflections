@@ -1,6 +1,7 @@
 ---
 title: Effortless API Request Caching with Python & Redis
 date: 2020-05-25
+tags: python, api
 ---
 
 ***Updated on 2020-07-13***: *Removed duplicate keys in docker-compose.yml*

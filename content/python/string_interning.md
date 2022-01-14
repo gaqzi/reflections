@@ -1,6 +1,7 @@
 ---
 title: String Interning in Python
 date: 2022-01-05
+tags: python
 ---
 
 I was reading the source [code](https://github.com/taleinat/python-stdlib-sentinels/blob/main/sentinels/sentinels.py) of the reference implementation of [PEP-661: Sentinel Values](https://www.python.org/dev/peps/pep-0661/) and discovered an optimization technique known as **String interning**. Modern programming languages like Java, Python, PHP, Ruby, Julia, etc, performs *string interning* to make their string operations more performant.

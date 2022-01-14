@@ -1,6 +1,7 @@
 ---
 title: Untangling Python Decorators
 date: 2020-05-13
+tags: python
 ---
 
 ***Updated on 2020-06-25***: *Replaced time.time() with time.perf_counter()*

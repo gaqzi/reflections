@@ -1,6 +1,7 @@
 ---
 title: Generic Functions with Python's Singledispatch
 date: 2020-04-05
+tags: python
 ---
 
 Recently, I was refactoring a portion of a Python function that somewhat looked like this:

@@ -1,6 +1,7 @@
 ---
 title: Interfaces, Mixins and Building Powerful Custom Data Structures in Python
 date: 2020-07-03
+tags: python
 ---
 
 Imagine a custom *set-like* data structure that doesn't perform hashing and trades performance for tighter memory footprint. Or imagine a *dict-like* data structure that automatically stores data in a PostgreSQL or Redis database the moment you initialize it; also it lets you to *get-set-delete* key-value pairs using the usual *retrieval-assignment-deletion* syntax associated with built-in dictionaries. Custom data structures can give you the power of choice and writing them will make you understand how the built-in data structures in Python are constructed.

@@ -1,6 +1,7 @@
 ---
 title: Pedantic Configuration Management with Pydantic
 date: 2020-07-13
+tags: python
 ---
 
 

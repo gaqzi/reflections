@@ -1,6 +1,7 @@
 ---
 title: Automatic Attribute Delegation in Python Composition
 date: 2021-11-28
+tags: python
 ---
 
 While trying to avoid inheritance in an API that I was working on, I came across this neat trick to perform attribute delegation on composed classes. Let's say there's a class called `Engine` and you want to put an engine instance in a `Car`. In this case, the car has a classic 'has a' (inheritance usually refers to 'is a' relationships) relationship with the engine. So, composition makes more sense than inheritance here. Consider this example:
