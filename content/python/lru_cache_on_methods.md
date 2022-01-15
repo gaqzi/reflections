@@ -1,6 +1,6 @@
 ---
 title: Don't Wrap Instance Methods with 'functools.lru_cache' Decorator in Python
-date: 2021-01-15
+date: 2022-01-15
 tags: Python
 ---
 
