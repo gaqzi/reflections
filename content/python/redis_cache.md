@@ -87,6 +87,7 @@ Assuming the database server is running and you've installed the dependencies, t
 import redis
 import sys
 
+
 def redis_connect() -> redis.client.Redis:
     try:
         client = redis.Redis(
@@ -102,7 +103,6 @@ def redis_connect() -> redis.client.Redis:
     except redis.AuthenticationError:
         print("AuthenticationError")
         sys.exit(1)
-
 
 
 client = redis_connect()
@@ -156,7 +156,11 @@ def get_routes_from_cache(key: str) -> str:
 def set_routes_to_cache(key: str, value: str) -> bool:
     """Set data to redis."""
 
-    state = client.setex(key, timedelta(seconds=3600), value=value, )
+    state = client.setex(
+        key,
+        timedelta(seconds=3600),
+        value=value,
+    )
     return state
 ```
 
@@ -173,7 +177,6 @@ The `route_optima` function is the primary agent that orchestrates and executes 
 When a new request arrives, the function first checks if the return-value exists in the Redis cache. If the value exists, it shows the cached value, otherwise, it sends a new request to the MapBox API, cache that value and then shows the result.
 
 ```python
-
 def route_optima(coordinates: str) -> dict:
 
     # First it looks for the data in redis cache
@@ -216,7 +219,7 @@ app = FastAPI()
 def view(coordinates):
     """This will wrap our original route optimization API and
     incorporate Redis Caching. You'll only expose this API to
-    the end user. """
+    the end user."""
 
     # coordinates = "90.3866,23.7182;90.3742,23.7461"
 
@@ -235,7 +238,6 @@ from datetime import timedelta
 import httpx
 import redis
 from fastapi import FastAPI
-
 
 
 def redis_connect() -> redis.client.Redis:
@@ -283,7 +285,11 @@ def get_routes_from_cache(key: str) -> str:
 def set_routes_to_cache(key: str, value: str) -> bool:
     """Data to redis."""
 
-    state = client.setex(key, timedelta(seconds=3600), value=value,)
+    state = client.setex(
+        key,
+        timedelta(seconds=3600),
+        value=value,
+    )
     return state
 
 
@@ -320,7 +326,7 @@ app = FastAPI()
 def view(coordinates: str) -> dict:
     """This will wrap our original route optimization API and
     incorporate Redis Caching. You'll only expose this API to
-    the end user. """
+    the end user."""
 
     # coordinates = "90.3866,23.7182;90.3742,23.7461"
 

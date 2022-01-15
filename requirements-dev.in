@@ -4,3 +4,5 @@ flake8
 mypy
 pip-tools
 pre-commit
+ipython
+blacken-docs
