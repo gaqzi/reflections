@@ -23,7 +23,7 @@ Number = TypeVar("Number", int, float, complex)
 
 
 class SlowAdder:
-    def __init__(self, delay: int = 1):
+    def __init__(self, delay: int = 1) -> None:
         self.delay = delay
 
     @lru_cache
@@ -124,7 +124,7 @@ Number = TypeVar("Number", int, float, complex)
 
 
 class SlowAdder:
-    def __init__(self, delay: int = 1):
+    def __init__(self, delay: int = 1) -> None:
         self.delay = delay
         self.calculate = lru_cache()(self._calculate)
 
@@ -193,13 +193,13 @@ import time
 class Foo:
     @classmethod
     @lru_cache
-    def bar(cls, delay: int):
+    def bar(cls, delay: int) -> int:
         # Do something with the cls.
         cls.delay = delay
         time.sleep(delay)
         return 42
 
-    def __del__(self):
+    def __del__(self) -> None:
         print("Deleting instance ...")
 
 
@@ -244,10 +244,10 @@ import time
 class Foo:
     @staticmethod
     @lru_cache
-    def bar(delay: int):
+    def bar(delay: int) -> int:
         return 42
 
-    def __del__(self):
+    def __del__(self) -> None:
         print("Deleting instance ...")
 ```
 
