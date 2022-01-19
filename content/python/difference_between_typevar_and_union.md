@@ -1,10 +1,10 @@
 ---
 title: Difference Between Constrained 'TypeVar' and 'Union' in Python
 date: 2022-01-19
-tags: Python, Typing
+tags: Python, Type Hint
 ---
 
-If you want to define a variable that can accept values of multiple possible types, using `typing.Union` is one way to do that:
+If you want to define a variable that can accept values of multiple possible types, using `typing.Union` is one way of doing that:
 
 ```python
 from typing import Union
@@ -20,9 +20,9 @@ from typing import TypeVar
 T = TypeVar("T", int, str)
 ```
 
-So, what's the difference between these two and when to use what? The primary difference is:
+So, what's the difference between these two and when to use which? The primary difference is:
 
-> T's type needs be consistent across multiple uses within a given scope, while U's doesn't.
+> T's type needs to be consistent across multiple uses within a given scope, while U's doesn't.
 
 With a `Union` type used as function parameters, the arguments, as well as the return type, can all be different:
 
@@ -74,7 +74,7 @@ src.py:12: error: Value of type variable "T" of "add" cannot be "object"
 Found 1 error in 1 file (checked 1 source file)
 ```
 
-As the comment implies, this error is coming from the third use of `add("hello", 1)`. The function `add` can take parameters of either integer or string type. However, the type of both the parameters needs to be the same. Also, the type of the input parameters will define the type of the output value. So, the types of the input parameters must need to match, otherwise, Mypy will complain and this case, the snippet will also raise a `TypeError` in runtime. Mypy is statically catching a runtime bug, how convenient!
+As the comment implies, this error is coming from the line where I called `add("hello", 1)`. The function `add` can take parameters of either integer or string type. However, the type of both the parameters needs to be the same. Also, the type of the input parameters will define the type of the output value. So, the types of the input parameters must match, otherwise, Mypy will complain and in this case, the snippet will also raise a `TypeError` in runtime. Mypy is statically catching a bug that'd otherwise appear in runtime, how convenient!
 
 
 ## References
