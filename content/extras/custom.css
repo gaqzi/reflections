@@ -53,6 +53,10 @@ code,
 pre {
   font-size: 1rem;
   font-family: "Menlo", "Monaco", "Courier New", monospace;
+  overflow-wrap: break-word;
+  max-width: 88ch;
+  text-align: left;
+  white-space: pre-wrap;
 }
 
 .article-content {
