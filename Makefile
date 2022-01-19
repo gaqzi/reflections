@@ -110,8 +110,14 @@ mypy: ## Apply mypy.
 
 
 dep-lock: ## Freeze deps in 'requirements.txt' file.
-	@pip-compile requirements.in -o requirements.txt
-	@pip-compile requirements-dev.in -o requirements-dev.txt
+	@pip-compile requirements.in \
+			-o requirements.txt \
+			--no-emit-options \
+			--no-emit-index-url
+	@pip-compile requirements-dev.in \
+			-o requirements.txt \
+			--no-emit-options \
+			--no-emit-index-url
 
 
 .PHONY: html help clean regenerate serve serve-global devserver \
