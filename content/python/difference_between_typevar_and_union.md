@@ -4,7 +4,7 @@ date: 2022-01-19
 tags: Python, Typing
 ---
 
-If you want to define a variable that can accept values of multiple possible types, `typing.Union` is one way of expressing that:
+If you want to define a variable that can accept values of multiple possible types, using `typing.Union` is one way to do that:
 
 ```python
 from typing import Union
@@ -74,7 +74,7 @@ src.py:12: error: Value of type variable "T" of "add" cannot be "object"
 Found 1 error in 1 file (checked 1 source file)
 ```
 
-As the comment implies, this error is coming from the third use of `add("hello", 1)`. The function `add` can take parameters of either integer or string type. However, the type of both the parameters needs to be the same. Also, the type of the input parameters will define the type of the output value. So the types of the input parameters must need to match, otherwise, Mypy will complain and this case, the snippet will raise a `TypeError` in runtime.
+As the comment implies, this error is coming from the third use of `add("hello", 1)`. The function `add` can take parameters of either integer or string type. However, the type of both the parameters needs to be the same. Also, the type of the input parameters will define the type of the output value. So, the types of the input parameters must need to match, otherwise, Mypy will complain and this case, the snippet will also raise a `TypeError` in runtime. Mypy is statically catching a runtime bug, how convenient!
 
 
 ## References
