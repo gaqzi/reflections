@@ -115,7 +115,7 @@ dep-lock: ## Freeze deps in 'requirements.txt' file.
 			--no-emit-options \
 			--no-emit-index-url
 	@pip-compile requirements-dev.in \
-			-o requirements.txt \
+			-o requirements-dev.txt \
 			--no-emit-options \
 			--no-emit-index-url
 
