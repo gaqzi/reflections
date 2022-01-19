@@ -150,6 +150,7 @@ use explicit `OneToOneFields` and `ForeignKeys` between models so you can contro
     ```python
     from django.db import models
 
+
     class AuditLogModel(models.Models):
         """
         An abstract base class model that provides self
@@ -164,6 +165,7 @@ use explicit `OneToOneFields` and `ForeignKeys` between models so you can contro
 
 
     # Use the models as follows.
+
 
     class FooModel(AuditLogModel):
         title = models.CharField(max_length=200)
