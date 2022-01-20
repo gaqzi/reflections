@@ -1,4 +1,4 @@
-/* Landing Page Fonts */
+/*Landing Page Fonts*/
 div.recent-posts-article {
   padding: 0.5rem;
   margin: 0rem;
@@ -42,22 +42,28 @@ div.blog-archives time {
 /* Link */
 a {
   color: #1e54c0;
+  font-size: 100%;
 }
 
 .site-name {
   font-family: var(--mutedTextColor);
 }
 
+
 .literal,
-code,
-pre {
-  font-size: 1rem;
+code, pre {
+  font-size: 95%;
   font-family: "Menlo", "Monaco", "Courier New", monospace;
-  overflow-wrap: break-word;
-  max-width: 88ch;
-  text-align: left;
-  white-space: pre-wrap;
+
 }
+
+pre{
+  white-space: nowrap;
+  text-align: left;
+  overflow-x: scroll;
+  justify-content: left;
+}
+
 
 .article-content {
   font-size: 140%;

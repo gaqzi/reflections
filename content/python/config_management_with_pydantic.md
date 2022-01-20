@@ -261,53 +261,54 @@ The modular design demonstrated above is easy to maintain and extend in my opini
 
 * First you'll need to add those *staging* variables to the `.env` file.
 
-  ```
-  ...
+```
+...
 
-  STAGE_REDIS_HOST="127.0.0.3"
-  STAGE_REDIS_PORT="6000"
+STAGE_REDIS_HOST="127.0.0.3"
+STAGE_REDIS_PORT="6000"
 
-  ...
-  ```
+...
+
+```
 
 * Then you've to create a class named `StageConfig` that inherits from the `GlobalConfig` class. The architecture of the class is  similar to that of the `DevConfig` or `ProdConfig` class.
 
-    ```python
-    # configs.py
-    ...
+```python
+# configs.py
+...
 
-    class StageConfig(GlobalConfig):
-        """Staging configurations."""
+class StageConfig(GlobalConfig):
+    """Staging configurations."""
 
-        class Config:
-            env_prefix : str = "STAGE_"
-    ...
-    ```
+    class Config:
+        env_prefix : str = "STAGE_"
+...
+```
 
 
 * Finally, you'll need to insert an `ENV_STATE` logic into the control flow of the `FactoryConfig` class. See how I've appended another if-else block to the previous (prod) block.
 
-    ```python
-    # configs.py
-    ...
+```python
+# configs.py
+...
 
-    class FactoryConfig:
-        """Returns a config instance depending on the ENV_STATE variable."""
+class FactoryConfig:
+    """Returns a config instance depending on the ENV_STATE variable."""
 
-        def __init__(self, env_state: Optional[str]):
-            self.env_state = env_state
+    def __init__(self, env_state: Optional[str]):
+        self.env_state = env_state
 
-        def __call__(self):
-            if self.env_state == "dev":
-                return DevConfig()
+    def __call__(self):
+        if self.env_state == "dev":
+            return DevConfig()
 
-            elif self.env_state == "prod":
-                return ProdConfig()
+        elif self.env_state == "prod":
+            return ProdConfig()
 
-            elif self.env_state == "stage"
-                return StageConfig()
-    ...
-    ```
+        elif self.env_state == "stage"
+            return StageConfig()
+...
+```
 
 To see your new addition in action just change the `ENV_STATE` to "stage" in the `.env` file or export it to your shell environment.
 
