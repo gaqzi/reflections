@@ -4,7 +4,7 @@ date: 2022-01-22
 tags: Python
 ---
 
-How come I didn't know about the `python -m pydoc` command before today.
+How come I didn't know about the `python -m pydoc` command before today!
 
 > It lets you inspect the docstrings of any modules, classes, functions, or methods in Python.
 
