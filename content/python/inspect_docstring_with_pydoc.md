@@ -95,7 +95,7 @@ Instead of inspecting the docstrings one by one, you can also pull up all the do
 python -m pydoc -b
 ```
 
-This will render the docstrings as HTML web pages and automatically open the index page with your default browser. You can use the built-in search to find and read your desired docstring.
+This will render the docstrings as HTML web pages and automatically open the index page with your default browser. From there you can use the built-in search to find and read your desired docstring.
 
 ## References
 
