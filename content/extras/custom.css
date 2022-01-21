@@ -49,20 +49,15 @@ a {
   font-family: var(--mutedTextColor);
 }
 
-.literal,
 code, pre {
   font-size: 95%;
   font-family: "Menlo", "Monaco", "Courier New", monospace;
-
 }
 
-pre{
-  white-space: nowrap;
-  text-align: left;
-  overflow-x: scroll;
-  justify-content: left;
+/* Turn off code wrapping */
+pre code{
+  white-space: pre;
 }
-
 
 .article-content {
   font-size: 140%;
