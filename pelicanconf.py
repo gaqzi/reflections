@@ -62,3 +62,4 @@ SITE_DESCRIPTION = """
 """
 
 LANDING_PAGE_TITLE = ""
+SITE_LICENSE = """© 2020-2022 • Redowan Delowar • All Rights Reserved"""

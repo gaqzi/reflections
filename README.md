@@ -21,7 +21,7 @@ Assuming you're using a Unix-based system.
     ```
     pip install -r requirements.txt
     ```
-* Run `make regenerate`.
+* Run `make devserver`.
 
 * Go to [http://localhost:5000](http://localhost:5000) to see the site locally.
 
