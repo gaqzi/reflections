@@ -26,7 +26,7 @@ LINKS = (
 
 # Social widget
 SOCIAL = (
-    ("You can add links in your config file", "#"),
+    ("https://twitter.com/rednafi", "#"),
     ("Another social link", "#"),
 )
 
@@ -56,10 +56,14 @@ CUSTOM_CSS = "theme/css/custom.css"
 # Elegant theme specific
 RECENT_ARTICLES_COUNT = 10
 SITE_DESCRIPTION = """
-        Redowan's ruminations on software.
-        Python, Go, Django, Flask, FastAPI, Microservices, PostgreSQL, Redis,
-        AWS, Open Source, Github
+        Ruminations on software.
+        Python, Django, Microservices, PostgreSQL,
+        Redis, AWS, Go, Open Source.
 """
 
 LANDING_PAGE_TITLE = ""
 SITE_LICENSE = """© 2020-2022 • Redowan Delowar • All Rights Reserved"""
+
+
+# SEO
+CLAIM_GOOGLE = "<meta name='google-site-verification' content='N5QEPRj-LpgoEY0Hf3uVMmZq8kjDwTFjd54IgvLmRBc' />"
