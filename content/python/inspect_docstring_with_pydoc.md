@@ -91,13 +91,13 @@ src.greetings = greetings(name: str) -> None
         Name of the person you want to greet
 ```
 
-Instead of inspecting the docstrings one by one, you can also pull up all the docstrings in the current Python path and serve them as HTML pages. To do so, run:
+Instead of inspecting the docstrings one by one, you can also pull up all of them in the current Python path and serve them as HTML pages. To do so, run:
 
 ```
 python -m pydoc -b
 ```
 
-This will render the docstrings as HTML web pages and automatically open the index page with your default browser. From there you can use the built-in search to find and read your desired docstring.
+This will render the docstrings as HTML web pages and automatically open the index page with your default browser. From there you can use the built-in search to find and read your ones you need.
 
 ## References
 
