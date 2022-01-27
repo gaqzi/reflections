@@ -176,20 +176,23 @@ def find(haystack: Container, needle: T):
 Abstract base classes in Python let you validate the structure of subclasses in runtime. Python's standard library APIs uses `abc.ABC` in many places. See this example:
 
 ```python
+# src.py
+from __future__ import annotations
+
 from abc import ABC, abstractmethod, abstractclassmethod, abstractproperty
 
 
 class FooInterface(ABC):
     @abstractmethod
-    def bar(self):
+    def bar(self) -> str:
         pass
 
     @abstractclassmethod
-    def baz(cls):
+    def baz(cls) -> str:
         pass
 
     @abstractproperty
-    def qux(self):
+    def qux(self) -> str:
         pass
 
 

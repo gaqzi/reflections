@@ -796,7 +796,7 @@ print(calc.div(4, 5))
 
 ### Metaclasses & Dataclasses
 
-Data classes were introduced to python in version 3.7. Basically they can be regarded as code generators that reduce the amount of boilerplate you need to write while generating generic classes. Dataclasses automatically create `__init__`, `__repr__`, `__eq__`, `__gt__`, `__lt__` etc methods without you having to add them explicitly. This can be very handy when you need to create custom containers for your data. You can create dataclasses in the following manner:
+Data classes were introduced to python in version 3.7. Basically they can be regarded as code generators that reduce the amount of boilerplate you need to write while generating generic classes. Dataclasses automatically create `__init__`, `__repr__`, `__eq__`, `__gt__`, `__lt__` etc methods without you having to add them explicitly. This can be very handy when you need to create custom collections for your data. You can create dataclasses in the following manner:
 
 #### Creating Multiple DataClasses
 
