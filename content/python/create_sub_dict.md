@@ -57,7 +57,7 @@ It prints out the same thing as before:
 {'this': 0, 'is': 1, 'an': 2, 'example': 3}
 ```
 
-This is so simple and elegant. How did I miss that! There's another functional but subjectively less readable way of achieving the same thing. Here it goes:
+It's quite a bit faster because in the worst case scenario, it'll only have to traverse the entire `sub_keys` list—O(K) complexity achieved. This is so simple and elegant. How did I miss that! There's another functional but subjectively less readable way of achieving the same thing. Here you go:
 
 
 ```python
@@ -91,7 +91,7 @@ In [5]: %timeit dict(zip(sub_keys, itemgetter(*sub_keys)(main_dict)))
 ...
 ```
 
-It shows that the solution I was using does suffer from the effects of `O(DK)` complexity even when the dict size is as small as 9 elements. The second solution is the fastest and the least complex one to understand. I find the third one borderline unreadable.
+It shows that the solution I was using does suffer from the effects of `O(DK)` complexity even when the dict size is as small as 9 elements. The second solution is the fastest and the least complex one to understand. While the third one is better than the first solution, it's a gratuitously complex way of doing something so trivial.
 
 ## References
 
