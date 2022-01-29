@@ -1,5 +1,5 @@
 ---
-title: Create Sub Dictionary with O(K) Complexity in Python
+title: Create a Sub Dictionary with O(K) Complexity in Python
 Date: 2022-01-30
 tags: Python
 ---
