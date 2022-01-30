@@ -4,6 +4,9 @@ date: 2020-06-16
 tags: Python
 ---
 
+***Updated on 2022-01-31***: *Syntax is now compatible with Python 3.10.*
+
+
 In Python, there's a saying that *[design patterns](https://en.wikipedia.org/wiki/Design_Patterns) are anti-patterns*. Also, in the realm of dynamic languages, design patterns have the notoriety of injecting additional abstraction layers to the core logic and making the flow gratuitously obscure. Python's dynamic nature and the treatment of functions as [first-class](https://dbader.org/blog/python-first-class-functions) objects often make Java-ish design patterns redundant. Instead of littering your code with seemingly over-engineered patterns, you can almost always take the advantage of Python's first-class objects, duck-typing, monkey-patching etc to accomplish the task at hand. However, recently there is one design pattern that I find myself using over and over again to write more maintainable code and that is the Proxy pattern. So I thought I'd document it here for future reference.
 
 ## The Proxy Pattern
@@ -14,6 +17,9 @@ Have you ever used an access card to go through a door? There are multiple optio
 
 
 ```python
+# src.py
+
+
 class Door:
     def open_method(self) -> None:
         pass
@@ -63,13 +69,18 @@ Suppose, you're defining a `division` function that takes takes two integer as a
 
 
 ```python
+# src.py
+from __future__ import annotations
+
 import logging
 from typing import Union
 
 logging.basicConfig(level=logging.INFO)
 
+Number = Union[int, float]
 
-def division(a: Union[int, float], b: Union[int, float]) -> float:
+
+def division(a: Number, b: Number) -> float:
     try:
         result = a / b
         return result
@@ -78,7 +89,7 @@ def division(a: Union[int, float], b: Union[int, float]) -> float:
         logging.error(f"Argument b cannot be {b}")
 
     except TypeError:
-        logging.error(f"Arguments must be integers/floats")
+        logging.error("Arguments must be integers/floats")
 
 
 print(division(1.9, 2))
@@ -93,14 +104,19 @@ You can see this function is already doing three things at once which violates t
 Instead, you can write two classes. The primary class `Division` will only implement the core logic while another class `ProxyDivision` will extend the functionality of `Division` by adding exception handlers and loggers.
 
 ```python
+# src.py
+from __future__ import annotations
+
 import logging
 from typing import Union
 
 logging.basicConfig(level=logging.INFO)
 
+Number = Union[int, float]
+
 
 class Division:
-    def div(self, a: Union[int, float], b: Union[int, float]) -> float:
+    def div(self, a: Number, b: Number) -> Number:
         return a / b
 
 
@@ -108,7 +124,7 @@ class ProxyDivision:
     def __init__(self) -> None:
         self._klass = Division()
 
-    def div(self, a: Union[int, float], b: Union[int, float]) -> float:
+    def div(self, a: Number, b: Number) -> Number:
         try:
             result = self._klass.div(a, b)
             return result
@@ -117,7 +133,7 @@ class ProxyDivision:
             logging.error(f"Argument b cannot be {b}")
 
         except TypeError:
-            logging.error(f"Arguments must be integers/floats")
+            logging.error("Arguments must be integers/floats")
 
 
 klass = ProxyDivision()
@@ -142,6 +158,7 @@ In the real world, your class won't look like the simple `Division` class having
 Here, the solution is an interface that can signal the author of the proxy class about all the methods that need to be implemented. An *interface* is nothing but an abstract class that dictates all the methods a concrete class needs to implement. However, interfaces can't be initialized independently. You'll have to make a subclass of the interface and implement all the methods defined there. Your subclass will raise error if it fails to implement any of the methods of the interface. Let's look at a minimal example of how you can write an interface using Python's `abc.ABC` and `abc.abstractmethod` and achieve proxy pattern with that.
 
 ```python
+# src.py
 from abc import ABC, abstractmethod
 
 
@@ -229,6 +246,8 @@ This API is perfect for the demonstration since it has a rate limiter that kicks
 Since, by now, you're already familiar with the workflow of the proxy pattern, let's dump the entire 110 line solution all at once.
 
 ```python
+from __future__ import annotations
+
 import logging
 import sys
 from abc import ABC, abstractmethod
@@ -236,42 +255,45 @@ from datetime import datetime
 from pprint import pprint
 
 import httpx
-from httpx._exceptions import ConnectTimeout, ReadTimeout
+from httpx import ConnectTimeout, ReadTimeout
 from functools import lru_cache
+from typing import Any
 
 
 logging.basicConfig(level=logging.INFO)
+
+D = dict[str, Any]
 
 
 class IFetchUrl(ABC):
     """Abstract base class. You can't instantiate this independently."""
 
     @abstractmethod
-    def get_data(self, url: str) -> dict:
+    def get_data(self, url: str) -> D:
         pass
 
     @abstractmethod
-    def get_headers(self, data: dict) -> dict:
+    def get_headers(self, data: D) -> D:
         pass
 
     @abstractmethod
-    def get_args(self, data: dict) -> dict:
+    def get_args(self, data: D) -> D:
         pass
 
 
 class FetchUrl(IFetchUrl):
     """Concrete class that doesn't handle exceptions and loggings."""
 
-    def get_data(self, url: str) -> dict:
+    def get_data(self, url: str) -> D:
         with httpx.Client() as client:
             response = client.get(url)
             data = response.json()
             return data
 
-    def get_headers(self, data: dict) -> dict:
+    def get_headers(self, data: D) -> D:
         return data["headers"]
 
-    def get_args(self, data: dict) -> dict:
+    def get_args(self, data: D) -> D:
         return data["args"]
 
 
@@ -282,7 +304,7 @@ class ExcFetchUrl(IFetchUrl):
     def __init__(self) -> None:
         self._fetch_url = FetchUrl()
 
-    def get_data(self, url: str) -> dict:
+    def get_data(self, url: str) -> D:
         try:
             data = self._fetch_url.get_data(url)
             return data
@@ -295,12 +317,12 @@ class ExcFetchUrl(IFetchUrl):
             logging.error("Read timed out. Try again later.")
             sys.exit(1)
 
-    def get_headers(self, data: dict) -> dict:
+    def get_headers(self, data: D) -> D:
         headers = self._fetch_url.get_headers(data)
         logging.info(f"Getting the headers at {datetime.now()}")
         return headers
 
-    def get_args(self, data: dict) -> dict:
+    def get_args(self, data: D) -> D:
         args = self._fetch_url.get_args(data)
         logging.info(f"Getting the args at {datetime.now()}")
         return args
@@ -309,17 +331,17 @@ class ExcFetchUrl(IFetchUrl):
 class CacheFetchUrl(IFetchUrl):
     def __init__(self) -> None:
         self._fetch_url = ExcFetchUrl()
+        self.get_data = lru_cache()(self.get_data)  # type: ignore
 
-    @lru_cache(maxsize=32)
-    def get_data(self, url: str) -> dict:
+    def get_data(self, url: str) -> D:
         data = self._fetch_url.get_data(url)
         return data
 
-    def get_headers(self, data: dict) -> dict:
+    def get_headers(self, data: D) -> D:
         headers = self._fetch_url.get_headers(data)
         return headers
 
-    def get_args(self, data: dict) -> dict:
+    def get_args(self, data: D) -> D:
         args = self._fetch_url.get_args(data)
         return args
 
@@ -333,7 +355,7 @@ if __name__ == "__main__":
         url = f"https://postman-echo.com/get?foo1=bar_{arg1}&foo2=bar_{arg2}"
         print(f"\n {'-'*75}\n")
         data = fetch.get_data(url)
-        print(f"Cache Info: {fetch.get_data.cache_info()}")
+        print(f"Cache Info: {fetch.get_data.cache_info()}")  # type: ignore
         pprint(fetch.get_headers(data))
         pprint(fetch.get_args(data))
 ```
@@ -341,8 +363,8 @@ if __name__ == "__main__":
 ```
 ---------------------------------------------------------------------------
 
-INFO:root:Getting the headers at 2020-06-16 16:54:36.214562
-INFO:root:Getting the args at 2020-06-16 16:54:36.220221
+INFO:root:Getting the headers at 2022-01-31 16:54:36.214562
+INFO:root:Getting the args at 2022-01-31 16:54:36.220221
 Cache Info: CacheInfo(hits=0, misses=1, maxsize=32, currsize=1)
 {'accept': '*/*',
     'accept-encoding': 'gzip, deflate',
