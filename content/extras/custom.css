@@ -39,6 +39,7 @@ div.blog-archives time {
   line-height: 1em;
 }
 
+
 /* Link */
 a {
   color: #1e54c0;
@@ -52,6 +53,7 @@ a {
 code, pre {
   font-size: 95%;
   font-family: "Menlo", "Monaco", "Courier New", monospace;
+  text-align: left;
 }
 
 /* Turn off code wrapping */
@@ -62,7 +64,7 @@ pre code{
 .article-content {
   font-size: 140%;
   font-family: var(--sansFontFamily);
-  justify-content: flex-start;
+  text-align: left;
 }
 
 header.page-header h1 {
