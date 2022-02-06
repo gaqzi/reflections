@@ -22,12 +22,15 @@ consuming the entire iterable of 100 elements.
 
 Tqdm progress bar will be updated after every `MAX_WORKERS*CHUNK_SIZE` iterations.
 """
+# src.py
+
+
+from __future__ import annotations
 
 import multiprocessing as mp
 
 from tqdm import tqdm
 import time
-
 
 import random
 from dataclasses import dataclass
@@ -47,9 +50,13 @@ def foo(start_end: StartEnd) -> int:
     return random.randint(start_end.start, start_end.end)
 
 
-def main():
+def main() -> None:
     inputs = [
-        StartEnd(start, end) for start, end in zip(range(0, 100), range(100, 200))
+        StartEnd(start, end)
+        for start, end in zip(
+            range(0, 100),
+            range(100, 200),
+        )
     ]
 
     with mp.Pool(processes=MAX_WORKERS) as pool:

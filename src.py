@@ -80,37 +80,51 @@
 
 # if __name__ == "__main__":
 #     asyncio.run(main(order_code="SO22-0002746"))
-# src.py
+
+
+# main()
 from __future__ import annotations
 
-# import asyncio
-import inspect
+# In < Python 3.9, import this from the 'typing' module.
+from collections.abc import Generator
+from pathlib import Path
 
-# In <Python 3.9, import these from the 'typing' module.
-from collections.abc import Awaitable, Callable
-from functools import wraps
-from typing import Any
+d = {k: v for k, v in zip("smart", ["a", {"x": "b"}, "c", "d", "e"])}
 
 
-def tag(*names: str) -> Callable:
-    def decorator(func: Callable) -> Callable:
-        # Tagging has to happen in function definition time.
-        # Othewise calling func._tags will raise AttributeError.
-        func._tags = names  # type: ignore
+def search(d: dict, key: str, default: str | None = None) -> str | None:
+    stack = [d.items()]
 
-        if inspect.iscoroutinefunction(func):
-
-            @wraps(func)
-            async def async_wrapped(*args: Any, **kwargs: Any) -> Awaitable[Any]:
-                return await func(*args, **kwargs)
-
-            return async_wrapped
+    while stack:
+        for k, v in stack[-1]:
+            if isinstance(v, dict):
+                stack.append(v.items())
+                break
+            elif k == key:
+                return v
         else:
+            stack.pop()
+    return default
 
-            @wraps(func)
-            def sync_wrapped(*args: Any, **kwargs: Any) -> Any:
-                return func(*args, **kwargs)
 
-            return sync_wrapped
+def list_files(root: str = ".") -> Generator[str, None, None]:
+    """Recursively find files in a directory."""
 
-    return decorator
+    root = Path(root)
+
+    stack = [root.iterdir()]
+    while stack:
+        for path in stack[-1]:
+            if path.is_dir():
+                stack.append(path.iterdir())
+                break
+
+            elif path.is_file():
+                yield str(path).split("/")[-1]
+        else:
+            stack.pop()
+
+
+g = list_files("./theme")
+for f in g:
+    print(f)

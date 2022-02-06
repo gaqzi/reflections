@@ -277,11 +277,14 @@ STAGE_REDIS_PORT="6000"
 # configs.py
 ...
 
+
 class StageConfig(GlobalConfig):
     """Staging configurations."""
 
     class Config:
-        env_prefix : str = "STAGE_"
+        env_prefix: str = "STAGE_"
+
+
 ...
 ```
 

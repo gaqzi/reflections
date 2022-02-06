@@ -88,6 +88,16 @@ black: ## Apply black.
 	@black --fast $(path)
 	@echo
 
+
+black: ## Apply black.
+	@echo
+	@echo "Applying blacken docs..."
+	@echo "========================"
+	@echo
+	@blacken-docs -E content/python/*.md
+	@echo
+
+
 isort: ## Apply isort.
 	@echo "Applying isort..."
 	@echo "================="

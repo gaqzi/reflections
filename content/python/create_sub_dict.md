@@ -26,10 +26,9 @@ main_dict = {
 
 sub_keys = ["this", "is", "an", "example"]
 
-sub_dict = {k:v for k, v in main_dict.items() if k in sub_keys}
+sub_dict = {k: v for k, v in main_dict.items() if k in sub_keys}
 
 print(sub_dict)
-
 ```
 This prints:
 
@@ -45,10 +44,9 @@ While this works fine, if you look carefully you'll notice that in the above sni
 ...
 
 # Only this line is different from the previous snippet.
-sub_dict = {k:main_dict[k] for k in sub_keys}
+sub_dict = {k: main_dict[k] for k in sub_keys}
 
 ...
-
 ```
 
 It prints out the same thing as before:
@@ -69,7 +67,6 @@ from operator import itemgetter
 sub_dict = dict(zip(sub_keys, itemgetter(*sub_keys)(main_dict)))
 
 ...
-
 ```
 
 ## Benchmarks

@@ -96,6 +96,7 @@ from rest_framework.views import Response
 
 ...
 
+
 def api_exception_handler(exc: Exception, context: dict[str, Any]) -> Response:
     """Custom API exception handler."""
 
@@ -122,6 +123,7 @@ def api_exception_handler(exc: Exception, context: dict[str, Any]) -> Response:
         error["details"] = response.data
         response.data = error_payload
     return response
+
 
 ...
 ```

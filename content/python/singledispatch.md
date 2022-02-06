@@ -53,6 +53,7 @@ Let's consider the following code:
 ```python
 # procedural.py
 
+
 def process(num):
     if isinstance(num, int):
         return process_int(num)

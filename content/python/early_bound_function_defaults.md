@@ -88,7 +88,7 @@ if __name__ == "__main__":
             "Reality can often be disappointing.",
             level="warning",
             # Pass this explicitly.
-            timestamp = datetime.utcnow().isoformat(),
+            timestamp=datetime.utcnow().isoformat(),
         )
 ```
 
