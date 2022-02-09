@@ -1,5 +1,5 @@
 ---
-title: Limit Concurrency with Semaphore in Python Asyncio
+title: Limit Concurrency With Semaphore in Python Asyncio
 date: 2022-02-10
 tags: Python
 ---
@@ -32,7 +32,9 @@ async def make_one_request(url: str, num: int) -> httpx.Response:
     if r.status_code == HTTPStatus.OK:
         return r
 
-    raise ValueError(f"Unexpected Status: Http status code is {r.status_code}.")
+    raise ValueError(
+        f"Unexpected Status: Http status code is {r.status_code}.",
+    )
 
 
 async def make_many_requests(url: str, count: int) -> list[httpx.Response]:
@@ -120,7 +122,9 @@ async def make_one_request(url: str, num: int) -> httpx.Response:
         if r.status_code == HTTPStatus.OK:
             return r
 
-    raise ValueError(f"Unexpected Status: Http status code is {r.status_code}.")
+    raise ValueError(
+        f"Unexpected Status: Http status code is {r.status_code}.",
+    )
 
 
 ...
@@ -189,7 +193,9 @@ async def make_one_request(url: str, num: int) -> httpx.Response:
         if r.status_code == HTTPStatus.OK:
             return r
 
-    raise ValueError(f"Unexpected Status: Http status code is {r.status_code}.")
+    raise ValueError(
+        f"Unexpected Status: Http status code is {r.status_code}.",
+    )
 
 
 async def make_many_requests(url: str, count: int) -> list[httpx.Response]:
