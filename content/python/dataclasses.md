@@ -226,7 +226,7 @@ class CartesianPoint:
     z: float
 
     def dist(self):
-        return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
+        return math.sqrt(self.x**2 + self.y**2 + self.z**2)
 
 
 # create a new instance and use method `abs_val`
@@ -416,7 +416,7 @@ class CartesianPoint:
     def dist(self):
         """Finds distance of point from origin."""
 
-        return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
+        return math.sqrt(self.x**2 + self.y**2 + self.z**2)
 ```
 
 Let's see the class in action:
@@ -479,7 +479,7 @@ class CartesianPoint:
     def dist(self):
         """Finds distance of point from origin."""
 
-        return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
+        return math.sqrt(self.x**2 + self.y**2 + self.z**2)
 ```
 
 Use this class like before.
