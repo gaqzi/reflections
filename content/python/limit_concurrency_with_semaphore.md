@@ -19,7 +19,7 @@ from pprint import pprint
 
 import httpx
 
-# Reusing http client allows us to reuse a pool of TCP connection.
+# Reusing http client allows us to reuse a pool of TCP connections.
 client = httpx.AsyncClient()
 
 
@@ -169,7 +169,7 @@ from pprint import pprint
 
 import httpx
 
-# Reusing http client allows us to reuse a pool of TCP connection.
+# Reusing http client allows us to reuse a pool of TCP connections.
 client = httpx.AsyncClient()
 
 # Initialize a semaphore object with a limit of 3.
