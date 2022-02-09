@@ -93,7 +93,7 @@ From the output, it's pretty evident that the script is hammering the server wit
 
 Luckily, Python exposes a `Semaphore` construct that allows you to synchronize the concurrent workers (threads, processes, or coroutines) regarding how they should access a shared resource. All concurrency primitives in Python have semaphores to help you control resource access. This means if you're using any of the—`multiprocessing`, `threading`, or `asyncio` module, you can take advantage of it. From the `asyncio` docs:
 
-> A semaphore manages an internal counter which is decremented by each acquire() call and incremented by each release() call. The counter can never go below zero; when acquire() finds that it is zero, it blocks, waiting until some task calls release().
+> A semaphore manages an internal counter which is decremented by each `acquire()` call and incremented by each `release()` call. The counter can never go below zero; when `acquire()` finds that it is zero, it blocks, waiting until some task calls `release()`.
 
 
 You can use the semaphores in the above script as follows:
