@@ -43,7 +43,7 @@ def tag(*names: str) -> Callable:
             return async_wrapped
         else:
 
-            @wraps(func)
+            @functools.wraps(func)
             def sync_wrapped(*args: Any, **kwargs: Any) -> Any:
                 return func(*args, **kwargs)
 
