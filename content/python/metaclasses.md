@@ -4,7 +4,7 @@ date: 2020-06-26
 tags: Python
 ---
 
-***Updated on 2020-11-27***: *Refactoring arg names and testing on Python 3.9*
+***Updated on 2022-02-13***: *Use `inspect` to inspect object types.*
 
 In Python, metaclass is one of the few tools that enables you to inject metaprogramming capabilities into your code. The term metaprogramming refers to the potential for a program to manipulate itself in a self referential manner. However, messing with metaclasses is often considered an arcane art that's beyond the grasp of the proletariats. Heck, even [Tim Peters](https://en.wikipedia.org/wiki/Tim_Peters_(software_engineer)) advices you to tread carefully while dealing with these.
 
@@ -496,13 +496,13 @@ TypeError: Inherited multiple base classes!
 Suppose you want to measure the execution time of different methods of a class. One way of doing that is to define a timer decorator and decorating all the methods to measure and show the execution time. However, by using a metaclass, you can avoid decorating the methods in the class individually and the metaclass will dynamically apply the timer decorator to all of the methods of your target class. This can reduce code repetition and improve code readability.
 
 ```python
+import functools
+import inspect
 import time
-from functools import wraps
-from types import FunctionType, MethodType
 
 
 def timefunc(func):
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         start_time = time.time()
         ret = func(*args, **kwargs)
@@ -520,7 +520,7 @@ class TimerMeta(type):
 
         # key is attribute name and val is attribute value in attribute dict
         for key, val in classdict.items():
-            if isinstance(val, FunctionType) or isinstance(val, MethodType):
+            if inspect.isfunction(val) or inspect.ismethoddescriptor(val):
                 setattr(new_cls, key, timefunc(val))
         return new_cls
 
@@ -530,6 +530,7 @@ class Shouter(metaclass=TimerMeta):
         pass
 
     def intro(self):
+        time.sleep(1)
         print("I shout!")
 
 
@@ -538,9 +539,9 @@ s.intro()
 ```
 
 ```
-Executing Shouter.__init__ took 1.1920928955078125e-06 seconds.
+Executing Shouter.__init__ took 9.5367431640625e-07 seconds.
 I shout!
-Executing Shouter.intro took 6.747245788574219e-05 seconds.
+Executing Shouter.intro took 1.0011515617370605 seconds.
 ```
 
 ### Registering Plugins With Metaclasses
@@ -587,14 +588,14 @@ print(registry)
 Debugging a class often involves inspecting the individual methods and adding extra debugging logic to those. However, this can get tedious if you've do this over an over again. Instead, you can write an inspection decorator and use a metaclass to dynamically apply the decorator to all of the methods of your target class. Later on, you can simply detach the metaclass once you're done with debugging and don't want the extra logic in your target class.
 
 ```python
-from functools import wraps
-from types import FunctionType, MethodType
+import functools
+import inspect
 
 
 def debug(func):
     """Decorator for debugging passed function."""
 
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         print("Full name of this method:", func.__qualname__)
         return func(*args, **kwargs)
@@ -608,7 +609,7 @@ class DebugMeta(type):
 
         # key is attribute name and val is attribute value in the attrs dict
         for key, val in classdict.items():
-            if isinstance(val, FunctionType) or isinstance(val, MethodType):
+            if inspect.isfunction(val) or inspect.ismethoddescriptor(val):
                 setattr(new_cls, key, debug(val))
         return new_cls
 
@@ -641,19 +642,19 @@ Full name of this method: CalcAdv.mul
 Sometimes you need to handle exceptions in multiple methods of a class in a generic manner. That means all the methods of the class have the same exception handling, logging logic etc. Metaclasses can help you avoid adding repetitive exception handling and logging logics to your methods.
 
 ```python
-from functools import wraps
-from types import FunctionType, MethodType
+import functools
+import inspect
 
 
 def exc_handler(func):
     """Decorator for custom exception handling."""
 
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
             ret = func(*args, **kwargs)
-        except:
-            print(f"Exception Occured!")
+        except Exception:
+            print("Exception Occured!")
             print(f"Method name: {func.__qualname__}")
             print(f"Args: {args}, Kwargs: {kwargs}")
             raise
@@ -668,7 +669,7 @@ class ExceptionMeta(type):
 
         # key is attribute name and val is attribute value in attribute dict
         for key, val in classdict.items():
-            if isinstance(val, FunctionType) or isinstance(val, MethodType):
+            if inspect.isfunction(val) or inspect.ismethoddescriptor(val):
                 setattr(new_cls, key, exc_handler(val))
         return new_cls
 

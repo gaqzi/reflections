@@ -14,9 +14,8 @@ Let's consider this example:
 
 ```python
 # src.py
-
+import functools
 import time
-from functools import lru_cache
 from typing import TypeVar
 
 Number = TypeVar("Number", int, float, complex)
@@ -26,7 +25,7 @@ class SlowAdder:
     def __init__(self, delay: int = 1) -> None:
         self.delay = delay
 
-    @lru_cache
+    @functools.lru_cache
     def calculate(self, *args: Number) -> Number:
         time.sleep(self.delay)
         return sum(args)
@@ -115,9 +114,8 @@ To solve this, we'll have to make the cache containers local to the instances so
 
 ```python
 # src_2.py
-
+import functools
 import time
-from functools import lru_cache
 from typing import TypeVar
 
 Number = TypeVar("Number", int, float, complex)
@@ -126,7 +124,7 @@ Number = TypeVar("Number", int, float, complex)
 class SlowAdder:
     def __init__(self, delay: int = 1) -> None:
         self.delay = delay
-        self.calculate = lru_cache()(self._calculate)
+        self.calculate = functools.lru_cache()(self._calculate)
 
     def _calculate(self, *args: Number) -> Number:
         time.sleep(self.delay)
@@ -186,13 +184,13 @@ Class methods and static methods don't suffer from the above issues as they don'
 
 ```python
 # src_3.py
-from functools import lru_cache
+import functools
 import time
 
 
 class Foo:
     @classmethod
-    @lru_cache
+    @functools.lru_cache
     def bar(cls, delay: int) -> int:
         # Do something with the cls.
         cls.delay = delay
@@ -237,13 +235,13 @@ Deleting instance ...
 Static methods behave exactly the same. You can use the `lru_cache` decorator in similar fashion as below:
 
 ```python
-from functools import lru_cache
+import functools
 import time
 
 
 class Foo:
     @staticmethod
-    @lru_cache
+    @functools.lru_cache
     def bar(delay: int) -> int:
         return 42
 

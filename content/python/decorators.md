@@ -4,7 +4,7 @@ date: 2020-05-13
 tags: Python
 ---
 
-***Updated on 2020-06-25***: *Replaced time.time() with time.perf_counter()*
+***Updated on 2022-02-13***: *Change functools import style.*
 
 When I first learned about Python decorators, using them felt like doing voodoo magic. Decorators can give you the ability to add new functionalities to any callable without actually touching or changing the code inside it. This can typically yield better encapsulation and help you write cleaner and more understandable code. However, *decorator* is considered as a fairly advanced topic in Python since understanding and writing it requires you to have command over multiple additional concepts like first class objects, higher order functions, closures etc. First, I'll try to introduce these concepts as necessary and then unravel the core concept of decorator layer by layer. So let's dive in.
 
@@ -325,11 +325,11 @@ help(hello)
 Now what's going on there. The decorator `yell` has made the function `hello` confused about its own identity. Instead of reporting its own name, it takes the identity of the inner function `wrapper`. This can be confusing while doing debugging. You can fix this by using builtin `wraps` decorator from the `functools` module. This will make sure that the original identity of the decorated function stays preserved.
 
 ```python
-from functools import wraps
+import functools
 
 
 def yell(func):
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         ret = func(*args, **kwargs)
         ret = ret.upper() + "!"
@@ -380,11 +380,11 @@ Before moving on to the next section let's see a few real world examples of deco
 
 
 ```python
-from functools import wraps
+import functools
 
 
 def decorator(func):
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         # Do something before
         ret = func(*args, **kwargs)
@@ -400,14 +400,14 @@ Timer decorator will help you time your callables in a non-intrusive way. It can
 
 
 ```python
+import functools
 from time import perf_counter
-from functools import wraps
 
 
 def timer(func):
     """This decorator prints out the execution time of a callable."""
 
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         start_time = perf_counter()
         ret = func(*args, **kwargs)
@@ -443,12 +443,12 @@ Just like the `timer` decorator, we can define a logger decorator that will log 
 
 
 ```python
-from functools import wraps
+import functools
 from datetime import datetime
 
 
 def logexc(func):
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
 
         # Stringify the arguments
@@ -501,11 +501,11 @@ Imagine this: you have a set of functions, each returning a dictionary, which (a
 
 
 ```python
-from functools import wraps
+import functools
 
 
 def validate_summary(func):
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         ret = func(*args, **kwargs)
         if len(ret["summary"]) > 30:
@@ -548,7 +548,7 @@ print(long_summary())
 Imagine a situation where your defined callable fails due to some I/O related issues and you'd like to retry that again. Decorator can help you to achieve that in a reusable manner. Let's define a `retry` decorator that will rerun the decorated function multiple times if an http error occurs.
 
 ```python
-from functools import wraps
+import functools
 import requests
 
 
@@ -556,7 +556,7 @@ def retry(func):
     """This will rerun the decorated callable 3 times if
     the callable encounters http 500/404 error."""
 
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         n_tries = 3
         tries = 0
@@ -596,13 +596,13 @@ resp.text
 You can apply multiple decorators to a function by stacking them on top of each other. Let's define two simple decorators and use them both on a function.
 
 ```python
-from functools import wraps
+import functools
 
 
 def greet(func):
     """Greet in English."""
 
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         ret = func(*args, **kwargs)
         return "Hello " + ret + "!"
@@ -613,7 +613,7 @@ def greet(func):
 def flare(func):
     """Add flares to the string."""
 
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         ret = func(*args, **kwargs)
         return "🎉 " + ret + " 🎉"
@@ -645,7 +645,7 @@ Before doing that let's cook up a trivial example of how you can define decorato
 
 
 ```python
-from functools import wraps
+import functools
 
 
 def joinby(delimiter=" "):
@@ -654,7 +654,7 @@ def joinby(delimiter=" "):
     them using a user specified delimiter."""
 
     def outer_wrapper(func):
-        @wraps(func)
+        @functools.wraps(func)
         def inner_wrapper(*args, **kwargs):
             ret = func(*args, **kwargs)
             ret = ret.split(" ")
@@ -708,7 +708,7 @@ There are a few subtle things happening in the `joinby()` function:
 You saw earlier that a decorator specifically designed to take parameters can't be used without parameters; you need to at least apply parenthesis after the decorator `deco()` to use it without explicitly providing the arguments. But what if you want to design one that can used both with and without arguments. Let's redefine the `joinby` decorator so that you can use it with parameters or just like an ordinary parameter-less decorator that we've seen before.
 
 ```python
-from functools import wraps
+import functools
 
 
 def joinby(_func=None, *, delimiter=" "):
@@ -717,7 +717,7 @@ def joinby(_func=None, *, delimiter=" "):
     using a user specified delimiter."""
 
     def outer_wrapper(func):
-        @wraps(func)
+        @functools.wraps(func)
         def inner_wrapper(*args, **kwargs):
             ret = func(*args, **kwargs)
             ret = ret.split(" ")
@@ -762,14 +762,14 @@ If `joinby` has been called without arguments, the decorated function will be pa
 Personally, I find it cumbersome how you need three layers of nested functions to define a generalized decorator that can be used with or without arguments. [David Beazly](https://www.dabeaz.com/) in his book [Python Cookbook](https://realpython.com/asins/1449340377/) shows an excellent way to define generalized decorators without writing three levels of nested functions. It uses the built in `functools.partial` function to achieve that. The following is a pattern you can use to define generalized decorators in a more elegant way:
 
 ```python
-from functools import wraps
+import functools
 
 
 def decorator(func=None, foo="spam"):
     if func is None:
         return functools.partial(decorator, foo=foo)
 
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         # Do something with `func` and `foo`, if you're so inclined
         pass
@@ -792,14 +792,14 @@ def f(*args, **kwargs):
 Let's redefine our `retry` decorator using this pattern.
 
 ```python
-from functools import wraps
+import functools
 
 
 def retry(func=None, n_tries=4):
     if func is None:
         return functools.partial(retry, n_tries=n_tries)
 
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         tries = 0
         while True:
@@ -860,12 +860,13 @@ This eliminates the need to write multiple layers of nested factory function get
 This time, I'll be using a class to compose a decorator. Classes can be handy to avoid nested architecture while writing decorators. Also, it can be helpful to use a class while writing stateful decorators. You can follow the pattern below to compose decorators with classes.
 
 ```python
-from functools import update_wrapper
+import functools
 
 
 class ClassDeco:
     def __init__(self, func):
-        update_wrapper(self, func)
+        # Does the work of the 'functools.wraps' in methods.
+        functools.update_wrapper(self, func)
         self.func = func
 
     def __call__(self, *args, **kwargs):
@@ -881,12 +882,12 @@ class ClassDeco:
 Let's use the above template to write a decorator named `Emphasis` that will add bold tags `<b></b>`to the string output of a function.
 
 ```python
-from functools import update_wrapper
+import functools
 
 
 class Emphasis:
     def __init__(self, func):
-        update_wrapper(self, func)
+        functools.update_wrapper(self, func)
         self.func = func
 
     def __call__(self, *args, **kwargs):
@@ -913,12 +914,12 @@ The __init__() method stores a reference to the function num_calls and can do ot
 Before moving on, let's write a stateful decorator using classes. Stateful decorators can remember the state of their previous run. Here's a stateful decorator called `Tally` that will keep track of the number of times decorated functions are called in a dictionary. The keys of the dictionary will hold the names of the functions and the corresponding values will hold the call count.
 
 ```python
-from functools import update_wrapper
+import functools
 
 
 class Tally:
     def __init__(self, func):
-        update_wrapper(self, func)
+        functools.update_wrapper(self, func)
         self.func = func
         self.tally = {}
         self.n_calls = 0
@@ -982,10 +983,10 @@ api(3)
 You'll see that running this function takes roughly 3 seconds. To cache the result , we can use Python's built in functools.lru_cache to save the result against an argument in a dictionary and serve that when it encounters the same argument again. The only drawback here is, all the arguments need to be hashable.
 
 ```python
-from functools import lru_cache
+import functools
 
 
-@lru_cache(maxsize=32)
+@functools.lru_cache(maxsize=32)
 def api(a):
     """API takes an integer and returns the square value of it.
     To simulate a time consuming process, I've added some time delay to it."""
@@ -1012,7 +1013,7 @@ Least Recently Used (LRU) Cache organizes items in order of use, allowing you to
 The following decorator converts length from SI units to multiple other units without polluting your target function with conversion logics.
 
 ```python
-from functools import wraps, partial
+import functools
 
 
 def convert(func=None, convert_to=None):
@@ -1021,7 +1022,7 @@ def convert(func=None, convert_to=None):
     if func is None:
         return partial(convert, convert_to=convert_to)
 
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         print(f"Conversion unit: {convert_to}")
 
@@ -1107,7 +1108,7 @@ If you run the server and hit the `http://localhost:5000/` url, it'll greet you 
 
 ## Remarks
 
-All the pieces of codes in the blog were written and tested with python 3.8 on a machine running Ubuntu 20.04.
+All the snippets of codes in this blog were tested across Python 3.6-3.10 on a UNIX based system.
 
 ## References
 

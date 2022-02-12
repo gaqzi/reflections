@@ -11,8 +11,8 @@ Python's daemon threads are cool. A Python script will stop when the main thread
 # test_hello.py
 
 import asyncio
+import functools
 import threading
-from functools import partial
 from unittest.mock import patch
 
 import pytest
@@ -28,7 +28,7 @@ async def hello() -> None:
 @patch("asyncio.sleep", autospec=True)
 async def test_hello(mock_asyncio_sleep, capsys):
 
-    run = partial(asyncio.run, hello())
+    run = functools.partial(asyncio.run, hello())
     t = threading.Thread(target=run, daemon=True)
     t.start()
     t.join(timeout=0.1)

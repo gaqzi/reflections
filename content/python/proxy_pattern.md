@@ -4,7 +4,7 @@ date: 2020-06-16
 tags: Python
 ---
 
-***Updated on 2022-01-31***: *Syntax is now compatible with Python 3.10.*
+***Updated on 2022-02-13***: *Change import style of `functools.singledispatch`.*
 
 
 In Python, there's a saying that *[design patterns](https://en.wikipedia.org/wiki/Design_Patterns) are anti-patterns*. Also, in the realm of dynamic languages, design patterns have the notoriety of injecting additional abstraction layers to the core logic and making the flow gratuitously obscure. Python's dynamic nature and the treatment of functions as [first-class](https://dbader.org/blog/python-first-class-functions) objects often make Java-ish design patterns redundant. Instead of littering your code with seemingly over-engineered patterns, you can almost always take the advantage of Python's first-class objects, duck-typing, monkey-patching etc to accomplish the task at hand. However, recently there is one design pattern that I find myself using over and over again to write more maintainable code and that is the Proxy pattern. So I thought I'd document it here for future reference.
@@ -248,6 +248,7 @@ Since, by now, you're already familiar with the workflow of the proxy pattern, l
 ```python
 from __future__ import annotations
 
+import functools
 import logging
 import sys
 from abc import ABC, abstractmethod
@@ -256,7 +257,6 @@ from pprint import pprint
 
 import httpx
 from httpx import ConnectTimeout, ReadTimeout
-from functools import lru_cache
 from typing import Any
 
 
@@ -331,7 +331,7 @@ class ExcFetchUrl(IFetchUrl):
 class CacheFetchUrl(IFetchUrl):
     def __init__(self) -> None:
         self._fetch_url = ExcFetchUrl()
-        self.get_data = lru_cache()(self.get_data)  # type: ignore
+        self.get_data = functools.lru_cache()(self.get_data)  # type: ignore
 
     def get_data(self, url: str) -> D:
         data = self._fetch_url.get_data(url)

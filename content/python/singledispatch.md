@@ -4,6 +4,8 @@ date: 2020-04-05
 tags: Python
 ---
 
+***Updated on 2022-02-13***: *Change import style of `functools.singledispatch`.*
+
 Recently, I was refactoring a portion of a Python function that somewhat looked like this:
 
 ```python
@@ -87,10 +89,10 @@ The above code snippet applies `process_int` or `process_float` functions on the
 
 ```python
 # single_dispatch.py
-from functools import singledispatch
+import functools
 
 
-@singledispatch
+@functools.singledispatch
 def process(num=None):
     raise NotImplementedError("Implement process function.")
 
@@ -160,7 +162,7 @@ Running this snippet will print out:
 To refactor this with `singledispatch`, you can create two data types `Cat` and `Dog`.When you make `Cat` and `Dog` objects from the classes and pass them through the `process` function, singledispatch will take care of dispatching the appropriate implementation of that function.
 
 ```python
-from functools import singledispatch
+import functools
 from dataclasses import dataclass
 
 
@@ -176,7 +178,7 @@ class Dog:
     species: str
 
 
-@singledispatch
+@functools.singledispatch
 def process(obj=None):
     raise NotImplementedError("Implement process for bucket")
 

@@ -11,9 +11,10 @@ Let's write a decorator that registers the decorated functions in a global dicti
 
 ```python
 # src.py
+import functools
+
 # Import 'Callable' from 'typing' module in < Py3.9.
 from collections.abc import Callable
-from functools import wraps
 from typing import Any, TypeVar
 
 R = TypeVar("R")
@@ -28,7 +29,7 @@ def register(func: Callable[..., R]) -> Callable[..., R]:
     # Registers the function during function defition time.
     funcs[func.__name__] = func
 
-    @wraps(func)
+    @functools.wraps(func)
     def inner(*args: Any, **kwargs: Any) -> Any:
         return func(*args, **kwargs)
 
@@ -62,9 +63,10 @@ I'll take advantage of both `ParamSpec` and `TypeVar` to annotate the `register`
 
 ```python
 # src.py
+import functools
+
 # Import 'Callable' from 'typing' module in < Py3.9.
 from collections.abc import Callable
-from functools import wraps
 from typing import ParamSpec, TypeVar
 
 P = ParamSpec("P")
@@ -76,7 +78,7 @@ funcs = {}
 def register(func: Callable[P, R]) -> Callable[P, R]:
     funcs[func.__name__] = func
 
-    @wraps(func)
+    @functools.wraps(func)
     def inner(*args: P.args, **kwargs: P.kwargs) -> R:
         return func(*args, **kwargs)
 
@@ -106,11 +108,11 @@ Consider this `inject_logger` decorator, that adds a logger instance to the deco
 
 ```python
 # src.py
+import functools
 import logging
 
 # Import 'Callable' from 'typing' module in < Py3.9.
 from collections.abc import Callable
-from functools import wraps
 from typing import Concatenate, ParamSpec, TypeVar
 
 P = ParamSpec("P")
@@ -124,7 +126,7 @@ def inject_logger(
     # Runs this during function definition time only.
     logger = logging.getLogger(func.__name__)
 
-    @wraps(func)
+    @functools.wraps(func)
     def inner(*args: P.args, **kwargs: P.kwargs) -> R:
         return func(logger, *args, *kwargs)
 
