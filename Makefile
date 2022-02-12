@@ -69,7 +69,7 @@ github: publish ## Upload the web site via gh-pages.
 #################################
 path := .
 
-lint: black isort flake mypy	## Apply all the linters.
+lint: black blacken-docs isort flake mypy	## Apply all the linters.
 lint-check:  ## Check whether the codebase satisfies the linter rules.
 	@echo
 	@echo "Checking linter rules..."
@@ -89,7 +89,7 @@ black: ## Apply black.
 	@echo
 
 
-black: ## Apply black.
+blacken-docs: ## Apply black.
 	@echo
 	@echo "Applying blacken docs..."
 	@echo "========================"
