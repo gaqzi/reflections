@@ -119,8 +119,6 @@ WRAPPER_ASSIGNMENTS = (
 )
 WRAPPER_UPDATES = ("__dict__",)
 
-...
-
 
 def update_wrapper(
     wrapper: Callable,
@@ -154,9 +152,6 @@ def wraps(
         assigned=assigned,
         updated=updated,
     )
-
-
-...
 ```
 
 The bulk of the work is done in the `update_wrapper` function. It copies the identity properties defined in `WRAPPER_ASSIGNMENTS` and `WRAPPER_UPDATES`—from the `wrapped` function over to the `wrapper` function. Here, the `wrapped` function is the decorated one (`add` function) and the `wrapper` function is the eponymous function inside the `log` decorator.
