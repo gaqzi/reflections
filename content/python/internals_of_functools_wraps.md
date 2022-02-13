@@ -4,7 +4,7 @@ date: 2022-02-14
 tags: Python
 ---
 
-The `functools.wraps` decorator allows you to keep your function's identity intact after it's wrapped by a decorator. When a function is wrapped by a decorator, identity properties like—function name, docstring, annotations of it get replaced by those of the wrapper function. Consider this example:
+The `functools.wraps` decorator allows you to keep your function's identity intact after it's been wrapped by a decorator. Whenever a function is wrapped by a decorator, identity properties like—function name, docstring, annotations of it get replaced by those of the wrapper function. Consider this example:
 
 
 ```python
@@ -18,6 +18,7 @@ from typing import Any
 def log(func: Callable) -> Callable:
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         """Internal wrapper."""
+
         val = func(*args, **kwargs)
         return val
 
@@ -48,14 +49,14 @@ if __name__ == "__main__":
     print(add.__name__)
 ```
 
-Here, I've defined a simple logging decorator that's wrapping the `add` function. The `add` function has its own type annotations and docstring. So, you'd expect the **docstring** and **name** of the `add` function to be printed when the above snippet is executed. However, running the script prints the following instead:
+Here, I've defined a simple logging decorator that wraps the `add` function. The function `add` has its own type annotations and docstring. So, you'd expect the **docstring** and **name** of the `add` function to be printed when the above snippet gets executed. However, running the script prints the following instead:
 
 ```
 Internal wrapper.
 wrapper
 ```
 
-This is surprising and probably not something you'd want. If you pay attention to the function `wrapper` in the `log` decorator, you'll see that the identity properties of the `wrapper` function replace the identity properties of the wrapped function `add`. This can easily be avoided by decorating the `wrapper` function inside the `log` decorator with the `functools.wraps` decorator:
+This is surprising and probably not something you want. If you pay attention to the function `wrapper` in the `log` decorator, you'll see that the identity properties of the `wrapper` function replace the identity properties of the wrapped function `add`. This can easily be avoided by decorating the `wrapper` function inside the `log` decorator with the `functools.wraps` decorator:
 
 
 ```python
@@ -158,11 +159,11 @@ def wraps(
 ...
 ```
 
-The bulk of the work is done in the `update_wrapper` function. It copies the identity properties defined in the `WRAPPER_ASSIGNMENTS` and `WRAPPER_UPDATES` variables from the `wrapped` function over to the `wrapper` function. Here, the `wrapped` function is the decorated one (`add` function) and the `wrapper` function is the eponymous function inside the `log` decorator.
+The bulk of the work is done in the `update_wrapper` function. It copies the identity properties defined in `WRAPPER_ASSIGNMENTS` and `WRAPPER_UPDATES`—from the `wrapped` function over to the `wrapper` function. Here, the `wrapped` function is the decorated one (`add` function) and the `wrapper` function is the eponymous function inside the `log` decorator.
 
 Since you've already seen that whenever you try to introspect the identity properties of a wrapped function, the wrapper function obfuscates them and returns its own properties. However, if the identity properties are copied over from the wrapped to the wrapper function, your inspection will return the expected result. The `update_wrapper` function is doing exactly that.
 
-The `wraps` function just binds the variables with the `update_wrapper` function with the help of the `partial` function defined in the same module. This allows us to use the `wraps` callable as a decorator.
+The `wraps` function just binds the input arguments with the `update_wrapper` function using the `partial` function defined in the same module. This allows us to use the `wraps` function as a decorator.
 
 You can also directly use the `update_wrapper` function to get the same result should you choose to do so. Here's how to do it:
 
