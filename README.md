@@ -1,7 +1,7 @@
 <h1>Reflections<img src='https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png' align='right' width='128' height='128'></h1>
 
 
-<strong>>> <i>Reflections & Snippet Style Notes on Software</i> <<</strong>
+<strong>>> <i>Musings & Snippet Style Notes</i> <<</strong>
 
 </div>
 
@@ -39,9 +39,9 @@ Also, [dependabot](https://github.com/dependabot/dependabot-core) is working tir
 
 If you've spotted an errata and want to fix it, then:
 
-* Fork the repo and headover to the root directory.
+* Fork the repo and head over to the root directory.
 * Create a feature branch.
-* Update the relevant files in the [content](./content/*) folder. The blogs are written in GitHub flavored markdown.
+* Update the relevant files in the [content](./content/*) folder. The blogs are written using GitHub flavored markdown syntax.
 * Push the changes to your fork.
 * Send a pull request against the `master` branch of this repo, and you're done.
 
