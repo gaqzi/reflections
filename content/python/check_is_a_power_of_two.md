@@ -56,8 +56,8 @@ def is_power_of_two(number: int) -> bool:
 
 class IsPowerofTwoTest(unittest.TestCase):
     def setUp(self):
-        self.power_of_twos = [2**x for x in range(2, 25_000)]
-        self.not_power_of_twos = [3**x for x in range(2, 25_000)]
+        self.power_of_twos = [2 ** x for x in range(2, 25_000)]
+        self.not_power_of_twos = [3 ** x for x in range(2, 25_000)]
 
     def test_is_power_of_two(self):
         for x, y in zip(self.power_of_twos, self.not_power_of_twos):

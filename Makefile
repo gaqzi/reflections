@@ -78,6 +78,8 @@ init:
 	@.venv/bin/python -m pip install -r requirements.txt
 	@.venv/bin/python -m pip install -r requirements-dev.txt
 	@.venv/bin/pelican-themes --install theme/elegant || exit 0
+	@.venv/bin/pre-commit install
+	@.venv/bin/pre-commit run --all || exit 0
 
 
 ## Lint
