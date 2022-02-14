@@ -1,5 +1,5 @@
 ---
-title: Peeking Into the Internals of the 'functools.wraps' Decorator in Python
+title: Peeking Into the Internals of Python's 'functools.wraps' Decorator
 date: 2022-02-14
 tags: Python
 ---
