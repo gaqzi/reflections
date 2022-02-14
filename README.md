@@ -14,7 +14,7 @@ Assuming you're using a Unix-based system:
 
 * Clone this repository and head over to the root directory.
 * Make sure that you've got Python 3.10 installed in your system.
-* Run `make init`. This will—
+* Run `make init`. This will:
     * Create a virtual environment named `.venv` in the current directory.
     * Install the app and dev dependencies.
     * Configure pre-commit.
@@ -26,7 +26,7 @@ Assuming you're using a Unix-based system:
 
 ## Infrastructure
 
-The site is built using [Pelican](https://github.com/getpelican/pelican) and hosted on Github pages. The CI automatically instantiates the build—
+The site is built using [Pelican](https://github.com/getpelican/pelican) and hosted on Github pages. The CI automatically instantiates the build:
 
 * Every day at 1 pm UTC.
 * On every pull request.
@@ -37,7 +37,7 @@ Also, [dependabot](https://github.com/dependabot/dependabot-core) is working tir
 
 ## Contributions
 
-If you've spotted an errata and want to fix it, then—
+If you've spotted an errata and want to fix it, then:
 
 * Fork the repo and headover to the root directory.
 * Create a feature branch.
