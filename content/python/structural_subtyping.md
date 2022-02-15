@@ -83,7 +83,7 @@ from typing import TypeVar
 T = TypeVar("T")
 
 
-def find(haystack: dict, needle: T):
+def find(haystack: dict, needle: T) -> bool:
     return needle in haystack
 
 
@@ -113,7 +113,7 @@ That's because mypy expects the type to be a dict but we're passing a `set` whic
 ...
 
 
-def contains(haystack: dict | set, needle: T):
+def contains(haystack: dict | set, needle: T) -> bool:
     return needle in haystack
 
 
@@ -140,7 +140,7 @@ class ProtoHaystack(Protocol):
         ...
 
 
-def find(haystack: ProtoHaystack, needle: T):
+def find(haystack: ProtoHaystack, needle: T) -> bool:
     return needle in haystack
 
 
@@ -164,7 +164,7 @@ This pattern of strurctural duck typing is so common, that the mixins in the `co
 from collections.abc import Container
 
 
-def find(haystack: Container, needle: T):
+def find(haystack: Container, needle: T) -> bool:
     return needle in haystack
 
 
@@ -299,7 +299,7 @@ class WebhookPayload:
     message: str = "Dummy message"
 
     @property
-    def json(self):
+    def json(self) -> str:
         return json.dumps(asdict(self))
 
 
