@@ -76,7 +76,7 @@ title=Green, hex_code=#00ff00, description=Guava Green
 title=Blue, hex_code=#0000ff, description=Baby Blue
 ```
 
-Hard coding indexes in such a manner is fragile and will break if you drop a new value in the middle of the tuple assigned to an enum member. A better thing to do is to rewrite the enum in a way that'll allow you to access different elements of the member values by their attribute names. Let's do it:
+Hard coding indexes in such a manner is fragile and will break if you drop a new value in the middle of the tuple assigned to an enum member. Also, it's hard to reason through logic when you've keep the semantic meanings of the index positions in your working memory. A better thing to do is to rewrite the enum in a way that'll allow you to access different elements of the member values by their attribute names. Let's do it:
 
 
 ```python
