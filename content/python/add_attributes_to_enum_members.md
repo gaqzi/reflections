@@ -9,6 +9,7 @@ While grokking the source code of `http.HTTPStatus` module, I came across this t
 ```python
 # src.py
 from __future__ import annotations
+
 from enum import Enum
 
 
@@ -50,6 +51,7 @@ Suppose, in the above case, along with the color title, you also need to save th
 ```python
 # src.py
 from __future__ import annotations
+
 from enum import Enum
 
 
