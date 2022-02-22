@@ -1,7 +1,7 @@
 ---
 title: Implementing Proxy Pattern in Python
 date: 2020-06-16
-tags: python
+tags: Python
 ---
 
 ***Updated on 2022-02-13***: *Change import style of `functools.singledispatch`.*

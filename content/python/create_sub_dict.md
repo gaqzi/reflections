@@ -1,7 +1,7 @@
 ---
 title: Create a Sub Dictionary with O(K) Complexity in Python
 Date: 2022-01-30
-tags: python
+tags: Python
 ---
 
 How'd you create a sub dictionary from a dictionary where the keys of the sub-dict are provided as a list?

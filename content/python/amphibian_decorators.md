@@ -1,7 +1,7 @@
 ---
 title: Amphibian Decorators in Python
 date: 2022-02-06
-tags: python
+tags: Python
 ---
 
 Whether you like it or not, the split world of sync and async functions in the Python ecosystem is something we'll have to live with; at least for now. So, having to write things that work with both sync and async code is an inevitable part of the journey. Projects like [Starlette](https://www.starlette.io/), [HTTPx](https://www.python-httpx.org/) can give you some clever pointers on how to craft APIs that are compatible with both sync and async code.

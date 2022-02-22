@@ -1,7 +1,7 @@
 ---
 title: Why 'NoReturn' Type Exists in Python
 date: 2022-02-21
-tags: python, types
+tags: Python, Types
 ---
 
 Technically, the type of `None` in Python is `NoneType`. However, you'll rarely see `types.NoneType` being used in the wild as the community has pretty much adopted `None` to denote the type of the `None` singleton. This usage is also [documented](https://www.python.org/dev/peps/pep-0484/#using-none) in PEP-484.

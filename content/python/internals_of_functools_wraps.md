@@ -1,7 +1,7 @@
 ---
 title: Peeking Into the Internals of Python's 'functools.wraps' Decorator
 date: 2022-02-14
-tags: python
+tags: Python
 ---
 
 The `functools.wraps` decorator allows you to keep your function's identity intact after it's been wrapped by a decorator. Whenever a function is wrapped by a decorator, identity properties like—function name, docstring, annotations of it get replaced by those of the wrapper function. Consider this example:

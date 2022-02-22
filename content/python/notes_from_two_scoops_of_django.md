@@ -1,7 +1,7 @@
 ---
 title: Notes From Two Scoops of Django
 date: 2022-01-18
-tags: python, Django
+tags: Python, Django
 status: draft
 ---
 

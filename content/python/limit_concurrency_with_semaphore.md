@@ -1,7 +1,7 @@
 ---
 title: Limit Concurrency With Semaphore in Python Asyncio
 date: 2022-02-10
-tags: python
+tags: Python
 ---
 
 I was working with a rate-limited API endpoint where I continuously needed to send short polling GET requests without hitting HTTP 429 error. Perusing the API doc, I found out that the API endpoint only allows a maximum of 100 requests per second. So, my goal was to find out a way to send the maximum amount of requests without encountering the too-many-requests error.
