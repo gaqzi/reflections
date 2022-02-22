@@ -89,10 +89,10 @@ The above code snippet applies `process_int` or `process_float` functions on the
 
 ```python
 # single_dispatch.py
-import functools
+from functools import singledispatch
 
 
-@functools.singledispatch
+@singledispatch
 def process(num=None):
     raise NotImplementedError("Implement process function.")
 
@@ -162,8 +162,8 @@ Running this snippet will print out:
 To refactor this with `singledispatch`, you can create two data types `Cat` and `Dog`.When you make `Cat` and `Dog` objects from the classes and pass them through the `process` function, singledispatch will take care of dispatching the appropriate implementation of that function.
 
 ```python
-import functools
 from dataclasses import dataclass
+from functools import singledispatch
 
 
 @dataclass
@@ -178,7 +178,7 @@ class Dog:
     species: str
 
 
-@functools.singledispatch
+@singledispatch
 def process(obj=None):
     raise NotImplementedError("Implement process for bucket")
 

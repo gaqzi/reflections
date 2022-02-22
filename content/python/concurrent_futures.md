@@ -137,12 +137,12 @@ Before proceeding with the examples, let's write a small [decorator](https://www
 
 
 ```python
-import functools
 import time
+from functools import wraps
 
 
 def timeit(method):
-    @functools.wraps(method)
+    @wraps(method)
     def wrapper(*args, **kwargs):
         start_time = time.time()
         result = method(*args, **kwargs)

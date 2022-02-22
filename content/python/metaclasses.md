@@ -496,13 +496,13 @@ TypeError: Inherited multiple base classes!
 Suppose you want to measure the execution time of different methods of a class. One way of doing that is to define a timer decorator and decorating all the methods to measure and show the execution time. However, by using a metaclass, you can avoid decorating the methods in the class individually and the metaclass will dynamically apply the timer decorator to all of the methods of your target class. This can reduce code repetition and improve code readability.
 
 ```python
-import functools
 import inspect
 import time
+from functools import wraps
 
 
 def timefunc(func):
-    @functools.wraps(func)
+    @wraps(func)
     def wrapper(*args, **kwargs):
         start_time = time.time()
         ret = func(*args, **kwargs)
@@ -588,14 +588,14 @@ print(registry)
 Debugging a class often involves inspecting the individual methods and adding extra debugging logic to those. However, this can get tedious if you've do this over an over again. Instead, you can write an inspection decorator and use a metaclass to dynamically apply the decorator to all of the methods of your target class. Later on, you can simply detach the metaclass once you're done with debugging and don't want the extra logic in your target class.
 
 ```python
-import functools
 import inspect
+from functools import wraps
 
 
 def debug(func):
     """Decorator for debugging passed function."""
 
-    @functools.wraps(func)
+    @wraps(func)
     def wrapper(*args, **kwargs):
         print("Full name of this method:", func.__qualname__)
         return func(*args, **kwargs)
@@ -642,14 +642,14 @@ Full name of this method: CalcAdv.mul
 Sometimes you need to handle exceptions in multiple methods of a class in a generic manner. That means all the methods of the class have the same exception handling, logging logic etc. Metaclasses can help you avoid adding repetitive exception handling and logging logics to your methods.
 
 ```python
-import functools
 import inspect
+from functools import wraps
 
 
 def exc_handler(func):
     """Decorator for custom exception handling."""
 
-    @functools.wraps(func)
+    @wraps(func)
     def wrapper(*args, **kwargs):
         try:
             ret = func(*args, **kwargs)

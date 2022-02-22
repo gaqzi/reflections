@@ -19,12 +19,11 @@ Here's how you can do that:
 # src.py
 from __future__ import annotations
 
-import asyncio
-import functools
 import inspect
 
 # In <Python 3.9, import these from the 'typing' module.
 from collections.abc import Awaitable, Callable
+from functools import wraps
 from typing import Any
 
 
@@ -36,14 +35,14 @@ def tag(*names: str) -> Callable:
 
         if inspect.iscoroutinefunction(func):
 
-            @functools.wraps(func)
+            @wraps(func)
             async def async_wrapped(*args: Any, **kwargs: Any) -> Awaitable:
                 return await func(*args, **kwargs)
 
             return async_wrapped
         else:
 
-            @functools.wraps(func)
+            @wraps(func)
             def sync_wrapped(*args: Any, **kwargs: Any) -> Any:
                 return func(*args, **kwargs)
 

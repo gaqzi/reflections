@@ -61,13 +61,13 @@ This is surprising and probably not something you want. If you pay attention to 
 
 ```python
 # src.py
-import functools
+from functools import wraps
 
 ...
 
 
 def log(func: Callable) -> Callable:
-    @functools.wraps(func)  # Here's the decorator!
+    @wraps(func)  # Here's the decorator!
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         """Internal wrapper."""
         val = func(*args, **kwargs)
@@ -165,7 +165,7 @@ You can also directly use the `update_wrapper` function to get the same result s
 
 ```python
 # src.py
-import functools
+from functools import update_wrapper
 
 ...
 
@@ -177,7 +177,7 @@ def log(func: Callable) -> Callable:
         return val
 
     # Only this line is different!
-    return functools.update_wrapper(func, wrapper)
+    return update_wrapper(func, wrapper)
 
 
 ...
