@@ -1,7 +1,7 @@
 ---
 title: Reduce Boilerplate Code with Python's Dataclasses
 date: 2020-03-12
-tags: Python
+tags: python
 ---
 
 Recently, my work needed me to create lots of custom data types and draw comparison among them. So, my code was littered with many classes that somewhat looked like this:

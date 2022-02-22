@@ -1,7 +1,7 @@
 ---
 title: Generic Functions with Python's Singledispatch
 date: 2020-04-05
-tags: Python
+tags: python
 ---
 
 ***Updated on 2022-02-13***: *Change import style of `functools.singledispatch`.*

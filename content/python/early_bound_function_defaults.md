@@ -1,7 +1,7 @@
 ---
 title: Gotchas of Early-bound Function Argument Defaults in Python
 date: 2022-01-27
-tags: Python
+tags: python
 ---
 
 I was reading a tweet about it yesterday and that didn't stop me from pushing a code change in production with the same rookie mistake today. Consider this function:

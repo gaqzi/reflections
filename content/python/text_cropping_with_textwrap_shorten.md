@@ -1,7 +1,7 @@
 ---
 title: Cropping Texts in Python With 'textwrap.shorten'
 date: 2022-01-06
-tags: Python
+tags: python
 ---
 
 ## Problem

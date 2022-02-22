@@ -1,7 +1,7 @@
 ---
 title: Uniform Error Response in Django Rest Framework
 date: 2022-01-20
-tags: Python, Django
+tags: python, Django
 ---
 
 Django Rest Framework exposes a neat hook to customize the response payload of your API when errors occur. I was going through Microsoft's REST API [guideline](https://github.com/microsoft/api-guidelines) and wanted to make the error response of my APIs more uniform and somewhat similar to [this](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#examples).

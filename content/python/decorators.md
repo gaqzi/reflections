@@ -1,7 +1,7 @@
 ---
 title: Untangling Python Decorators
 date: 2020-05-13
-tags: Python
+tags: python
 ---
 
 ***Updated on 2022-02-13***: *Change functools import style.*

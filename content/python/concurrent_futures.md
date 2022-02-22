@@ -1,7 +1,7 @@
 ---
 title: Effortless Concurrency with Python's concurrent.futures
 date: 2020-04-21
-tags: Python
+tags: python
 ---
 
 Writing concurrent code in Python can be tricky. Before you even start, you have to worry about all these icky stuff like whether the task at hand is I/O or CPU bound or whether putting the extra effort to achieve concurrency is even going to give you the boost you need. Also, the presence of Global Interpreter Lock, [GIL](https://wiki.python.org/moin/GlobalInterpreterLock) foists further limitations on writing truly concurrent code. But for the sake of sanity, you can oversimplify it like this without being blatantly incorrect:

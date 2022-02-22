@@ -1,7 +1,7 @@
 ---
 title: Don't Wrap Instance Methods with 'functools.lru_cache' Decorator in Python
 date: 2022-01-15
-tags: Python
+tags: python
 ---
 
 Recently, fell into this trap as I wanted to speed up a slow instance method by caching it.

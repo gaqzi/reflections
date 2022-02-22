@@ -1,7 +1,7 @@
 ---
 title: Use 'assertIs' to Check Literal Booleans in Python Unittest
 date: 2022-01-24
-tags: Python
+tags: python
 ---
 
 I used to use Unittest's `self.assertTrue` / `self.assertFalse` to check both **literal booleans** and **truthy**/**falsy** values in Unittest. Committed the same sin while writing tests in Django.

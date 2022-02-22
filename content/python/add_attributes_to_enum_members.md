@@ -1,7 +1,7 @@
 ---
 title: Add Additional Attributes to Enum Members in Python
 date: 2022-02-17
-tags: Python
+tags: python
 ---
 
 While grokking the source code of `http.HTTPStatus` module, I came across this technique to add additional attributes to the values of enum members. Now, to understand what do I mean by adding attributes, let's consider the following example:

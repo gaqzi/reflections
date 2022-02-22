@@ -1,7 +1,7 @@
 ---
 title: Use Daemon Threads to Test Infinite While Loops in Python
 date: 2021-11-18
-tags: Python
+tags: python
 ---
 
 Python's daemon threads are cool. A Python script will stop when the main thread is done and only daemon threads are running. To test a simple `hello` function that runs indefinitely, you can do the following:

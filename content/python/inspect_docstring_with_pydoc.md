@@ -1,7 +1,7 @@
 ---
 title: Inspect Docstrings with Pydoc
 date: 2022-01-22
-tags: Python
+tags: python
 ---
 
 How come I didn't know about the `python -m pydoc` command before today!

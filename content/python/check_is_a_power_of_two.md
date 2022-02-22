@@ -1,7 +1,7 @@
 ---
 title: Check Whether an Integer Is a Power of Two in Python
 date: 2022-01-21
-tags: Python
+tags: python
 ---
 
 To check whether an integer is a power of two, I've deployed hacks like this:

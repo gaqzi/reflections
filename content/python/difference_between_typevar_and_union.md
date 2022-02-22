@@ -1,7 +1,7 @@
 ---
 title: Difference Between Constrained 'TypeVar' and 'Union' in Python
 date: 2022-01-19
-tags: Python, Type Hint
+tags: python, types
 ---
 
 If you want to define a variable that can accept values of multiple possible types, using `typing.Union` is one way of doing that:

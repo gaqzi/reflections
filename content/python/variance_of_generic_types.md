@@ -1,7 +1,7 @@
 ---
 title: Variance of Generic Types in Python
 date: 2022-01-31
-tags: Python
+tags: python
 ---
 
 I've always had a hard time explaining **variance** of generic types while working with type annotations in Python. This is an attempt to distill the things I've picked up on type variance while going through PEP-483.

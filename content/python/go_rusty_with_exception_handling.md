@@ -1,7 +1,7 @@
 ---
 title: Go Rusty with Exception Handling in Python
 date: 2022-02-02
-tags: Python
+tags: python
 ---
 
 While grokking [Black's](https://github.com/psf/black) codebase, I came across [this](https://github.com/psf/black/blob/main/src/black/rusty.py) interesting way of handling exceptions in Python. Exception handling in Python usually follows the EAFP paradigm where it's easier to ask for forgiveness than permission.

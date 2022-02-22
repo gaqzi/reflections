@@ -1,7 +1,7 @@
 ---
 title: Deciphering Python's Metaclasses
 date: 2020-06-26
-tags: Python
+tags: python
 ---
 
 ***Updated on 2022-02-13***: *Use `inspect` to inspect object types.*
