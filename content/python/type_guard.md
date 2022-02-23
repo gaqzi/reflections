@@ -23,16 +23,16 @@ def check(x: int | float) -> str:
     return str(x)
 ```
 
-The `reveal_type` function is provided by Mypy and you don't need to import this. If you run Mypy against this snippet, it'll print the following lines:
+The `reveal_type` function is provided by Mypy and you don't need to import this. But remember to remove the function before executing the snippet. Otherwise, Python will raise a runtime error as the function is only understood by Mypy. If you run Mypy against this snippet, it'll print the following lines:
 
 ```
 src.py:6: note: Revealed type is "builtins.float"
 src.py:10: note: Revealed type is "builtins.int"
 ```
 
-Here, I didn't have to explicitly tell the type checker how the conditionals narrow the type. From PEP-647:
+Here, I didn't have to explicitly tell the type checker how the conditionals narrow the types.
 
-> Static type checkers commonly employ a technique called 'type narrowing' to determine a more precise type of an expression within a program's code flow. When type narrowing is applied within a block of code based on a conditional code flow statement (such as if and while statements), the conditional expression is sometimes referred to as a 'type guard'.
+> Static type checkers commonly employ a technique called 'type narrowing' to determine a more precise type of an expression within a program's code flow. When type narrowing is applied within a block of code based on a conditional code flow statement (such as if and while statements), the conditional expression is sometimes referred to as a 'type guard'. — PEP-647
 
 So, in the above snippet, Mypy performed **type narrowing** to determine the more precise type of the variable `x`; and the `if ... else` conditionals, in this case, is known as **type guards**.
 
@@ -48,7 +48,7 @@ from collections.abc import Sequence
 def check_sequence_str(container: Sequence[object]) -> bool:
     """Check all objects in the container is of type str."""
 
-    return all(isinstance(o, str) for o in container)
+    return all(isinstance(elem, str) for elem in container)
 
 
 def concat(
@@ -94,7 +94,7 @@ def check_sequence_str(
 ) -> TypeGuard[Sequence[str]]:
     """Check all objects in the container is of type str."""
 
-    return all(isinstance(o, str) for o in container)
+    return all(isinstance(elem, str) for elem in container)
 
 
 ...
@@ -106,8 +106,7 @@ Notice that the return type now has the expected type defined inside the `TypeGu
 
 You've already seen how `check_sequence_str` narrows down the type of an object in runtime. Functions like this can be loosely called user-defined type guard functions. However, to be considered a proper type guard function by the type checker, the callable needs to pass through a few more checks.
 
-> When TypeGuard is used to annotate the return type of a function or method that accepts at least one parameter, that function or method is treated by type checkers as a user-defined type guard. The type argument provided for TypeGuard indicates the type that has been validated by the function.
-— PEP-647
+> When TypeGuard is used to annotate the return type of a function or method that accepts at least one parameter, that function or method is treated by type checkers as a user-defined type guard. The type argument provided for TypeGuard indicates the type that has been validated by the function. — PEP-647
 
 * Usually, a type guard function only takes a single parameter and returns a boolean value based on the conformity of the type of the incoming object with the expected type. The expected type needs to be wrapped in `TypeGuard` and added as the return type annotation.
 * Type checkers will only check if the first positional argument conforms to the expected return type annotation. It'll ignore other parameters if there is more than one.
@@ -115,7 +114,7 @@ You've already seen how `check_sequence_str` narrows down the type of an object 
 * The input type is usually wider than the output type. In our example case, the input type `Sequence[object]` is less specific than that of the return type `Sequence[str]`. However, this is mostly a convention and not enforced by any means.
 
 > The return type of a user-defined type guard function will normally refer to a type that is strictly "narrower" than the type of the first argument (that is, it's a more specific type that can be assigned to the more general type). However, it is not required that the return type be strictly narrower.
-— PEP-647
+> — PEP-647
 
 ## Generic Type Guard Functions
 
@@ -154,7 +153,7 @@ if __name__ == "__main__":
         print(elem)
 ```
 
-Here, type guard function `list_of_t` is a generic function since it accepts a generic container `Sequence[T]`. The first parameter is the input type that the type checker will focus on and the second parameter denotes the default types that are allowed inside the output list. Running the snippet will print `jupiter` and `mars` in the console and Mypy is also happy with the types.
+Here, type guard function `list_of_t` is a generic function since it accepts a generic container `Sequence[T]`. The first parameter is the input type that the type checker will focus on, and the second parameter denotes the default types that are allowed inside the output list. Running the snippet will print `jupiter` and `mars` in the console and Mypy will also be happy with the types.
 
 
 ## References
