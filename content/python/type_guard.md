@@ -141,7 +141,7 @@ def list_of_t(
     return all(isinstance(elem, types) for elem in container)
 
 
-def process(container: list[T]) -> Generator[T, None, None]:
+def process(container: Sequence[T]) -> Generator[T, None, None]:
     if list_of_t(container):
         for elem in container:
             yield elem
