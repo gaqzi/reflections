@@ -1,7 +1,7 @@
 ---
 title: Static Typing Python Decorators
 date: 2022-01-23
-tags: Python, Types
+tags: Python, Typing
 ---
 
 Accurately static typing decorators in Python is an icky business. The **wrapper** function obfuscates type information required to statically determine the types of the parameters and the return values of the **wrapped** function.

@@ -1,7 +1,7 @@
 ---
 title: Narrowing Types with TypeGuard in Python
 date: 2022-02-23
-tags: Python, Types
+tags: Python, Typing
 ---
 
 Static type checkers like Mypy follow your code flow and statically try to figure out the types of the variables without you having to explicitly annotate inline expressions. For example:
