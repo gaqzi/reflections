@@ -11,6 +11,7 @@ So, in almost all the tests that I write for both my OSS projects and at my work
 ```python
 # src.py
 from __future__ import annotations
+
 import random
 
 # In <Python3.9, import this from the 'typing' module.
