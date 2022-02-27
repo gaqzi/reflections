@@ -153,16 +153,18 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Self
 
+from typing import Any
+
 
 class Config:
-    def __new__(cls, var: int) -> Self:
+    def __new__(cls, var: int, *args: Any, **kwargs: Any) -> Self:
         """Validate the value before constructing the class."""
 
         if not 0 <= var < 10:
             raise TypeError(
                 "'var' must be a positive integer between 0 and 9",
             )
-        return cls(var)
+        return super().__new__(cls)
 
     def __init__(self, var: int) -> None:
         self.var = var
