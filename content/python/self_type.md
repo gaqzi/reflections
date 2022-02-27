@@ -6,11 +6,13 @@ tags: Python, Typing
 
 [PEP-673](https://www.python.org/dev/peps/pep-0673/) introduces the `Self` type and it's coming to Python 3.11. However, you can already use that now via the [`typing_extenstions`](https://typing.readthedocs.io/) module.
 
-The `Self` type makes typing methods that return the instances of the corresponding classes trivial. Before this, you'd have to do some mental gymnastics to statically type situations as follows:
+The `Self` type makes annotating methods that return the instances of the corresponding classes trivial. Before this, you'd have to do some mental gymnastics to statically type situations as follows:
 
 ```python
 # src.py
 from __future__ import annotations
+
+from typing import Any
 
 
 class Animal:
@@ -25,7 +27,7 @@ class Animal:
 
 
 class Dog(Animal):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
     @property
@@ -38,7 +40,7 @@ if __name__ == "__main__":
     print(dog.legs)  # Mypy complains here!
 ```
 
-The class `Animal` has a `from_description` class method that acts as an additional constructor. It takes a description string, and then builds and returns an instance of the same class. The return type of the method is annotated as `Animal` here. However, this makes the child class `Dog` conflate its identity with the `Animal` class. If you execute the snippet, it won't raise any runtime error. However, Mypy will complain about the type:
+The class `Animal` has a `from_description` class method that acts as an additional constructor. It takes a description string, and then builds and returns an instance of the same class. The return type of the method is annotated as `Animal` here. However, doing this makes the child class `Dog` conflate its identity with the `Animal` class. If you execute the snippet, it won't raise any runtime error. Also, Mypy will complain about the type:
 
 ```
 src.py:27: error: "Animal" has no attribute "legs"
@@ -71,9 +73,9 @@ class Animal:
 ...
 ```
 
-In the above snippet, first I had to declare a `TypeVar` and bound that to the `Animal` class. Then I had to explicitly type the `cls` variable in the `from_description` method. This time, the type checker will be happy. While this isn't a lot of work, it surely goes against the community convention. Usually, we don't explicitly type the `self`, `cls` variables and instead, let the type checker figure out their types. Also, subjectively, this sticks out like a sore thumb.
+In the above snippet, first I had to declare a `TypeVar` and bind that to the `Animal` class. Then I had to explicitly type the `cls` variable in the `from_description` method. This time, the type checker will be happy. While this isn't a lot of work, it surely goes against the community convention. Usually, we don't explicitly type the `self`, `cls` variables and instead, let the type checker figure out their types. Also, subjectively, this sticks out like a sore thumb.
 
-PEP-673 allows us to solve this issue elegantly:
+PEP-673 allows us to solve the issue elegantly:
 
 
 ```python
@@ -105,7 +107,7 @@ class Animal:
 **Ideally, Mypy should be happy now. However, as of writing this post, Mypy 0.931 doesn't support this yet. So, it'll still complain.**
 
 
-## Typing Instance Methods that Return `self`
+## Typing Instance Methods That Return `self`
 
 Take a look at this:
 
@@ -134,7 +136,7 @@ class Counter:
         return self
 ```
 
-The `increment` and `decrement` method of the `Counter` class return the instance of the same class after performing the operations on the `start` value. This a perfect case where the `Self` type can be useful.
+The `increment` and `decrement` method of the `Counter` class return the instance of the same class after performing the operations on the `start` value. This is a perfect case where the `Self` type can be useful.
 
 
 ## Typing `__new__` Methods
@@ -157,7 +159,9 @@ class Config:
         """Validate the value before constructing the class."""
 
         if not 0 <= var < 10:
-            raise TypeError("'var' must be a positive integer between 0 and 9")
+            raise TypeError(
+                "'var' must be a positive integer between 0 and 9",
+            )
         return cls(var)
 
     def __init__(self, var: int) -> None:
