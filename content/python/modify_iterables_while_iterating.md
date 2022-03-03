@@ -212,4 +212,4 @@ Voila, the key-value pairs of the even numbers have been removed successfully!
 
 ## Resources
 
-I wrote this post after watching [Anthony Sottile's] short YouTube video on the topic. Go watch [it](https://www.youtube.com/watch?v=JXis-BKRDFY).
+I wrote this post after watching [Anthony Sottile's](https://twitter.com/codewithanthony) short YouTube video on the topic. Go watch [it](https://www.youtube.com/watch?v=JXis-BKRDFY).
