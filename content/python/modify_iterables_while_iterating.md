@@ -167,10 +167,10 @@ Dictionaries don't even allow you to change their sizes while iterating. The fol
 # src.py
 
 # {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9}
-d = {k:k for k in range(10)}
+d = {k: k for k in range(10)}
 
-for k,v in d.items():
-    if not v %2 == 0:
+for k, v in d.items():
+    if not v % 2 == 0:
         continue
     d.pop(k)
 ```
@@ -189,7 +189,7 @@ You can solve this by making a copy of the keys of the dictionary and iterating 
 # src.py
 
 # {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9}
-d = {k:k for k in range(10)}
+d = {k: k for k in range(10)}
 
 # This creates a copy of all the keys of 'd'.
 # At least we arent't creating a new copy of the
