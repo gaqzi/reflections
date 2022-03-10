@@ -4,7 +4,7 @@ date: 2022-03-10
 tags: Python, Testing
 ---
 
-While most of my Pytest fixtures don't react to the dynamically-passed values of function parameters, I've been in situations where I've definitely felt the need for that. Consider this example:
+While most of my Pytest fixtures don't react to the dynamically-passed values of function parameters, there have been situations where I've definitely felt the need for that. Consider this example:
 
 ```python
 # test_src.py
@@ -74,6 +74,7 @@ It'd be much better if we could just pass the filename to the fixture and the fi
 
 ```python
 # test_src.py
+
 import pytest
 
 
