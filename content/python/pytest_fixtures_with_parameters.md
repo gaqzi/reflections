@@ -61,9 +61,7 @@ def test_file_creation(create_files):
     filenames = ("foo.md", "bar.md", "baz.md")
 
     assert directory.name == "tmp"
-    assert any(
-        file.name for file in files if file.name in filenames
-    )
+    assert any(file.name for file in files if file.name in filenames)
 ```
 
 I had to change the name of the fixture from `create_file` to `create_files` because the output signature of the fixture was changed to yield the directory path and a list of the paths of the three newly created files.
@@ -95,8 +93,8 @@ def test_file_creation(create_file):
     directory, file = create_file
     filenames = ("foo.md", "bar.md", "baz.md")
 
-    assert str(directory).split("/")[-1] == "tmp"
-    assert any(filename for filename in filenames if file.name == f)
+    assert directory.name == "tmp"
+    assert any(f for f in filenames if file.name == f)
 ```
 
 In this case, the fixture `create_file` takes an additional parameter called `filename` and then yields the directory path and the file path; just as the first snippet. Later on, in the `test_file_creation` function, the desired values of the `filename` parameter is injected into the fixture via the `@pytest.mark.parametrize` decorator. In the above snippet, Pytest runs the fixture 3 times and creates the desired files in 3 passes—just like how a normal function call would behave.
