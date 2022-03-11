@@ -18,17 +18,19 @@ import redis  # Do a pip install.
 
 
 def get_payload() -> dict[str, Any]:
-    """Get the 'zoo' payload containing animal names and properties."""
+    """Get the 'zoo' payload containing animal names and attributes."""
 
     payload = {"name": "awesome_zoo", "animals": []}
 
     names = ("wolf", "snake", "ostrich")
-    properties = (
+    attributes = (
         {"family": "Canidae", "genus": "Canis", "is_mammal": True},
         {"family": "Viperidae", "genus": "Boas", "is_mammal": False},
     )
-    for name, prop in zip(names, properties):
-        payload["animals"].append({"name": name, "properties": prop})
+    for name, attr in zip(names, attributes):
+        payload["animals"].append(  # type: ignore
+            {"name": name, "attribute": attr},
+        )
     return payload
 
 
