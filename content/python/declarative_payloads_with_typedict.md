@@ -65,7 +65,7 @@ This will return the following payload to your console:
   "animals": [
     {
       "name": "wolf",
-      "properties": {
+      "attribute": {
         "family": "Canidae",
         "genus": "Canis",
         "is_mammal": true
@@ -73,7 +73,7 @@ This will return the following payload to your console:
     },
     {
       "name": "snake",
-      "properties": {
+      "attribute": {
         "family": "Viperidae",
         "genus": "Boas",
         "is_mammal": false
@@ -83,7 +83,7 @@ This will return the following payload to your console:
 }
 ```
 
-Although this workflow is functional in runtime, there's a big gotcha here! It's really difficult to picture the shape of the `payload` from the output of the `get_payload` function; as it dynamically builds the dictionary. First, it declares a dictionary with two fields—`name` and `animals`. Here, `name` is a string value that denotes the name of the zoo. The other field `animals` is a list containing the names and properties of the animals in the zoo. Later on, the for-loop fills up the dictionary with nested data structures. This charade of operations makes it difficult to reify the final shape of the resulting `payload` in your mind.
+Although this workflow is functional in runtime, there's a big gotcha here! It's really difficult to picture the shape of the `payload` from the output of the `get_payload` function; as it dynamically builds the dictionary. First, it declares a dictionary with two fields—`name` and `animals`. Here, `name` is a string value that denotes the name of the zoo. The other field `animals` is a list containing the names and attributes of the animals in the zoo. Later on, the for-loop fills up the dictionary with nested data structures. This charade of operations makes it difficult to reify the final shape of the resulting `payload` in your mind.
 
 In this case, you'll have to inspect the content of the Redis cache to fully understand the shape of the data. Writing code in the above manner is effortless but it makes it really hard for the next person working on the codebase to understand how the payload looks without tapping into the data storage. There's a better way to declaratively communicate the shape of the payload that doesn't involve writing unmaintainably large docstrings. Here's how you can leverage `TypedDict` and `Annotated` to achieve the goals:
 
@@ -100,7 +100,7 @@ from typing import Annotated, Any, TypedDict
 import redis  # Do a pip install.
 
 
-class Property(TypedDict):
+class Attribute(TypedDict):
     family: str
     genus: str
     is_mammal: bool
@@ -108,7 +108,7 @@ class Property(TypedDict):
 
 class Animal(TypedDict):
     name: str
-    properties: Property
+    attribute: Attribute
 
 
 class Zoo(TypedDict):
@@ -117,17 +117,17 @@ class Zoo(TypedDict):
 
 
 def get_payload() -> Zoo:
-    """Get the 'zoo' payload containing animal names and properties."""
+    """Get the 'zoo' payload containing animal names and attributes."""
 
     payload: Zoo = {"name": "awesome_zoo", "animals": []}
 
     names = ("wolf", "snake", "ostrich")
-    properties: tuple[Property, ...] = (
+    attributes: tuple[Attribute, ...] = (
         {"family": "Canidae", "genus": "Canis", "is_mammal": True},
         {"family": "Viperidae", "genus": "Boas", "is_mammal": False},
     )
-    for name, prop in zip(names, properties):
-        payload["animals"].append({"name": name, "properties": prop})
+    for name, attr in zip(names, attributes):
+        payload["animals"].append({"name": name, "attribute": attr})
     return payload
 
 
@@ -144,7 +144,7 @@ if __name__ == "__main__":
     save_to_cache(payload)
 ```
 
-Notice, how I've used `TypedDict` to declare the nested structure of the payload `Zoo`. In runtime, instances of typed-dict classes behave the same way as normal dicts. Here, `Zoo` contains two fields—`name` and `animals`. The `animals` field is annotated as `list[Animal]` where `Animal` is another typed-dict. The `Animal` typed-dict houses another typed-dict called `Property`.
+Notice, how I've used `TypedDict` to declare the nested structure of the payload `Zoo`. In runtime, instances of typed-dict classes behave the same way as normal dicts. Here, `Zoo` contains two fields—`name` and `animals`. The `animals` field is annotated as `list[Animal]` where `Animal` is another typed-dict. The `Animal` typed-dict houses another typed-dict called `Attribute` that defines various properties of the animal.
 
 Taking a look at the typed-dict `Zoo` and following along its nested structure, the final shape of the payload becomes clearer without us having to look for example payloads. Also, Mypy can check whether the payload conforms to the shape of the annotated type. I used `Annotated[Zoo, dict]` in the input parameter of `save_to_cache`  function to communicate with the reader that an instance of the class `Zoo` is a dict that conforms to the contract laid out in the type itself. The type `Annotated` can be used to add any arbitrary metadata to a particular type.
 
@@ -160,13 +160,13 @@ from __future__ import annotations
 from typing import TypedDict
 
 
-class Property(TypedDict):
+class Attribute(TypedDict):
     family: str
     genus: str
     is_mammal: bool
 
 
-animal_property: Property = {
+animal_attribute: Attribute = {
     "family": "Hominidae",
     "genus": "Homo",
 }  # Mypy will complain about the missing 'is_mammal' key.
@@ -175,9 +175,9 @@ animal_property: Property = {
 Mypy will complain about the missing key:
 
 ```
-src.py:10: error: Missing key "is_mammal" for TypedDict "Property"
-    animal_property: Property = {
-                                ^
+src.py:12: error: Missing key "is_mammal" for TypedDict "Attribute"
+    animal_attribute: Attribute = {
+                                  ^
 Found 1 error in 1 file (checked 1 source file)
 ```
 
@@ -187,7 +187,7 @@ You can relax this behavior like this:
 ...
 
 
-class Property(TypedDict, total=False):
+class Attribute(TypedDict, total=False):
     family: str
     genus: str
     is_mammal: bool
@@ -202,14 +202,14 @@ Now Mypy will no longer complain about the missing field in the annotated dict. 
 ...
 
 # Mypy will complain as the key 'species' doesn't exist in the TypedDict.
-animal_property["species"] = "Sapiens"
+animal_attribute["species"] = "Sapiens"
 
 ...
 ```
 
 ```
-src.py:17: error: TypedDict "Property" has no key "species"
-    animal_property["species"] = "Sapiens"
+src.py:17: error: TypedDict "Attribute" has no key "species"
+    animal_attribute["species"] = "Sapiens"
                     ^
 Found 1 error in 1 file (checked 3 source files)
 make: *** [Makefile:134: mypy] Error 1
