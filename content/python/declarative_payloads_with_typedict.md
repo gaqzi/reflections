@@ -150,6 +150,74 @@ Taking a look at the typed-dict `Zoo` and following along its nested structure, 
 
 In runtime, this snippet will exhibit the same behavior as the previous one. Mypy also approves this.
 
+## Handling Missing Key-Value Pairs
+
+By default, the type checker will structurally validate the shape of the dict annotated with a `TypedDict` class and all the key-value pairs expected by the annotation must be present in the dict. It's possible to lax this behavior by specifying *totality*. This can be helpful to deal with missing fields without letting go of type safety. Consider this:
+
+```python
+from __future__ import annotations
+
+from typing import TypedDict
+
+
+class Property(TypedDict):
+    family: str
+    genus: str
+    is_mammal: bool
+
+
+animal_property: Property = {
+    "family": "Hominidae",
+    "genus": "Homo",
+}  # Mypy will complain about the missing 'is_mammal' key.
+```
+
+Mypy will complain about the missing key:
+
+```
+src.py:10: error: Missing key "is_mammal" for TypedDict "Property"
+    animal_property: Property = {
+                                ^
+Found 1 error in 1 file (checked 1 source file)
+```
+
+You can relax this behavior like this:
+
+```python
+...
+
+
+class Property(TypedDict, total=False):
+    family: str
+    genus: str
+    is_mammal: bool
+
+
+...
+```
+
+Now Mypy will no longer complain about the missing field in the annotated dict. However, this will still disallow arbitrary keys that isn't defined in the `TypedDict`. For example:
+
+```python
+...
+
+# Mypy will complain as the key 'species' doesn't exist in the TypedDict.
+animal_property["species"] = "Sapiens"
+
+...
+```
+
+```
+src.py:17: error: TypedDict "Property" has no key "species"
+    animal_property["species"] = "Sapiens"
+                    ^
+Found 1 error in 1 file (checked 3 source files)
+make: *** [Makefile:134: mypy] Error 1
+
+```
+
+Sweet type safety without being too strict about missing fields!
+
 ## References
 
 * [PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys](https://peps.python.org/pep-0589/)
