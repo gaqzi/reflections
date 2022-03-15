@@ -429,7 +429,9 @@ def hash_all(n):
     """Function that does hashing in serial."""
 
     with ProcessPoolExecutor(max_workers=10) as executor:
-        for arg, res in zip(range(n), executor.map(hash_one, range(n), chunksize=2)):
+        for arg, res in zip(
+            range(n), executor.map(hash_one, range(n), chunksize=2)
+        ):
             pass
 
     return "done"

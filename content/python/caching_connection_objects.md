@@ -51,7 +51,9 @@ import redis
 _cache = {}
 
 
-def get_dynamo_client(service_name: str = "dynamodb") -> boto3.session.Session.client:
+def get_dynamo_client(
+    service_name: str = "dynamodb",
+) -> boto3.session.Session.client:
     """Immortalize the Dynamo client object so that this function
     always returns the same connection object ."""
 

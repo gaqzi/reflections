@@ -468,7 +468,11 @@ from werkzeug import (
 
 
 class Request(
-    AcceptMixin, ETagRequestMixin, UserAgentMixin, AuthenticationMixin, BaseRequest
+    AcceptMixin,
+    ETagRequestMixin,
+    UserAgentMixin,
+    AuthenticationMixin,
+    BaseRequest,
 ):
     pass
 ```
@@ -597,7 +601,9 @@ vt = VerboseTuple(1, 3, 4)
 
 print(vt)
 print(f"Abstract Methods: {set(Sequence.__abstractmethods__)}")
-print(f"Mixin Methods: { {k for k, v in Sequence.__dict__.items() if callable(v)} }")
+print(
+    f"Mixin Methods: { {k for k, v in Sequence.__dict__.items() if callable(v)} }"
+)
 ```
 
 ```
@@ -858,7 +864,9 @@ vf2 = VerboseFrozenDict(**{"b": "orange", "c": "mango"})
 
 print(vf)
 print(f"Abstract Methods: {set(Mapping.__abstractmethods__)}")
-print(f"Mixin Methods: { {k for k, v in Mapping.__dict__.items() if callable(v)} }")
+print(
+    f"Mixin Methods: { {k for k, v in Mapping.__dict__.items() if callable(v)} }"
+)
 ```
 
 ```
@@ -1109,7 +1117,9 @@ class BitSet(MutableSet):
 
     def _get_location(self, elem):
         if elem < 0 or elem >= self.limit:
-            raise ValueError(f"{elem!r} must be in range 0 <= elem < {self.limit}")
+            raise ValueError(
+                f"{elem!r} must be in range 0 <= elem < {self.limit}"
+            )
         return divmod(elem, 8)
 
     def __contains__(self, elem):
@@ -1133,7 +1143,9 @@ class BitSet(MutableSet):
         return sum(1 for elem in self)
 
     def __repr__(self):
-        return f"{type(self).__name__}(limit={self.limit}, iterable={list(self)})"
+        return (
+            f"{type(self).__name__}(limit={self.limit}, iterable={list(self)})"
+        )
 
     def _from_iterable(self, iterable):
         return type(self)(self.limit, iterable)
@@ -1348,7 +1360,9 @@ class SQLAlechemyDict(MutableMapping):
             raise KeyError(key)
 
         with self.session_scope() as session:
-            session.execute(text("DELETE FROM Dict WHERE key=:key"), {"key": key})
+            session.execute(
+                text("DELETE FROM Dict WHERE key=:key"), {"key": key}
+            )
 
     def __len__(self):
         with self.session_scope() as session:
@@ -1361,9 +1375,7 @@ class SQLAlechemyDict(MutableMapping):
             return map(itemgetter(0), r.fetchall())
 
     def __repr__(self):
-        return (
-            f"{type(self).__name__}(dbname={self.dbname!r}, items={list(self.items())})"
-        )
+        return f"{type(self).__name__}(dbname={self.dbname!r}, items={list(self.items())})"
 
     def vacuum(self):
         with self.session_scope() as session:

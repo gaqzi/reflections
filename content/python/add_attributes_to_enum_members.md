@@ -67,7 +67,9 @@ Here, I'm using a tuple to contain the title, hex code, and description of the `
 ...
 
 for c in Color:
-    print(f"title={c.value[0]}, hex_code={c.value[1]}, description={c.value[2]}")
+    print(
+        f"title={c.value[0]}, hex_code={c.value[1]}, description={c.value[2]}"
+    )
 ```
 
 It prints:
@@ -92,7 +94,9 @@ class Color(str, Enum):
     hex_code: str
     description: str
 
-    def __new__(cls, title: str, hex_code: str = "", description: str = "") -> Color:
+    def __new__(
+        cls, title: str, hex_code: str = "", description: str = ""
+    ) -> Color:
 
         obj = str.__new__(cls, title)
         obj._value_ = title
@@ -124,7 +128,9 @@ print(f"{Color.GREEN.description=}")
 
 # Iterate through all the memebers.
 for c in Color:
-    print(f"title={c.value}, hex_code={c.hex_code}, description={c.description}")
+    print(
+        f"title={c.value}, hex_code={c.hex_code}, description={c.description}"
+    )
 ```
 
 This will print:

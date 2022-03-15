@@ -109,7 +109,7 @@ blacken-docs: ## Apply black.
 	@echo "Applying blacken docs..."
 	@echo "========================"
 	@echo
-	@blacken-docs -E content/python/*.md
+	@blacken-docs -E content/python/*.md -l 79
 	@echo
 
 

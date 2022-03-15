@@ -562,7 +562,11 @@ def retry(func):
         tries = 0
         while True:
             resp = func(*args, **kwargs)
-            if resp.status_code == 500 or resp.status_code == 404 and tries < n_tries:
+            if (
+                resp.status_code == 500
+                or resp.status_code == 404
+                and tries < n_tries
+            ):
                 print(f"retrying... ({tries})")
                 tries += 1
                 continue
@@ -804,7 +808,11 @@ def retry(func=None, n_tries=4):
         tries = 0
         while True:
             ret = func(*args, **kwargs)
-            if ret.status_code == 500 or ret.status_code == 404 and tries < n_tries:
+            if (
+                ret.status_code == 500
+                or ret.status_code == 404
+                and tries < n_tries
+            ):
                 print(f"retrying... ({tries})")
                 tries += 1
                 continue

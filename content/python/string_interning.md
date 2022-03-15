@@ -169,7 +169,9 @@ print(t1 - t0)
 print((t3 - t2) / (t1 - t0))
 print(f"Implicitly interned dict creation & access: {t1-t0} seconds")
 print(f"Explicitly interned dict creation & access: {t3-t2} seconds")
-print(f"Explicitly interned creation & access is {(t3-t2)/(t1-t0)} times slower")
+print(
+    f"Explicitly interned creation & access is {(t3-t2)/(t1-t0)} times slower"
+)
 ```
 
 This prints:

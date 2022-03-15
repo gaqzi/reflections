@@ -308,7 +308,8 @@ from pathlib import Path
 # ExitStack ensures all files are properly closed after o/p
 with ExitStack() as stack:
     streams = (
-        stack.enter_context(open(fname, "r")) for fname in Path("src").rglob("*.py")
+        stack.enter_context(open(fname, "r"))
+        for fname in Path("src").rglob("*.py")
     )
     contents = [f.read() for f in streams]
 ```

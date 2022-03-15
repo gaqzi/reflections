@@ -229,7 +229,9 @@ def process_holder_contra(holder: HolderContra[float]) -> None:
 if __name__ == "__main__":
     holder_inv = HolderInv(1.0)  # ok
     holder_cov = HolderCov(1, 2)  # ok
-    holder_contra = HolderContra(1, 2)  # raises error because T is contravariant
+    holder_contra = HolderContra(
+        1, 2
+    )  # raises error because T is contravariant
 
     process_holder_inv(holder_inv)
     process_holder_cov(holder_cov)
