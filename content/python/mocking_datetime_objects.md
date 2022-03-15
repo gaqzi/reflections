@@ -18,7 +18,7 @@ def get_utcnow_isoformat() -> str:
     return datetime.datetime.utcnow().isoformat()
 ```
 
-How'd you test the function? Mocking out `datetime.datetime` is tricky because of its immutable nature. Third-party libraries like [freezegun](https://github.com/spulec/freezegun) make it easier to mock and test functions like the one above. However, it's not too difficult to cover this simple case without any additional dependencies. Here's one way to achieve the goal:
+How'd you test it? Mocking out `datetime.datetime` is tricky because of its immutable nature. Third-party libraries like [freezegun](https://github.com/spulec/freezegun) make it easier to mock and test functions like the one above. However, it's not too difficult to cover this simple case without any additional dependencies. Here's one way to achieve the goal:
 
 ```python
 # src.py
@@ -38,7 +38,9 @@ def get_utcnow_isoformat() -> str:
 def mock_datetime():
     with patch("datetime.datetime") as m:
         # This is where the magic happens!
-        m.utcnow.return_value.isoformat.return_value = "2022-03-15T23:11:12.432048"
+        m.utcnow.return_value.isoformat.return_value = (
+            "2022-03-15T23:11:12.432048"
+        )
         yield m
 
 
@@ -56,7 +58,7 @@ rootdir: /home/rednafi/canvas/personal/reflections
 plugins: anyio-3.5.0
 collected 1 item
 
-src.py .                                                                              [100%]
+src.py .                                              [100%]
 
 ====== 1 passed in 0.01s ======
 ```
