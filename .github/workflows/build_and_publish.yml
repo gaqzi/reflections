@@ -30,8 +30,6 @@ jobs:
         include:
         - os: ubuntu-latest
           path: ~/.cache/pip # Cache location on Ubuntu
-        - os: macos-latest
-          path: ~/Library/Caches/pip # Cache location on MacOS
 
     steps:
       - uses: actions/checkout@v3
