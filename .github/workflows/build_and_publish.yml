@@ -57,6 +57,5 @@ jobs:
 
       - name: Build and deploy to gh-pages
         run: |
-          source .venv/bin/activate
           pelican-themes --install theme/elegant/
           make github
