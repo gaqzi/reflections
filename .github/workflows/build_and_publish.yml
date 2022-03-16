@@ -50,7 +50,7 @@ jobs:
       - name: Install the Dependencies
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Check Linter
         run: |
