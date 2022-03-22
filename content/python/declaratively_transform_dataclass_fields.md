@@ -133,8 +133,8 @@ WebhookPayload(
     request_payload={"hello": "world"},
     response_payload=None,
     status_code=None,
-    _json_transform=False
-    )
+    _json_transform=False,
+)
 ```
 
 You can also add or remove fields to be transformed by changing the value of the `_json_fields` iterable of the class:
@@ -148,8 +148,8 @@ WebhookPayload(
     request_payload={"hello": "world"},
     response_payload=None,
     status_code=None,
-    _json_fields = ("status_code",)
-    )
+    _json_fields=("status_code",),
+)
 ```
 
 This will only serialize the `status_code` field. Neat!
