@@ -61,7 +61,7 @@ def save_to_s3(
             for chunk in response.iter_bytes(chunk_size):
                 downloaded_content_length += len(chunk)
                 if downloaded_content_length > max_size:
-                    raise TypeError(
+                    raise ValueError(
                         f"File size too large. Make sure your linked"
                         "file is not larger than 10 MB."
                     )
