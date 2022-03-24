@@ -1,5 +1,5 @@
 ---
-title: Caching Connection Objects in Python
+title: Caching connection objects in Python
 date: 2022-03-16
 tags: Python
 ---
@@ -75,4 +75,4 @@ def get_redis_client(service_name: str = "redis") -> redis.Redis:
 
 ## References
 
-[Caching connections in Python — Twitter](https://twitter.com/rednafi/status/1503465791987273729?s=20&t=GlzWHBF_y0ZR-uKHVSP40Q)
+* [Caching connections in Python — Twitter](https://twitter.com/rednafi/status/1503465791987273729?s=20&t=GlzWHBF_y0ZR-uKHVSP40Q)

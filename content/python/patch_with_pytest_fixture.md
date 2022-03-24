@@ -1,5 +1,5 @@
 ---
-title: Patching Test Dependencies via Pytest Fixture & Unittest Mock
+title: Patching test dependencies via Pytest fixture & unittest mock
 date: 2022-02-27
 tags: Python, Testing
 ---
@@ -199,7 +199,7 @@ This approach has the following advantages:
 * This makes the *mocked dependency* usage more composable. In a test, you can pick and choose which dependencies you need in their mocked form and which dependencies you don't want to be mocked. If you don't want a particular dependency to be mocked in a test, then don't pass the corresponding fixture as an argument of the test function.
 * If some of your mocked dependencies don't vary much during their test lifetime, you can change the `scope` of the fixture to speed up the overall execution. By default, fixtures run in `function` scope; that means, the fixture (mocking) will be executed once per test function. This behavior can be changed via using the `scope` parameter of the `@pytest.fixture(scope=...)` decorator. Other allowed scopes are `module` and `session`. **Module** scope means, the fixture will be executed once per test module and **session** scope means, the fixture will run once per Pytest session.
 
-## Another Practical Example
+## Another practical example
 
 The following snippet defines the `get` and `post` functions that make `GET` and `POST` requests to a URL respectively. I used the canonical [httpx](https://www.python-httpx.org/) library to make the requests. Here, the functions make external network calls to the `https://httpbin.org` URL:
 

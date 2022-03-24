@@ -1,13 +1,13 @@
 ---
-title: Notes From Two Scoops of Django
+title: Notes from two scoops of Django
 date: 2022-01-18
 tags: Python, Django
 status: draft
 ---
 
-## Project Structure
+## Project structure
 
-### Flat is Better Than Nested
+### Flat is better than nested
 
 Unless you're creating a resuable Django app, it's better to flatten the nested structure created by Django's `startproject` and `startapp` commands. If you run the follwing command:
 
@@ -60,14 +60,14 @@ The top folder `foo` isn't necessary unless you're creating a resuable package. 
 └── manage.py
 ```
 
-### Naming Apps
+### Naming apps
 
 * When possible keep to single word names like flavors, **animals**, **blog**, **polls**, **dreams**, **estimates**,
 and **finances**.
 
 * As a general rule, the app’s name should be a plural version of the app’s main model
 
-### Ruby on Rails Style App Structure
+### Ruby on rails style app structure
 
 Putting business logic of an app in dedicated modules is better than putting them in the `models.py` or `views.py` modules. This way, you can achieve loose coupling between different apps. Also, it'll help you keep you models and views leaner.
 
@@ -91,9 +91,9 @@ foo_app/
 
 Here, by business logic I mean, functions or classes to create, update and delete Model objects.
 
-## Settings & Requirements Files
+## Settings & requirements files
 
-### Settings Module
+### Settings module
 
 * Don't use a separate `settings.py` file for local development, this adds additional confusion.
 
@@ -123,7 +123,7 @@ Here, by business logic I mean, functions or classes to create, update and delet
 * Don't hardcode paths in the settings modules. Consider using the `pathlib` module to avoid that.
 
 
-### Requirements File
+### Requirements file
 
 * Pin you dependencies to the exact version.
 
@@ -136,7 +136,7 @@ Here, by business logic I mean, functions or classes to create, update and delet
 
 ## Models
 
-### Model Inheritance
+### Model inheritance
 
 * Take advantage of **abstract base class inheritance** when it makes sense. In this case, no table is created for the **parent** model. A table is created for the **child** model only. This doesn't suffer from the overhead of extra tables and joins that are incurred from **multi-table inheritance**.
 

@@ -1,5 +1,5 @@
 ---
-title: Pedantic Configuration Management with Pydantic
+title: Pedantic configuration management with Pydantic
 date: 2020-07-13
 tags: Python
 ---
@@ -7,11 +7,11 @@ tags: Python
 
 Managing configurations in your Python applications isn't something you think about much often, until complexity starts to seep in and forces you to re-architect your initial approach. Ideally, your config management flow shouldn't change across different applications or as your application begins to grow in size and complexity. Even if you're writing a library, there should be a consistent config management process that scales up properly. Since I primarily spend my time writing data-analytics, data-science applications and expose them using [Flask](https://github.com/pallets/flask) or [FastAPI](https://github.com/tiangolo/fastapi) framework, I'll be tacking config management from an application development perspective.
 
-## Few Ineffective Approaches
+## Few ineffective approaches
 
 In the past, while exposing APIs with Flask, I used to use `.env`, `.flaskenv` and `Config` class approach to manage configs which is pretty much a standard in the Flask realm. However, it quickly became cumbersome to maintain and juggle between configs depending on development, staging or production environments. There were additional application specific global constants to deal with too. So I tried using `*.json`, `*.yaml` or `*.toml` based config management approaches but those too, quickly turned into a tangled mess. I was constantly accessing variables buried into 3-4 levels of nested toml data structure and it wasn't pretty. Then there are config management libraries like [Dynaconf](https://github.com/rochacbruno/dynaconf) or [environ-config](https://github.com/hynek/environ-config) that aim to ameliorate the issue. While these are all amazing tools but they also introduce their own custom workflow that can feel over-engineered while dealing with maintenance and extension.
 
-## A Pragmatic Wishlist
+## A pragmatic wishlist
 
 I wanted to take a declarative approach while designing a config management pipleline that will be **modular**, **scalable** and easy to **maintain**. To meet my requirements, the system should be able to:
 
@@ -23,7 +23,7 @@ I wanted to take a declarative approach while designing a config management pipl
 * Inspect the *active* config values
 * Create arbitrarily nested config structure if required (Not encouraged though. Constraints fosters creativity, remember?)
 
-## Building the Config Management Pipeline
+## Building the config management pipeline
 
 ### Preparation
 
@@ -64,7 +64,7 @@ This will give you:
 
 In the above example, I defined a simple class named `User` and used Pydantic for data validation. Pydantic will make sure that the data you assign to the class attributes conform with the types you've annotated. Notice, how I've assigned a string type data in the `password` field and Pydantic converted it to integer type without complaining. That's because the corresponding type annotation suggests that the `password` attribute of the `User` class should be an integer. When implicit conversion is not possible or the hinted value of an attribute doesn't conform to its assigned type, Pydantic will throw a `ValidationError`.
 
-### The Orchestration
+### The orchestration
 
 Now let's see how you can orchestrate your config management flow with the tools mentioned above. For simplicity, let's say you've  3 sets of configurations.
 
@@ -220,7 +220,7 @@ This time the config instance should change and print the following:
 >>> ProdConfig(ENV_STATE='prod', APP_CONFIG=AppConfig(VAR_A=33, VAR_B=22.0), REDIS_PASS='ubuntu', REDIS_HOST='127.0.0.2', REDIS_PORT=5000)
 ```
 
-## Accessing the Configs
+## Accessing the configs
 
 Using the config variables is easy. Suppose you want use the variables in file called `app.py`. You can easily do so as shown in the following code block:
 
@@ -255,7 +255,7 @@ VAR_A=33 VAR_B=22.0
 5000
 ```
 
-## Extending the Pipeline
+## Extending the pipeline
 
 The modular design demonstrated above is easy to maintain and extend in my opinion. Previously, for simplicity, I've defined only two environment scopes; development and production. Let's say you want to add the configs for your *staging environment*.
 

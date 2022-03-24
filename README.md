@@ -8,7 +8,7 @@
 ![python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![github_actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
 
-## Local Development
+## Local development
 
 Assuming you're using a Unix-based system:
 

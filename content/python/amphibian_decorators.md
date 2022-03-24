@@ -1,5 +1,5 @@
 ---
-title: Amphibian Decorators in Python
+title: Amphibian decorators in Python
 date: 2022-02-06
 tags: Python
 ---

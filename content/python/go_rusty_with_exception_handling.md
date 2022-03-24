@@ -1,5 +1,5 @@
 ---
-title: Go Rusty with Exception Handling in Python
+title: Go Rusty with exception handling in Python
 date: 2022-02-02
 tags: Python
 ---
@@ -120,6 +120,5 @@ However, I wouldn't go about and mindlessly refactor any exception handling logi
 
 ## References
 
-* [An error-handling model influenced by that used by the Rust programming language](https://github.com/psf/black/blob/main/src/black/rusty.py)
-
-* [Beginner's guide to Error Handling in Rust](https://www.sheshbabu.com/posts/rust-error-handling/)
+* [An error-handling model influenced by the Rust programming language](https://github.com/psf/black/blob/main/src/black/rusty.py)
+* [Beginner's guide to error handling in Rust](https://www.sheshbabu.com/posts/rust-error-handling/)

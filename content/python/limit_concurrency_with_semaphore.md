@@ -1,5 +1,5 @@
 ---
-title: Limit Concurrency With Semaphore in Python Asyncio
+title: Limit concurrency with semaphore in Python asyncio
 date: 2022-02-10
 tags: Python
 ---
@@ -157,7 +157,7 @@ Making request 199
 The output makes it clear that no more than 3 async functions are making concurrent requests to the server at the same time. You can tune the number of concurrent workers by changing the limit in the `asyncio.Semaphore` object.
 
 
-## Complete Script
+## Complete script
 
 ```python
 # src.py

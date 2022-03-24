@@ -1,5 +1,5 @@
 ---
-title: Difference Between Constrained 'TypeVar' and 'Union' in Python
+title: Difference between constrained 'TypeVar' and 'Union' in Python
 date: 2022-01-19
 tags: Python, Typing
 ---

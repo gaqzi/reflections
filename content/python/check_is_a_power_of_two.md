@@ -1,5 +1,5 @@
 ---
-title: Check Whether an Integer Is a Power of Two in Python
+title: Check whether an integer is a power of two in Python
 date: 2022-01-21
 tags: Python
 ---
@@ -44,7 +44,7 @@ For example:
 The `.bit_count()` function checks how many on-bits (`1`) are there in the binary representation of an integer.
 
 
-## Complete Example with Tests
+## Complete example with tests
 
 ```python
 import unittest

@@ -1,5 +1,5 @@
 ---
-title: Uniform Error Response in Django Rest Framework
+title: Uniform error response in Django Rest Framework
 date: 2022-01-20
 tags: Python, Django
 ---

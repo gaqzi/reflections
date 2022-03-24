@@ -1,5 +1,5 @@
 ---
-title: Static Typing Python Decorators
+title: Static typing Python decorators
 date: 2022-01-23
 tags: Python, Typing
 ---
@@ -56,7 +56,7 @@ All this for nothing!
     If you're not on Python 3.10, you can import `ParamSpec` and `Concatenate` from the `typing_extensions` module. The package gets automatically installed with Mypy.
 
 
-## Use `ParamSpec` to Type Decorators
+## Use `ParamSpec` to type decorators
 
 I'll take advantage of both `ParamSpec` and `TypeVar` to annotate the `register` decorator that we've seen earlier:
 
@@ -98,7 +98,7 @@ Above, I've used `ParamSpec` to annotate the type of the wrapped function's inpu
 Notice the annotations of the `inner` function inside `register`. Here, `P.args` and `P.kwargs` are transferring the type information from the wrapped `func` to the `inner` function. This makes sure that static type checkers like Mypy can now precisely scream at you whenever you call the decorated functions with the wrong type of parameters.
 
 
-## Use `Concatenate` to Type Decorators That Changes Wrapped Functions' Signatures
+## Use `Concatenate` to type decorators that change the wrapped functions' signatures
 
 There's another type of decorator that changes the signature of the wrapped function by adding or removing parameters during runtime. Annotating these can be tricky; as the magic happens mostly during runtime. The `Concatenate` type allows us to communicate this behavior with the type checker.
 
@@ -180,6 +180,5 @@ Parameter 1: type "Logger" cannot be assigned to type "int"
 
 ## Resources
 
-* [PEP 612 -- Parameter Specification Variables](https://www.python.org/dev/peps/pep-0612/)
-
-* [Decorator Typing (PEP 612) - Anthony Explains #386](https://www.youtube.com/watch?v=fwZoxWyMGM8)
+* [PEP 612 -- Parameter specification variables](https://www.python.org/dev/peps/pep-0612/)
+* [Decorator typing (PEP 612) - Anthony explains #386](https://www.youtube.com/watch?v=fwZoxWyMGM8)

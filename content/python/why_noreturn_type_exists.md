@@ -1,5 +1,5 @@
 ---
-title: Why 'NoReturn' Type Exists in Python
+title: Why 'NoReturn' type exists in Python
 date: 2022-02-21
 tags: Python, Typing
 ---
@@ -86,9 +86,9 @@ src.py:14: error: Statement is unreachable
 Found 1 error in 1 file (checked 1 source file)
 ```
 
-## More Practical Examples
+## More practical examples
 
-### Callables Containing Infinite Loops
+### Callables containing infinite loops
 
 ```python
 # src.py
@@ -132,7 +132,7 @@ def loop_forever() -> NoReturn:
 ```
 
 
-### Callables That Invoke 'sys.exit()', 'os._exit()', 'os.execvp()', etc
+### Callables that invoke 'sys.exit()', 'os._exit()', 'os.execvp()', etc
 
 Both `sys.exit()` and `os._exit()` do similar things. The former function raises the `SystemExit()` exception and exits the program without printing any stacktrace or whatsoever. On the other hand, the latter function exits the process immediately without letting the interpreter run any cleanup code. Prefer `sys.exit()` over `os._exit()`.
 
@@ -163,5 +163,5 @@ def call_os_execvp() -> NoReturn:
 
 ## Resources
 
-* [python return annotations: NoReturn vs None (intermediate) anthony explains #007](https://www.youtube.com/watch?v=-zH0qqDtd4w)
-* [Python Type Hints - What’s the point of NoReturn? - Adam Johnson](https://adamj.eu/tech/2021/05/20/python-type-hints-whats-the-point-of-noreturn/)
+* [Python return annotations: NoReturn vs None (intermediate) anthony explains #007](https://www.youtube.com/watch?v=-zH0qqDtd4w)
+* [Python type hints - what’s the point of NoReturn? - Adam Johnson](https://adamj.eu/tech/2021/05/20/python-type-hints-whats-the-point-of-noreturn/)

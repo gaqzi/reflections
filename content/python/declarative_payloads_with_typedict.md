@@ -1,5 +1,5 @@
 ---
-title: Declarative Payloads with TypedDict in Python
+title: Declarative payloads with TypedDict in Python
 date: 2022-03-11
 tags: Python, Typing
 ---
@@ -152,7 +152,7 @@ Taking a look at the typed-dict `Zoo` and following along its nested structure, 
 
 In runtime, this snippet will exhibit the same behavior as the previous one. Mypy also approves this.
 
-## Handling Missing Key-Value Pairs
+## Handling missing key-value pairs
 
 By default, the type checker will structurally validate the shape of the dict annotated with a `TypedDict` class and all the key-value pairs expected by the annotation must be present in the dict. It's possible to lax this behavior by specifying *totality*. This can be helpful to deal with missing fields without letting go of type safety. Consider this:
 
@@ -222,4 +222,4 @@ Sweet type safety without being too strict about missing fields!
 
 ## References
 
-* [PEP 589 – TypedDict: Type Hints for Dictionaries with a Fixed Set of Keys](https://peps.python.org/pep-0589/)
+* [PEP 589 – TypedDict: Type hints for dictionaries with a fixed set of keys](https://peps.python.org/pep-0589/)

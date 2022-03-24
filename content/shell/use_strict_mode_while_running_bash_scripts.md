@@ -1,5 +1,5 @@
 ---
-title: Use Strict Mode While Running Bash Scripts
+title: Use strict mode while running bash scripts
 date: 2021-11-08
 tags: Unix
 ---
@@ -26,4 +26,4 @@ Where,
 
 ## References
 
-*  The idea is a less radical version of this [post](http://redsymbol.net/articles/unofficial-bash-strict-mode/). I don't recommend messing with the IFS without a valid reason.
+* The idea is a less radical version of this [post](http://redsymbol.net/articles/unofficial-bash-strict-mode/). I don't recommend messing with the IFS without a valid reason.

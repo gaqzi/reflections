@@ -1,5 +1,5 @@
 ---
-title: Gotchas of Early-bound Function Argument Defaults in Python
+title: Gotchas of early-bound function argument defaults in Python
 date: 2022-01-27
 tags: Python
 ---
@@ -190,4 +190,4 @@ The default parameter `baz` will be late-bound and will produce similar results 
 
 ## References
 
-* [Mutable Default Arguments - The Hitchhiker’s Guide to Python!](https://docs.python-guide.org/writing/gotchas/#mutable-default-arguments)
+* [Mutable default arguments - The hitchhiker’s guide to Python!](https://docs.python-guide.org/writing/gotchas/#mutable-default-arguments)

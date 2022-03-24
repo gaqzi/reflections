@@ -1,5 +1,5 @@
 ---
-title: Effortless API Request Caching with Python & Redis
+title: Effortless API request caching with Python & Redis
 date: 2020-05-25
 tags: Python, API
 ---
@@ -16,7 +16,7 @@ I found that in my country, the optimized routes returned by the API do not chan
 * Only send a new request to MapBox API if the response is not cached and then add that response to cache
 
 
-## Setting Up Redis & RedisInsight
+## Setting up Redis & RedisInsight
 
 To proceed with the above workflow, you'll need to install and setup Redis database on your system. For monitoring the database, I'll be using  [RedisInsight](https://redislabs.com/redisinsight/). The easiest way to setup Redis and RedisInsight is through [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose/). Here's a docker-compose that you can use to setup everything with a single command.
 
@@ -66,7 +66,7 @@ This command will start the database and monitor accordingly. You can go to this
 ![Screenshot from 2020-05-23 19-23-21](https://user-images.githubusercontent.com/30027932/82731781-f30b1b00-9d2a-11ea-8c72-62a4753bc5f9.png)
 
 
-## Preparing Python Environment
+## Preparing Python environment
 
 For local development, you can set up your python environment and install the dependencies using pip. Here, I'm on a Linux machine and using virtual environment for isolation. The following commands will work if you're on a \*nix based system and have `python 3.8` installed on your system. This will install the necessary dependencies in a virtual environment:
 
@@ -78,7 +78,7 @@ pip install redis httpx
 
 ## Workflow
 
-### Connecting Python Client to Redis
+### Connecting Python client to Redis
 
 Assuming the database server is running and you've installed the dependencies, the following snippet connects `redis-py` client to the database.
 
@@ -110,7 +110,7 @@ client = redis_connect()
 
 The above excerpt tries to connect to the `Redis` database server using the port `6379`. Notice, how I'm providing the password `ubuntu` via the `password` argument. Here, `client.ping()` helps you determine if a connection has been established successfully. It returns `True` if a successful connection can be established or raises specific errors in case of failures. The above function handles `AuthenticationError` and prints out an error message if the error occurs. If everything goes well, running the `redis_connect()` function will return an instance of the `redis.client.Redis` class. This instance will be used later to set and retrieve data to and from the redis database.
 
-### Getting Route Data From MapBox API
+### Getting route data from MapBox API
 
 The following function strikes the MapBox Route Optimization API and collects route data.
 
@@ -138,7 +138,7 @@ The above code uses Python's [httpx](https://github.com/encode/httpx) library to
 The `base_url` is the base url of the route optimization API and the you'll need to provide your own access token in the `access_token` field. Notice, how the `url` variable builds up the final request url. The `coordinates` are provided using the `lat0,lon0;lat1,lon1;lat2,lon2...` format. Rest of the function sends the http requests and converts the response into a native dictionary object using the `response.json()` method.
 
 
-### Setting & Retrieving Data to & from Redis Database
+### Setting & retrieving data to & from Redis database
 
 The following two functions retrieves data from and sets data to redis database respectively.
 
@@ -166,7 +166,7 @@ def set_routes_to_cache(key: str, value: str) -> bool:
 
 Here, both the keys and the values are strings. In the second function, `set_routes_to_cache`, the `client.setex()` method sets a timeout of 1 hour on the key. After that the key and its associated value get deleted automatically.
 
-### The Central Orchestration
+### The central orchestration
 
 The `route_optima` function is the primary agent that orchestrates and executes the caching and returning of responses against requests. It roughly follows the execution flow shown below.
 
@@ -204,7 +204,7 @@ def route_optima(coordinates: str) -> dict:
 ```
 
 
-### Exposing As an API
+### Exposing as an API
 
 This part of the code wraps the original Route Optimization API and exposes that as a new endpoint. I've used [fastAPI](https://fastapi.tiangolo.com/) to build the wrapper API. Doing this also hides the underlying details of authentication and the actual endpoint of the MapBox API.
 
@@ -226,7 +226,7 @@ def view(coordinates):
     return route_optima(coordinates)
 ```
 
-### Putting It All Together
+### Putting it all together
 
 ```python
 # app.py
@@ -454,7 +454,7 @@ This app has been made for demonstration purpose only. So it might not reflect t
 
 ## Resources
 
-* [Http Request Caching with Redis](https://github.com/rednafi/redis-request-caching)
+* [Http request caching with Redis](https://github.com/rednafi/redis-request-caching)
 * [Httpx](https://github.com/encode/httpx/)
 * [Redis](https://redis.io/)
 * [RedisInsight](https://redislabs.com/redisinsight/)

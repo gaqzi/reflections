@@ -1,5 +1,5 @@
 ---
-title: Structural Subtyping in Python
+title: Structural subtyping in Python
 date: 2021-12-04
 tags: Python, Typing
 ---
@@ -171,7 +171,7 @@ def find(haystack: Container, needle: T) -> bool:
 ...
 ```
 
-## Avoid `abc` Inheritance
+## Avoid `abc` inheritance
 
 Abstract base classes in Python let you validate the structure of subclasses in runtime. Python's standard library APIs uses `abc.ABC` in many places. See this example:
 
@@ -268,7 +268,7 @@ if __name__ == "__main__":
 Notice that `Foo` is not inheriting from `ProtoFoo` and when you run mypy against the snippet, it'll statically check whether `Foo` conforms to the `ProtoFoo` interface or not. Voila, we avoided inheritance. The `isinstance` in the `run` function later checks whether `foo` is an instance of `ProtoFoo` or not.
 
 
-## Complete Example With Tests
+## Complete example with tests
 
 This example employs static duck-typing to check the type of `WebhookPayload` where the class represents the structure of the payload that is going to be sent to an URL by the `send_webhook` function.
 

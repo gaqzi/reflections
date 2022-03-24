@@ -1,5 +1,5 @@
 ---
-title: Modify Iterables While Iterating in Python
+title: Modify iterables while iterating in Python
 date: 2022-03-04
 tags: Python
 ---
@@ -93,7 +93,7 @@ Out[6]: 4
 
 Notice how the element `4` is being visited twice after prepending a value to the list `l`.
 
-## The Solution
+## The solution
 
 To solve this, you'll have to make sure the target elements don't get removed after the iterator has already visited them. You can iterate in the reverse order and remove elements maintaining the original order. The first snippet can be rewritten as follows:
 
@@ -159,7 +159,7 @@ This time, the order of the iteration and element removal is the same, but that 
 [3, 7, 9, 5]
 ```
 
-## What About Dictionaries
+## What about dictionaries
 
 Dictionaries don't even allow you to change their sizes while iterating. The following snippet raises a `RuntimeError`:
 
