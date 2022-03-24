@@ -1,5 +1,5 @@
 ---
-title: Self Type in Python
+title: Self type in Python
 date: 2022-02-28
 tags: Python, Typing
 ---
@@ -107,7 +107,7 @@ class Animal:
 **Ideally, Mypy should be happy now. However, as of writing this post, Mypy 0.931 doesn't support this yet. So, it'll still complain.**
 
 
-## Typing Instance Methods That Return `self`
+## Typing instance methods that return `self`
 
 Take a look at this:
 
@@ -139,7 +139,7 @@ class Counter:
 The `increment` and `decrement` method of the `Counter` class return the instance of the same class after performing the operations on the `start` value. This is a perfect case where the `Self` type can be useful.
 
 
-## Typing `__new__` Methods
+## Typing `__new__` methods
 
 You can also type the `__new__` method easily:
 

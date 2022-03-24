@@ -1,5 +1,5 @@
 ---
-title: Don't Add Extensions to Bash Executables
+title: Don't add extensions to bash executables
 date: 2021-11-23
 tags: Unix
 ---
@@ -22,8 +22,6 @@ GitHub uses this [pattern](https://github.com/github/scripts-to-rule-them-all) s
 
 ## References
 
-* [typesystem](https://github.com/encode/typesystem)
-
-* [Scripts To Rule Them All - GitHub Repo](https://github.com/github/scripts-to-rule-them-all)
-
-* [Scripts to Rule Them All - GitHub Blog](https://github.blog/2015-06-30-scripts-to-rule-them-all/)
+* [Typesystem](https://github.com/encode/typesystem)
+* [Scripts to rule them all - GitHub Repo](https://github.com/github/scripts-to-rule-them-all)
+* [Scripts to rule them all - GitHub Blog](https://github.blog/2015-06-30-scripts-to-rule-them-all/)

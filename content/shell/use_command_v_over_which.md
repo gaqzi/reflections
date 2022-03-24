@@ -1,5 +1,5 @@
 ---
-title: Use 'command -v' Over 'which' to Find a Program's Executable
+title: Use 'command -v' over 'which' to find a program's executable
 date: 2021-11-16
 tags: Unix
 ---
@@ -21,5 +21,5 @@ command -v which python3.10
 
 ## References
 
-* [Debian's Which Hunt](https://lwn.net/Articles/874049/)
+* [Debian's which hunt](https://lwn.net/Articles/874049/)
 * [TIL: which is not POSIX](https://hynek.me/til/which-not-posix/)

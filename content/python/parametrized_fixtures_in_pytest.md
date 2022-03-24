@@ -1,5 +1,5 @@
 ---
-title: Parametrized Fixtures in Pytest
+title: Parametrized fixtures in Pytest
 date: 2022-03-10
 tags: Python, Testing
 ---

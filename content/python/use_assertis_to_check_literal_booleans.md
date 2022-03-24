@@ -1,5 +1,5 @@
 ---
-title: Use 'assertIs' to Check Literal Booleans in Python Unittest
+title: Use 'assertIs' to check literal booleans in Python unittest
 date: 2022-01-24
 tags: Python
 ---

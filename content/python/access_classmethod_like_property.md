@@ -1,5 +1,5 @@
 ---
-title: Access 'classmethod's Like 'property' Methods in Python
+title: Access 'classmethod's like 'property' methods in Python
 date: 2021-11-26
 tags: Python
 ---
@@ -59,7 +59,7 @@ print(ModernPlanets.choices)
 The only thing that matters here is the order of the `property` and `classmethod` decorator. Python applies them from bottom to top. Changing the order will make it behave unexpectedly.
 
 
-## Complete Example With Tests
+## Complete example with tests
 
 
 ```python

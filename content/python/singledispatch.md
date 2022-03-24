@@ -1,5 +1,5 @@
 ---
-title: Generic Functions with Python's Singledispatch
+title: Generic functions with Python's singledispatch
 date: 2020-04-05
 tags: Python
 ---
@@ -35,7 +35,7 @@ def func45(data):
 
 This pattern gets tedious when the number of conditions and actionable functions start to grow. I was looking for a functional approach to avoid defining and calling three different functions that do very similar things. Situations like this is where [parametric polymorphism](https://en.wikipedia.org/wiki/Parametric_polymorphism) comes into play. The idea is, you have to define a single function that will be dynamically overloaded with alternative implementations based on the type of the function arguments.
 
-## Function Overloading & Generic Functions
+## Function overloading & generic functions
 
 **Function overloading** is a specific type of polymorphism where multiple functions can have the same name with different implementations. Calling an overloaded function will run a specific implementation of that function based on some prior conditions or appropriate context of the call.
 When function overloading happens based on its argument types, the resulting function is known as **generic function**. Let's see how Python's `singledispatch` decorator can help to design generic functions and refactor the icky code above.

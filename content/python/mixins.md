@@ -1,5 +1,5 @@
 ---
-title: Interfaces, Mixins and Building Powerful Custom Data Structures in Python
+title: Interfaces, mixins and building powerful custom data structures in Python
 date: 2020-07-03
 tags: Python
 ---
@@ -8,7 +8,7 @@ Imagine a custom *set-like* data structure that doesn't perform hashing and trad
 
 One way to understand how built-in objects like dictionary, list, set etc work is to build custom data structures based on them. Python provides several mixin classes in the `collection.abc` module to design custom data structures that look and act like built-in structures with additional functionalities baked in.
 
-## Concept Edifice
+## Concept edifice
 
 To understand how all these work, you'll need a fair bit of knowledge about Interfaces, Abstract Base Classes, Mixin Classes etc. I'll build the concept edifice layer by layer where you'll learn about interfaces first and how they can be created and used via the `abc.ABC` class. Then you'll learn how abstract base classes differ from interfaces. After that I'll introduce mixins and explain how all these concepts can be knitted together to architect custom data structures with amazing capabilities. Let's dive in.
 
@@ -27,7 +27,7 @@ Usually, you inherit from an interface and implement the methods defined in the 
 * Informal Interfaces
 * Formal Interfaces
 
-## Informal Interfaces
+## Informal interfaces
 
 Informal interfaces are classes which define methods that can be overridden, but there’s no strict enforcement.
 
@@ -190,7 +190,7 @@ NotImplementedError:
 
 Despite not implementing all the methods defined in the `ICalc` class, I was still able to instantiate the `FakeCalc` concrete class. However, when I tried to apply a method `sub` that wasn't implemented in the concrete class, it gave me an error. Also, `issubclass(FakeCalc, ICalc)` returns `True` which can mislead you into thinking that all the methods of the subclass `FakeCalc` are usable. It can cause subtle bugs can be difficult to detect. Formal interfaces try to overcome these issues.
 
-## Formal Interfaces
+## Formal interfaces
 
 Formal interfaces do not suffer from the problems that plague informal interfaces. So if you want to implement an interface that the users can't initiate independently and that forces them to implement all the methods in the concrete sub classes, formal interface is the way to go. In Python, the idiomatic way to define formal interfaces is via the `abc` module. Let's transform the previously mentioned `ICalc` interface into a formal one:
 
@@ -267,7 +267,7 @@ print(c.div(5, 6))
 
 In the case of formal interface, failing to implement even one abstract method in the subclass will raise `TypeError`. So you can never write something the like the `FakeCalc` with a formal interface. This approach is more explicit and if there is an issue, it fails early.
 
-### Interfaces vs Abstract Base Classes
+### Interfaces vs abstract base classes
 
 You've probably seen the term *Interface* and *Abstract Base Class* being used interchangeably. However, conceptually they're different. Interfaces can be thought of as a special case of Abstract Base Classes.
 
@@ -321,7 +321,7 @@ The two examples above establish the fact that
 > All interfaces are abstract base classes but not all abstract base classes are interfaces.
 
 
-### A Complete Example
+### A complete example
 
 Before moving on to the next section, let's see another contrived example to get the idea about the cases where interfaces can come handy. I'll define an interface called `AutoMobile` and create three concrete classes called `Car`, `Truck` and `Bus` from it. The interface defines three abstract methods `start`, `accelerate` and `stop` that the concrete classes will need to implement later.
 
@@ -479,7 +479,7 @@ class Request(
 
 The above example might cause you to say, "that's just multiple inheritance, not really a mixin", which is can be true in a special case. Indeed, the differences between plain old multiple inheritance and mixin based inheritance collapse when the parent class can be instantiated. Understanding the subtlety in the differences between a mixin class, an abstract base class, an interface and the scope of multiple inheritance is important, so I'll explore them in a dedicated section.
 
-### Differences Between Interfaces, Abstract Classes and Mixins
+### Differences between interfaces, abstract classes and Mixins
 
 In order to better understand mixins, it's be useful to compare mixins with abstract classes and interfaces from a code/implementation perspective:
 
@@ -497,7 +497,7 @@ Like interfaces, mixins do not contain any internal state. But like abstract cla
 
 In Python, these are just conventions because all of the above are defined as classes. However, one trait that is common among *interfaces*, *abstract classes* and *mixins* is that they shouldn't exist on their own, i.e. shouldn't be instantiated independently.
 
-### A Complete Example
+### A complete example
 
 Before diving into the real-life examples and how mixins can be used to construct custom data structures, let's have a look at a self-contained example of a mixin class at work:
 
@@ -553,11 +553,11 @@ The `FactorMult` class takes in a number as a factor and the `multiply` method s
 
 If you really want to dive deeper into mixins and their real-life use cases, checkout the codebase of the famous [Requests](https://github.com/psf/requests/blob/8149e9fe54c36951290f198e90d83c8a0498289c/requests/models.py#L60) library. It defines and employs many powerful mixin classes to bestow superpowers upon different concrete classes.
 
-## Building Powerful Custom Data Structures with Mixins
+## Building powerful custom data structures with mixins
 
 You've reached the hall of fame where I'll be building custom data structures using the mixin classes from the `collections.abc` module.
 
-### Verbose Tuple
+### Verbose tuple
 
 This is a tuple-like data structure that acts exactly like the built-in tuple but with one exception. It'll print out the special methods underneath when you perform any operation with it.
 
@@ -683,7 +683,7 @@ Method: __getitem__, Index: 3
 
 The printed statements reveal the corresponding special methods used internally when a particular tuple operation occurs.
 
-### Verbose List
+### Verbose list
 
 This is a list-like data structure that acts exactly like the built-in list but with one exception. Like `VerboseTuple`, it'll also print out the special methods underneath when you perform any operation on or with it.`
 
@@ -815,7 +815,7 @@ Method: __getitem__, Index: 3
 VerboseList(4, 44, 0, 7, 8, 9)
 ```
 
-### Verbose Frozen Dict
+### Verbose frozen dict
 
 Here, `VerboseFrozenDict` is an immutable data structure that is similar to the built-in dictionaries. Like the previous structures, this also reveals the internal special methods while performing different operations.
 
@@ -954,7 +954,7 @@ Method: __getitem__, Key: c
 True
 ```
 
-### Verbose Dict
+### Verbose dict
 
 The `VerboseDict` data structure is the mutable version of `VerboseFrozedDict`. It supports all the operations of `VerboseFrozenDict` with some additional features like adding and deleting key-value pairs, updating values corresponding to different keys etc.
 
@@ -1087,7 +1087,7 @@ pepsi
 VerboseDict({'a': 'pepsi'})
 ```
 
-## Going Ballistic with Custom Data Structures
+## Going ballistic with custom data structures
 
 This section discusses two advanced data structures that I mentioned at the beginning of the post.
 

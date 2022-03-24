@@ -1,5 +1,5 @@
 ---
-title: Python's 'functools.partial' Flattens Nestings Automatically
+title: Python's 'functools.partial' flattens nestings Automatically
 date: 2021-11-08
 tags: Python
 ---

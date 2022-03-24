@@ -1,5 +1,5 @@
 ---
-title: The Curious Case of Python's Context Manager
+title: The curious case of Python's context manager
 date: 2020-03-26
 tags: Python
 ---
@@ -24,7 +24,7 @@ finally:
     f.close()
 ```
 
-## Writing Custom Context Managers
+## Writing custom context managers
 
 To write a custom context manager, you need to create a class that includes the  `__enter__` and `__exit__` methods. Let's recreate a custom context manager that will execute the same workflow as above.
 
@@ -53,7 +53,7 @@ with CustomFileOpen("file.txt", "wt") as f:
     f.write("contents go here")
 ```
 
-## From Generators to Context Managers
+## From generators to context managers
 
 Creating context managers by writing a class with `__enter__` and `__exit__` methods, is not difficult. However, you can achieve better brevity by defining them using `contextlib.contextmanager` decorator. This decorator converts a generator function into a context manager. The blueprint for creating context manager decorators goes something like this:
 
@@ -117,7 +117,7 @@ with CustomFileOpen("file.txt", "wt") as f:
     f.write("contents go here")
 ```
 
-## Writing Context Managers as Decorators
+## Writing context managers as decorators
 
 You can use context managers as decorators also. To do so, while defining the class, you have to inherit from `contextlib.ContextDecorator` class. Let's make a `RunTime` decorator that will be applied on a file-opening function. The decorator will:
 
@@ -190,7 +190,7 @@ def runtime(description):
         print(f"The function took {run_time} seconds to run.")
 ```
 
-## Nesting Contexts
+## Nesting contexts
 
 You can nest multiple context managers to manage resources simultaneously. Consider the following dummy manager:
 
@@ -223,7 +223,7 @@ exiting : A
 
 Notice the order they're closed. Context managers are treated as a stack, and should be exited in reverse order in which they're entered. If an exception occurs, this order matters, as any context manager could suppress the exception, at which point the remaining managers will not even get notified of this. The `__exit__` method is also permitted to raise a different exception, and other context managers then should be able to handle that new exception.
 
-## Combining Multiple Context Managers
+## Combining multiple context managers
 
 You can combine multiple context managers too. Let's consider these two managers.
 
@@ -314,7 +314,7 @@ with ExitStack() as stack:
     contents = [f.read() for f in streams]
 ```
 
-## Using Context Managers to Create SQLAlchemy Session
+## Using context managers to create SQLAlchemy session
 
 If you are familiar with SQLALchemy, Python's SQL toolkit and Object Relational Mapper, then you probably know the usage of `Session` to run a query. A `Session` basically turns any query into a transaction and make it atomic. Context managers can help you write a transaction session in a very elegant way. A basic querying workflow in SQLAlchemy may look like this:
 
@@ -354,7 +354,7 @@ with session_scope() as session:
     session.add(myobject)
 ```
 
-## Abstract Away Exception Handling Monstrosity with Context Managers
+## Abstract away exception handling monstrosity with context managers
 
 This is my absolute favorite use case of context managers. Suppose you want to write a function but want the exception handling logic out of the way. Exception handling logics with sophisticated logging can often obfuscate the core logic of your function. You can write a decorator type context manager that will handle the exceptions for you and decouple these additional code from your main logic. Let's write a decorator that will handle `ZeroDivisionError` and `TypeError` simultaneously.
 
@@ -480,7 +480,7 @@ Custom handling of Zero Division Error! Printing only 2 levels of traceback..
 None
 ```
 
-## Persistent Parameters Across Http Requests with Context Managers
+## Persistent parameters across HTTP requests with context managers
 
 Another great use case for context managers is making parameters persistent across multiple http requests. Python's `requests` library has a `Session` object that will let you easily achieve this. So, if you’re making several requests to the same host, the underlying TCP connection will be reused, which can result in a significant performance increase. The following example is taken directly from [requests'](https://2.python-requests.org/en/v2.8.1/user/advanced/) official docs. Let's persist some cookies across requests.
 
@@ -508,8 +508,8 @@ All the code snippets are updated for python `3.8`. To avoid redundencies, I hav
 
 ## Resources
 
-1. [Python Contextlib Documentation](https://docs.python.org/3/library/contextlib.html)
-2. [Python with Context Manager - Jeff Knupp](https://jeffknupp.com/blog/2016/03/07/python-with-context-managers/)
-2. [SQLALchemy Session Creation](https://docs.sqlalchemy.org/en/13/core/engines.html)
-3. [Scipy Lectures: Context Managers](https://scipy-lectures.org/advanced/advanced_python/index.html#context-managers)
-4. [Merging Context Managers](https://stackoverflow.com/a/45681273/8963300)
+* [Python contextlib documentation](https://docs.python.org/3/library/contextlib.html)
+* [Python with context manager - Jeff Knupp](https://jeffknupp.com/blog/2016/03/07/python-with-context-managers/)
+* [SQLALchemy session creation](https://docs.sqlalchemy.org/en/13/core/engines.html)
+* [Scipy lectures: context managers](https://scipy-lectures.org/advanced/advanced_python/index.html#context-managers)
+* [Merging context managers](https://stackoverflow.com/a/45681273/8963300)

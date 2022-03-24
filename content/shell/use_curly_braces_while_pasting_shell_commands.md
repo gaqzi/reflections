@@ -1,5 +1,5 @@
 ---
-title: Use Curly Braces While Pasting Shell Commands
+title: Use curly braces while pasting shell commands
 date: 2021-11-08
 tags: Unix
 ---

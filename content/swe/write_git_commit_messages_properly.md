@@ -1,5 +1,5 @@
 ---
-title: Write Git Commit Messages Properly
+title: Write git commit messages properly
 date: 2021-11-11
 tags: General
 ---
@@ -18,7 +18,7 @@ ec9191c added unfinished indexing script
 
 With all the misuse of letter casings and punctuations, clearly, the message formatting is all over the place. To tame this mayhem, I've adopted these 7 rules of writing great commit messages:
 
-## The Seven Rules of Writing Consistent Git Commit Messages
+## The seven rules of writing consistent git commit messages
 
 1. Separate subject from body with a blank line
 2. Limit the subject line to 50 characters (I often break this when there's no message body)
@@ -43,4 +43,4 @@ ec9191c Add unfinished indexing script
 
 ## Reference
 
-* [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/)
+* [How to write a git commit message](https://chris.beams.io/posts/git-commit/)

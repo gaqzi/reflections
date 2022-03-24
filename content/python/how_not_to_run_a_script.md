@@ -1,5 +1,5 @@
 ---
-title: How Not To Run a Script in Python
+title: How not to run a script in Python
 date: 2022-03-16
 tags: Python
 ---

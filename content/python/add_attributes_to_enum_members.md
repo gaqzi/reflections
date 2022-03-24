@@ -1,5 +1,5 @@
 ---
-title: Add Additional Attributes to Enum Members in Python
+title: Add additional attributes to enum members in Python
 date: 2022-02-17
 tags: Python
 ---

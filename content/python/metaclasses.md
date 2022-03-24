@@ -1,5 +1,5 @@
 ---
-title: Deciphering Python's Metaclasses
+title: Deciphering Python's metaclasses
 date: 2020-06-26
 tags: Python
 ---
@@ -20,7 +20,7 @@ A metaclass is a class whose instances are classes. Like an "ordinary" class def
 
 Metaclasses aren't supported by every object oriented programming language. Those programming language, which support metaclasses, considerably vary in way they implement them. Python provides you a way to get under the hood and define custom metaclasses.
 
-## Understanding Type and Class
+## Understanding type and class
 
 In Python, everything is an object. Classes are objects as well. As a result, all classes must have corresponding types. You deal with built in types like `int`, `float`, `list` etc all the time. Consider this example:
 
@@ -134,7 +134,7 @@ Name of this class is A
 
 Despite the fact that we haven't called class `A` or created an instance of it, the `__new__` method of metaclass `PrintMeta` was executed and printed the name of the target class. In the return statement of `__new__` method, `super()` was used to call the `__new__` method of the base class (`type`) of the metaclass `PrintMeta`.
 
-## Special Methods Used by Metaclasses
+## Special methods used by metaclasses
 
 Type `type`, as the default metaclass in Python, defines a few special methods that new metaclasses can override to implement unique code generation behavior. Here is a brief overview of these "magic" methods that exist on a metaclass:
 
@@ -234,7 +234,7 @@ Calling __init__ method of <__main__.A object at 0x7febe710a130>
 
 Pay attention to the execution order of the special methods of the custom metaclass `ExampleMeta`. The `__prepare__` method is called first and is followed by `__new__`, `__init__` and `__call__` respectively. Only after that the first method `__init__` of the target class `A` is called. This is important since it'll help you to decide how you'll mutate and change the behavior of your target class.
 
-## Metaclass Conflicts
+## Metaclass conflicts
 
 Note that the metaclass argument is singular – you can’t attach more than one metaclass to a class. However, through multiple inheritance you can accidentally end up with more than one metaclass, and this produces a conflict which must be resolved.
 
@@ -280,11 +280,11 @@ TypeError: metaclass conflict: the metaclass of a derived class must be a (non-s
 
 Class `First` and `Second` are attached to different metaclasses and class `Third` inherits from both of them. Since metaclasses trickle down to subclasses, class `Third` is now effective attached to two metaclasses (`FirstMeta` and `SecondMeta`). This will raise `TypeError`. Attachment with only one metaclass is allowed here.
 
-## Examples in the Wild
+## Examples in the wild
 
 In this section, I'll go through a few real life examples where metaclasses can provide viable solutions to several tricky problems that you might encounter during software development. The solutions might appear over-engineered in some cases and almost all of them can be solved without using metaclasses. However, the purpose is to peek into the inner wirings of metaclasses and see how they can offer alternative solutions.
 
-### Simple Logging with Metaclasses
+### Simple logging with metaclasses
 
 The goal here is to log a few basic information about a class without directly adding any logging statements to it. Instead, you can whip up a custom metaclass to perform some metaprogramming and add those statements to the target class without mutating it explicitly.
 
@@ -327,7 +327,7 @@ Point(5, 10)
 
 In the above example, I've created a metaclass called `LittleMeta` and added the necessary logging statements to record the information about the target class. Since the logging statements are residing in the `__new__` method of the metaclass, these information will be logged before the creation of the target class. In the target class `Point`, `LittleMeta` replaces the default `type` metaclass and produces the desired result by mutating the class.
 
-### Returning Class Attributes in a Custom List
+### Returning class attributes in a custom list
 
 In this case, I want to dynamically attach a new attribute to the target class called `__attrs_ordered__`. Accessing this attribute from the target class (or instance) will give out an alphabetically sorted list of the attribute names. Here, the `__prepare__` method inside the metaclass `AttrsListMeta` returns an `OrderDict` instead of a simple `dict` - so all attributes gathered before the `__new__` method call will be ordered. Just like the previous example, here, the `__new__` method inside the metaclass implements the logic required to get the sorted list of the attribute names.
 
@@ -365,7 +365,7 @@ print(a.__attrs_ordered__)
 
 You can access the `__attrs_ordered__` attribute from both class `A` and an instance of class `A`. Try removing the `sorted()` function inside the `__new__` method of the metaclass and see what happens!
 
-### Creating Singleton Class
+### Creating a singleton class
 
 In OOP term, a singleton class is a class that can have only one object (an instance of the class) at a time.
 
@@ -397,7 +397,7 @@ True
 
 In the above example, at first, I've created a singleton class `A` by attaching the `Singleton` metaclass to it. Secondly, I've instantiated class `A` and assigned the instance of the class to a variable `a`. Thirdly, I've instantiated the class again and assigned variable a `b` to this seemingly new instance. Checking the identity of the two variables `a` and `b` reveals that both of them are actually the same object.
 
-### Implementing a Class that Can't be Subclassed
+### Implementing a class that can't be subclassed
 
 Suppose you want to create a base class where the users of your class won't be able to create any subclasses from the base class. In that case, you can write a metaclass and attach that your base class. The base class will raise `RuntimeError` if someone tries to create a subclass from it.
 
@@ -444,7 +444,7 @@ RuntimeError                              Traceback (most recent call last)
 RuntimeError: Subclassing a class that has TerminateMeta metaclass is prohibited
 ```
 
-### Disallowing Multiple Inheritance
+### Disallowing multiple inheritance
 
 Multiple inheritance can be fragile and error prone. So, if you don't want to allow the users to use a base class with any other base classes to form multiple inheritance, you can do so by attaching a metaclass to that target base class.
 
@@ -491,7 +491,7 @@ TypeError                                 Traceback (most recent call last)
 TypeError: Inherited multiple base classes!
 ```
 
-### Timing Classes with Metaclasses
+### Timing classes with metaclasses
 
 Suppose you want to measure the execution time of different methods of a class. One way of doing that is to define a timer decorator and decorating all the methods to measure and show the execution time. However, by using a metaclass, you can avoid decorating the methods in the class individually and the metaclass will dynamically apply the timer decorator to all of the methods of your target class. This can reduce code repetition and improve code readability.
 
@@ -544,7 +544,7 @@ I shout!
 Executing Shouter.intro took 1.0011515617370605 seconds.
 ```
 
-### Registering Plugins With Metaclasses
+### Registering plugins with metaclasses
 
 Suppose a specific single class represents a plugin in your code. You can write a metaclass to keep track of all of the plugins so than you don't have to count them manually.
 
@@ -583,7 +583,7 @@ print(registry)
 {'A': __main__.A, 'B': __main__.B, 'C': __main__.C, 'D': __main__.D}
 ```
 
-### Debugging Methods with Metaclasses
+### Debugging methods with metaclasses
 
 Debugging a class often involves inspecting the individual methods and adding extra debugging logic to those. However, this can get tedious if you've do this over an over again. Instead, you can write an inspection decorator and use a metaclass to dynamically apply the decorator to all of the methods of your target class. Later on, you can simply detach the metaclass once you're done with debugging and don't want the extra logic in your target class.
 
@@ -637,7 +637,7 @@ Full name of this method: CalcAdv.mul
 6
 ```
 
-### Exception Handling with Metaclasses
+### Exception handling with metaclasses
 
 Sometimes you need to handle exceptions in multiple methods of a class in a generic manner. That means all the methods of the class have the same exception handling, logging logic etc. Metaclasses can help you avoid adding repetitive exception handling and logging logics to your methods.
 
@@ -713,7 +713,7 @@ ZeroDivisionError                         Traceback (most recent call last)
 ZeroDivisionError: division by zero
 ```
 
-### Abstract Base Classes
+### Abstract base classes
 
 An abstract class can be regarded as a blueprint for other classes. It allows you to provide a set of methods that must be implemented within any child classes built from the abstract class. Abstract classes usually house multiple abstract methods.An abstract method is a method that has a declaration but does not have an implementation.
 
@@ -795,11 +795,11 @@ print(calc.div(4, 5))
 0.8
 ```
 
-### Metaclasses & Dataclasses
+### Metaclasses & dataclasses
 
 Data classes were introduced to python in version 3.7. Basically they can be regarded as code generators that reduce the amount of boilerplate you need to write while generating generic classes. Dataclasses automatically create `__init__`, `__repr__`, `__eq__`, `__gt__`, `__lt__` etc methods without you having to add them explicitly. This can be very handy when you need to create custom collections for your data. You can create dataclasses in the following manner:
 
-#### Creating Multiple DataClasses
+#### Creating multiple dataClasses
 
 ```python
 from dataclasses import dataclass
@@ -843,7 +843,7 @@ print(inv)
 InvoiceIssued(created_at=datetime.datetime(2020, 6, 20, 1, 3, 24, 967633), invoice_uuid=22, customer_uuid=34, total_amount=100.0, due_date=datetime.datetime(2020, 6, 19, 0, 0))
 ```
 
-#### Avoiding Dataclass Decorator with Metaclasses
+#### Avoiding dataclass decorator with metaclasses
 
 Now, one thing that I find cumbersome while creating multiple dataclasses is having to attach the `@dataclasses.dataclass` decorator to each of the dataclasses. Also, the decorator takes multiple arguments to customize the dataclass behavior and it can quickly get cumbersome when you've to create multiple dataclasses with custom behavior. Moreover, this goes against the DRY (Don't Repeat Yourself) principle in software engineering.
 
@@ -906,7 +906,7 @@ print(inv)
 InvoiceIssued(created_at=datetime.datetime(2020, 6, 24, 12, 57, 22, 543328), invoice_uuid=22, customer_uuid=34, total_amount=100.0, due_date=datetime.datetime(2020, 6, 19, 0, 0))
 ```
 
-## Should You Use It?
+## Should you use it?
 
 Almost all of the problems you've encountered above can be solved without using metaclasses. Decorators can also be exclusively used to perform metaprogramming in a more manageable and subjectively cleaner way. One case where you absolutely have to use metaclasses is to avoid applying decorators to multiple classes or methods repetitively.
 
@@ -922,10 +922,10 @@ This article assumes familiarity with decorators, dataclasses etc. If your knowl
 
 ## References
 
-* [Understanding Python's Metaclasses](https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/)
-* [What are metaclasses in Python - Stack Overflow](https://stackoverflow.com/questions/100003/what-are-metaclasses-in-python)
-* [Python Metaclasses - Real Python](https://realpython.com/python-metaclasses/)
-* [Metaprogramming with Metaclasses in Python - Geeksforgeeks](https://www.geeksforgeeks.org/abstract-classes-in-python/)
-* [Metaclasses - Python Course EU](https://www.python-course.eu/python3_metaclasses.php)
-* [When to Use Metaclasses in Python](https://breadcrumbscollector.tech/when-to-use-metaclasses-in-python-5-interesting-use-cases/)
-* [A Primer on Python Metaclasses](https://jakevdp.github.io/blog/2012/12/01/a-primer-on-python-metaclasses/)
+* [Understanding Python's metaclasses](https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/)
+* [What are metaclasses in Python - Stackoverflow](https://stackoverflow.com/questions/100003/what-are-metaclasses-in-python)
+* [Python metaclasses - Real Python](https://realpython.com/python-metaclasses/)
+* [Metaprogramming with metaclasses in Python - Geeksforgeeks](https://www.geeksforgeeks.org/abstract-classes-in-python/)
+* [Metaclasses - Python course EU](https://www.python-course.eu/python3_metaclasses.php)
+* [When to use metaclasses in Python](https://breadcrumbscollector.tech/when-to-use-metaclasses-in-python-5-interesting-use-cases/)
+* [A primer on Python metaclasses](https://jakevdp.github.io/blog/2012/12/01/a-primer-on-python-metaclasses/)

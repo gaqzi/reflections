@@ -1,5 +1,5 @@
 ---
-title: Github Action Template for Python Based Projects
+title: Github action template for Python based projects
 date: 2022-03-02
 tags: Python, General
 ---

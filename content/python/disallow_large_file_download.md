@@ -1,5 +1,5 @@
 ---
-title: Disallow Large File Download From an URL in Python
+title: Disallow large file download from URLs in Python
 date: 2022-03-23
 tags: Python
 ---

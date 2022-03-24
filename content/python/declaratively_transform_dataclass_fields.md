@@ -1,5 +1,5 @@
 ---
-title: Declaratively Transform Dataclass Fields in Python
+title: Declaratively transform dataclass fields in Python
 date: 2022-03-20
 tags: Python
 ---

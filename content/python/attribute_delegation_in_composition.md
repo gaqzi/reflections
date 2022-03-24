@@ -1,5 +1,5 @@
 ---
-title: Automatic Attribute Delegation in Python Composition
+title: Automatic attribute delegation in Python composition
 date: 2021-11-28
 tags: Python
 ---
@@ -108,7 +108,7 @@ Engine w16 goes vroom!
 !!! Warning
     While this was all fun and dandy, I don't recommend putting it in any serious code as it can obfuscate the program's intent and can make obvious things not-so-obvious. Also, in case of attributes and methods with the same names in different classes, this can get hairy. I just found this gymnastics intellectually stimulating.
 
-## Complete Example With Tests
+## Complete example with tests
 
 ```python
 # src.py

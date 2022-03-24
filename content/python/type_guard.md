@@ -1,5 +1,5 @@
 ---
-title: Narrowing Types with TypeGuard in Python
+title: Narrowing types with TypeGuard in Python
 date: 2022-02-23
 tags: Python, Typing
 ---
@@ -102,7 +102,7 @@ def check_sequence_str(
 
 Notice that the return type now has the expected type defined inside the `TypeGuard` generic. Now, Mypy will be satisfied if you run it against the modified snippet.
 
-## Properties of Type Guard Functions
+## Properties of type guard functions
 
 You've already seen how `check_sequence_str` narrows down the type of an object in runtime. Functions like this can be loosely called user-defined type guard functions. However, to be considered a proper type guard function by the type checker, the callable needs to pass through a few more checks.
 
@@ -116,7 +116,7 @@ You've already seen how `check_sequence_str` narrows down the type of an object 
 > The return type of a user-defined type guard function will normally refer to a type that is strictly "narrower" than the type of the first argument (that is, it's a more specific type that can be assigned to the more general type). However, it is not required that the return type be strictly narrower.
 > — PEP-647
 
-## Generic Type Guard Functions
+## Generic type guard functions
 
 User-defined type guards can be generic functions, as shown in this example:
 
@@ -158,5 +158,5 @@ Here, type guard function `list_of_t` is a generic function since it accepts a g
 
 ## References
 
-* [PEP 647 -- User-Defined Type Guards](https://www.python.org/dev/peps/pep-0647/)
-* [Python Type Hints - How to Narrow Types with TypeGuard — Adam Johnson](https://adamj.eu/tech/2021/06/09/python-type-hints-how-to-narrow-types-with-typeguard/)
+* [PEP 647 -- User-defined type guards](https://www.python.org/dev/peps/pep-0647/)
+* [Python type hints - how to narrow types with TypeGuard — Adam Johnson](https://adamj.eu/tech/2021/06/09/python-type-hints-how-to-narrow-types-with-typeguard/)
