@@ -62,7 +62,7 @@ def save_to_s3(
                 downloaded_content_length += len(chunk)
                 if downloaded_content_length > max_size:
                     raise ValueError(
-                        f"File size too large. Make sure your linked"
+                        f"File size too large. Make sure your linked "
                         "file is not larger than 10 MB."
                     )
                 file.write(chunk)
