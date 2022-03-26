@@ -98,7 +98,7 @@ Above, I've used `ParamSpec` to annotate the type of the wrapped function's inpu
 Notice the annotations of the `inner` function inside `register`. Here, `P.args` and `P.kwargs` are transferring the type information from the wrapped `func` to the `inner` function. This makes sure that static type checkers like Mypy can now precisely scream at you whenever you call the decorated functions with the wrong type of parameters.
 
 
-## Use `Concatenate` to type decorators that changes wrapped functions' signatures
+## Use `Concatenate` to type decorators that change the wrapped functions' signatures
 
 There's another type of decorator that changes the signature of the wrapped function by adding or removing parameters during runtime. Annotating these can be tricky; as the magic happens mostly during runtime. The `Concatenate` type allows us to communicate this behavior with the type checker.
 
