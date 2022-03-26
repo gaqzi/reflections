@@ -24,11 +24,11 @@ This allows me not to waste those few precious seconds thinking about the rules 
 
 *Sentence case everywhere* is the general trend I'm seeing on the technical blogs of some of the big players on the internet:
 
-* https://docs.djangoproject.com/en/4.0/
-* https://dropbox.tech
-* https://github.blog
-* https://blog.twitter.com
-* https://about.gitlab.com/blog/
+* [https://docs.djangoproject.com/en/4.0/](https://docs.djangoproject.com/en/4.0/)
+* [https://dropbox.tech](https://dropbox.tech)
+* [https://github.blog](https://github.blog)
+* [https://blog.twitter.com](https://blog.twitter.com)
+* [https://about.gitlab.com/blog/](https://about.gitlab.com/blog/)
 
 One thing that I'll admit is, at first it just doesn't look right to me for a title to have sentence casing. Also, I'm not to conviced to adopt sentence case in technical papers. However, [Robert Smallshire](https://twitter.com/robsmallshire) [argues](https://twitter.com/robsmallshire/status/1506980088532905998) that if it works for the [Economist](https://www.economist.com/), it should work for most of us.
 
