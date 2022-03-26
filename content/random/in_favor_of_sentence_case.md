@@ -1,7 +1,7 @@
 ---
 title: In favor of sentence case
 date: 2022-03-26
-tags: meta
+tags: Meta
 ---
 
 Up until now, I've always preferred **Title Case** to demarcate titles and section headers in my writings. However, lately I've realized that each time I start writing a sentence, I waste a few seconds deciding on the appropriate case of the special words like—technical terms, trademark names, proper nouns, etc—and how they'll blend in with the multiple [flavors](https://capitalizemytitle.com/) of rules around title casing. Moreover, often time, special casing of selected words makes title-cased sentences look strange.
