@@ -1,7 +1,7 @@
 <h1>Reflections<img src='https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png' align='right' width='128' height='128'></h1>
 
 
-<strong>>> <i>Musings & Snippet Style Notes</i> <<</strong>
+<strong>>> <i>Musings & snippet style notes</i> <<</strong>
 
 </div>
 
