@@ -30,6 +30,6 @@ This allows me not to waste those few precious seconds thinking about the rules 
 * [https://blog.twitter.com](https://blog.twitter.com)
 * [https://about.gitlab.com/blog/](https://about.gitlab.com/blog/)
 
-One thing that I'll admit is, at first it just doesn't look right to me for a title to have sentence casing. Also, I'm not to conviced to adopt sentence case in technical papers. However, [Robert Smallshire](https://twitter.com/robsmallshire) [argues](https://twitter.com/robsmallshire/status/1506980088532905998) that if it works for the [Economist](https://www.economist.com/), it should work for most of us.
+One thing that I'll admit is, at first it just doesn't look right to me for a title to have sentence casing. Also, I'm not too conviced to adopt sentence case in technical papers. However, [Robert Smallshire](https://twitter.com/robsmallshire) [argues](https://twitter.com/robsmallshire/status/1506980088532905998) that if it works for the [Economist](https://www.economist.com/), it should work for most of us.
 
 So, I'm kind of leaning towards sentence casing and have slowly started adopting it in my writings everywhere. This blog used to conform to a mangled version of title casing to delineate the titles and sub headers but I've converted all the posts to adopt sentence case in this [PR](https://github.com/rednafi/reflections/pull/106). I'm quite happy with the results so far and it's definitely one less thing to worry about.
