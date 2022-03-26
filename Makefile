@@ -65,11 +65,26 @@ github: publish ## Upload the web site via gh-pages.
 
 
 #################################
-### Lint
+### Local Dev
 #################################
 path := .
 
-lint: black isort flake mypy	## Apply all the linters.
+## Init
+init:
+	@echo
+	@echo "Initializing..."
+	@echo "==============="
+	@python3.10 -m venv .venv
+	@.venv/bin/python -m pip install -r requirements.txt
+	@.venv/bin/python -m pip install -r requirements-dev.txt
+	@.venv/bin/pelican-themes --install theme/elegant || exit 0
+	@.venv/bin/pre-commit install
+	@.venv/bin/pre-commit run --all || exit 0
+
+
+## Lint
+lint: black blacken-docs isort flake mypy	## Apply all the linters.
+
 lint-check:  ## Check whether the codebase satisfies the linter rules.
 	@echo
 	@echo "Checking linter rules..."
@@ -89,12 +104,12 @@ black: ## Apply black.
 	@echo
 
 
-black: ## Apply black.
+blacken-docs: ## Apply black.
 	@echo
 	@echo "Applying blacken docs..."
 	@echo "========================"
 	@echo
-	@blacken-docs -E content/python/*.md
+	@blacken-docs -E content/python/*.md -l 79
 	@echo
 
 
@@ -131,5 +146,5 @@ dep-lock: ## Freeze deps in 'requirements.txt' file.
 
 
 .PHONY: html help clean regenerate serve serve-global devserver \
-        publish github lint lint-check black isort flake mypy \
+        publish github lint lint-check black blacken-docs isort flake mypy \
         dep-lock

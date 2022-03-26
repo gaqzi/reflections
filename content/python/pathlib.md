@@ -1,5 +1,5 @@
 ---
-title: No Really, Python's Pathlib is Great
+title: No really, Python's pathlib is great
 date: 2020-04-13
 tags: Python
 ---
@@ -8,7 +8,7 @@ When I first encountered Python's `pathlib` module for path manipulation, I brus
 
 The `os.path` module has always been the de facto standard for working with paths in Python. But the API can feel massive as it performs a plethora of other loosely coupled system related jobs. I've to look things up constantly even to perform some of the most basic tasks like joining multiple paths, listing all the files in a folder having a particular extension, opening multiple files in a directory etc. The `pathlib` module can do nearly everything that `os.path` offers and comes with some additional cherries on top.
 
-## Problem with Python's Path Handling
+## Problem with Python's path handling
 
 Traditionally, Python has represented file paths as regular text strings. So far, using paths as strings with `os.path` module has been adequate although a bit cumbersome . However, paths are not actually strings and this has necessitated the usage of multiple modules to provide disparate functionalities that are scattered all around the standard library, including libraries like `os`, `glob`, and `shutil`. The following code uses three modules just to copy multiple python files from current directory to another directory called `src`.
 
@@ -24,7 +24,7 @@ for fname in glob("*.py"):
 
 The above pattern can get complicated fairly quickly and you have to know or look for specific modules and methods in a large search space to perform your path manipulations. Let's have a look at a few more examples of performing the same tasks using `os.path` and `pathlib` modules.
 
-## Joining & Creating New Paths
+## Joining & creating new paths
 
 Say you want to achieve the following goals:
 
@@ -82,7 +82,7 @@ print("file_another_path:", file_another_path)
 
 The `resolve` method finds out the absolute path of the file. From there you can use the `parent` method to find out the base directory and add the `another_file.txt` accordingly.
 
-## Making Directories & Renaming Files
+## Making directories & renaming files
 
 Here’s a piece of code that:
 
@@ -116,7 +116,7 @@ Path("src/.config").rename("src/.stuffconfig")
 Notice the output where the renamed file path is printed. It's not a simple string, rather a `PosixPath` object that indicates the type of host system (Linux in this case). You can almost always use stringified path values and the Path objects interchangeably.
 
 
-## Listing Specific Types of Files in a Directory
+## Listing specific types of files in a directory
 
 Let's say you want to recursively visit nested directories and list `.py` files in a directroy called source. The directory looks like this:
 
@@ -171,7 +171,7 @@ This will also print the same as before:
 
 By default, both `Path.glob` and `Path.rglob` returns a generator object. Calling `list` on them gives you the desired result. Notice how `rglob` method can discover the desired files without you having to mention the directory structure with wildcards explicitly. Pretty neat, huh?
 
-## Opening Multiple Files & Reading their Contents
+## Opening multiple files & reading their contents
 
 Now let's open the `.py` files and read their contents that you recursively discovered in the previous example.
 
@@ -217,7 +217,8 @@ from pathlib import Path
 # ExitStack ensures all files are properly closed after o/p
 with ExitStack() as stack:
     streams = (
-        stack.enter_context(open(fname, "r")) for fname in Path("src").rglob("*.py")
+        stack.enter_context(open(fname, "r"))
+        for fname in Path("src").rglob("*.py")
     )
     contents = [f.read() for f in streams]
 
@@ -228,7 +229,7 @@ print(contents)
 >>> ['from contextlib import ...']
 ```
 
-## Anatomy of the Pathlib Module
+## Anatomy of the pathlib module
 
 Primarily, `pathlib` has two high-level components, `pure path` and `concrete path`. Pure paths are absolute `Path` objects that can be instantiated regardless of the host operating system. On the other hand, to instantiate a concrete path, you need to be on the specific type of host expected by the class. These two high level components are made out of six individual classes internally coupled by inheritance. They are:
 
@@ -266,7 +267,7 @@ print(file_path)
 >>> PosixPath('src/stuff/__init__.py')
 ```
 
-### Attributes & Methods
+### Attributes & methods
 
 The following tree shows an inexhaustive list of attributes and methods that are associated with `Path` object. I have cherry picked some of the attributes and methods that I use most of the time while doing path manipulation. Head over to the official docs for a more detailed list. We'll linearly traverse through the tree and provide necessary examples to grasp their usage.
 
@@ -280,7 +281,7 @@ Path
 │       ├── suffix & suffixes
 │       └── stem
 │
-│  
+│
 └── Methods
         ├── joinpath(*other)
         ├── cwd()
@@ -691,7 +692,7 @@ file_path = Path("src/stuff")
 file_path.rmdir()
 ```
 
-## So, Should You Use It?
+## So, should you use it?
 
 Pathlib was introduced in python 3.4. However, if you are working with python 3.5 or earlier, in some special cases, you might have to convert `pathlib.Path` objects to regular strings. But since python 3.6, `Path` objects work almost everywhere you are using stringified paths. Also, the `Path` object nicely abstracts away the complexity that arises while working with paths in different operating systems.
 
@@ -700,6 +701,6 @@ The ability to manipulate paths in an OO way and not having to rummage through t
 
 ## References
 
-1. [pathlib — Object-oriented filesystem paths](https://docs.python.org/3/library/pathlib.html)
-2. [Python 3's pathlib Module: Taming the File System](https://realpython.com/python-pathlib/)
-3. [Why you should be using pathlib](https://treyhunner.com/2018/12/why-you-should-be-using-pathlib/#The_os_module_is_crowded)
+* [pathlib — Object-oriented filesystem paths](https://docs.python.org/3/library/pathlib.html)
+* [Python 3's pathlib Module: Taming the File System](https://realpython.com/python-pathlib/)
+* [Why you should be using pathlib](https://treyhunner.com/2018/12/why-you-should-be-using-pathlib/#The_os_module_is_crowded)

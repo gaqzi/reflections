@@ -1,5 +1,5 @@
 ---
-title: Uniform Error Response in Django Rest Framework
+title: Uniform error response in Django Rest Framework
 date: 2022-01-20
 tags: Python, Django
 ---
@@ -54,7 +54,9 @@ router.register(r"users", UserViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path("", include(router.urls)),
-    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    path(
+        "api-auth/", include("rest_framework.urls", namespace="rest_framework")
+    ),
 ]
 ```
 

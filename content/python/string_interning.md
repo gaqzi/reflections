@@ -1,12 +1,12 @@
 ---
-title: String Interning in Python
+title: String interning in Python
 date: 2022-01-05
 tags: Python
 ---
 
 I was reading the source [code](https://github.com/taleinat/python-stdlib-sentinels/blob/main/sentinels/sentinels.py) of the reference implementation of [PEP-661: Sentinel Values](https://www.python.org/dev/peps/pep-0661/) and discovered an optimization technique known as **String interning**. Modern programming languages like Java, Python, PHP, Ruby, Julia, etc, performs *string interning* to make their string operations more performant.
 
-## String Interning
+## String interning
 
 > **String interning** makes common string processing operations time and space-efficient by caching them. Instead of creating a new copy of string every time, this optimization method dictates to keep just one copy of string for every appropriate immutable distinct value and use the pointer reference wherever referred.
 
@@ -36,7 +36,7 @@ print(x is y)  # prints False
 
 This will print `False` on the console and the strings are not interned.
 
-## Explicit String Interning
+## Explicit string interning
 
 Python's `sys` module in the standard library has a routine called `intern` that you can use to intern even large strings. For example:
 
@@ -53,7 +53,7 @@ print(x is y)  # prints True
 
 Here, the strings are interned and running the snippet will print `True` on the console.
 
-## What Strings are Interned?
+## What strings are interned?
 
 CPython performs string interning on constants such as Function Names, Variable Names, String Literals, etc. This [snippet](https://github.com/python/cpython/blob/7d7817cf0f826e566d8370a0e974bbfed6611d91/Objects/codeobject.c#L537) from the CPython codebase suggests that when a new Python object is created, the interpreter is interning all the compile-time constants, names, and literals. Also, Dictionary Keys and Object Attributes are interned.
 Notice this:
@@ -79,7 +79,7 @@ print(foo.bar is foo.baz)  # prints True
 
 In both of these above cases, the print statement will print `True` on the console—confirming the fact that dictionary keys and object attributes are interned. Having interned attributes and keys means that the access operation is faster since the string comparison operation is now just doing a pointer comparison.
 
-## When Explicit String Interning Might Come in Handy?
+## When explicit string interning might come in handy?
 
 One use case that I've found is—interning large dictionary keys. Dictionary keys are in general, interned automatically. However, if the key is large—something like a 4097 bytes hash value—Python can choose not to perform interning. Here's an example:
 
@@ -169,7 +169,9 @@ print(t1 - t0)
 print((t3 - t2) / (t1 - t0))
 print(f"Implicitly interned dict creation & access: {t1-t0} seconds")
 print(f"Explicitly interned dict creation & access: {t3-t2} seconds")
-print(f"Explicitly interned creation & access is {(t3-t2)/(t1-t0)} times slower")
+print(
+    f"Explicitly interned creation & access is {(t3-t2)/(t1-t0)} times slower"
+)
 ```
 
 This prints:

@@ -1,5 +1,5 @@
 ---
-title: Use Daemon Threads to Test Infinite While Loops in Python
+title: Use daemon threads to test infinite while loops in Python
 date: 2021-11-18
 tags: Python
 ---
@@ -9,13 +9,12 @@ Python's daemon threads are cool. A Python script will stop when the main thread
 
 ```python
 # test_hello.py
+from __future__ import annotations
 
 import asyncio
 import threading
 from functools import partial
 from unittest.mock import patch
-
-import pytest
 
 
 async def hello() -> None:
@@ -24,7 +23,6 @@ async def hello() -> None:
         print("hello")
 
 
-@pytest.mark.asyncio
 @patch("asyncio.sleep", autospec=True)
 async def test_hello(mock_asyncio_sleep, capsys):
 
@@ -42,7 +40,7 @@ async def test_hello(mock_asyncio_sleep, capsys):
 To execute the script, make sure you've your virtual env actiavated. Also you'll need to install `pytest` and `pytest-asyncio`. Then run:
 
 ```
-pytest test_hello -v -s
+pytest -v -s --asyncio-mode=auto
 ```
 
 ## References

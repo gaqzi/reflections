@@ -1,5 +1,5 @@
 ---
-title: Inspect Docstrings with Pydoc
+title: Inspect docstrings with Pydoc
 date: 2022-01-22
 tags: Python
 ---

@@ -1,5 +1,5 @@
 ---
-title: Running Python Linters with Pre-commit Hooks
+title: Running Python linters with pre-commit hooks
 date: 2020-04-06
 tags: Python
 ---
@@ -27,7 +27,7 @@ To keep my sanity, I only use three linters in all of my python projects:
 
 * **[Flake8](https://github.com/PyCQA/flake8)**: *Flake8* is a wrapper around *PyFlakes*, *pycodestyle*, Ned Batchelder's [McCabe script](https://github.com/PyCQA/mccabe). The combination of these three linters makes sure that your code is compliant with [PEP 8](https://www.python.org/dev/peps/pep-0008/) and free of some obvious code smells.
 
-## Installing Pre-commit
+## Installing pre-commit
 
 * Install using `pip`:
 
@@ -41,7 +41,7 @@ To keep my sanity, I only use three linters in all of my python projects:
     curl https://pre-commit.com/install-local.py | python -
     ```
 
-## Defining the Pre-commit Config File
+## Defining the pre-commit config file
 
 Pre-commit configuration is a `.pre-commit-config.yaml` file where you define your hooks (tasks) that you want to run before every commit. Once you have defined your hooks in the config file, they will run automatically every time you say `git commit -m "Commit message"`. The following example shows how *black* and a few other linters can be added as hooks to the config:
 
@@ -61,7 +61,7 @@ repos:
     -   id: black
 ```
 
-## Installing the Git Hook scripts
+## Installing the git hook scripts
 
 Run
 
@@ -77,7 +77,7 @@ pre-commit installed at .git/hooks/pre-commit
 
 Now you'll be able to implicitly or explicitly run the hooks before each commit.
 
-## Running the Hooks Against All the Files
+## Running the hooks against all the files
 
 By default, the hooks will run every time you say:
 
@@ -91,7 +91,7 @@ However, if you wish to run the hooks manually on every file, you can do so via:
 pre-commit run --all-files
 ```
 
-## Running the Linters as Pre-commit Hooks
+## Running the linters as pre-commit hooks
 
 To run the above mentioned linters as pre-commit hooks, you need to add their respective settings to the `.pre-commit-config.yaml` file. However, there're a few minor issues that need to be taken care of.
 

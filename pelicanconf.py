@@ -67,3 +67,5 @@ SITE_LICENSE = """© 2020-2022 • Redowan Delowar • All Rights Reserved"""
 
 # SEO
 CLAIM_GOOGLE = "<meta name='google-site-verification' content='N5QEPRj-LpgoEY0Hf3uVMmZq8kjDwTFjd54IgvLmRBc' />"
+
+FEATURED_IMAGE = "https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png"

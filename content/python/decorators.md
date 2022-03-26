@@ -1,14 +1,14 @@
 ---
-title: Untangling Python Decorators
+title: Untangling Python decorators
 date: 2020-05-13
 tags: Python
 ---
 
-***Updated on 2020-06-25***: *Replaced time.time() with time.perf_counter()*
+***Updated on 2022-02-13***: *Change functools import style.*
 
 When I first learned about Python decorators, using them felt like doing voodoo magic. Decorators can give you the ability to add new functionalities to any callable without actually touching or changing the code inside it. This can typically yield better encapsulation and help you write cleaner and more understandable code. However, *decorator* is considered as a fairly advanced topic in Python since understanding and writing it requires you to have command over multiple additional concepts like first class objects, higher order functions, closures etc. First, I'll try to introduce these concepts as necessary and then unravel the core concept of decorator layer by layer. So let's dive in.
 
-## First Class Objects
+## First class objects
 
 In Python, basically everything is an object and functions are regarded as first-class objects. It means that functions can be passed around and used as arguments, just like any other object (string, int, float, list, and so on). You can assign functions to variables and treat them like any other objects. Consider this example:
 
@@ -37,7 +37,7 @@ main_func(func_a, func_b)
 
 The above example demonstrates how Python treats functions as first class citizens. First, I defined two functions, `func_a` and `func_b` and then `func_c` takes them as parameters. `func_c` runs the functions taken as parameters and prints the results. Then we assign `func_c` to variable `main_func`. Finally, we run `main_func` and it behaves just like `func_c`.
 
-## Higher Order Functions
+## Higher order functions
 
 Python also allows you to use functions as return values. You can take in another function and return that function or you can define a function within another function and return the inner function.
 
@@ -131,7 +131,7 @@ The `burger` function was called with the string `deli` and the returned functio
 
 This technique by which some data ("deli") gets attached to the code is called closure in Python. The value in the enclosing scope is remembered even when the variable goes out of scope or the function itself is removed from the current namespace. Decorators uses the idea of non-local variables multiple times and soon you'll see how.
 
-## Writing a Basic Decorator
+## Writing a basic decorator
 
 With these prerequisites out of the way, let's go ahead and create your first simple decorator.
 
@@ -205,7 +205,7 @@ print(ans())
 
 Can you guess why the return value of the decorated function appeared in the last line instead of in the middle like before?
 
-## The @ Syntactic Sugar
+## The @ syntactic sugar
 
 The way you've used decorator in the last section might feel a little clunky. First, you have to type the name `ans` three times to call and use the decorator. Also, it becomes harder to tell apart where the decorator is actually working. So Python allows you to use decorator with the special syntax `@`. You can apply your decorators while defining your functions, like this:
 
@@ -223,7 +223,7 @@ func()
 
 Sometimes the above syntax is called the **pie syntax** and it's just a syntactic sugar for `func = deco(func)`.
 
-## Decorating Functions with Arguments
+## Decorating functions with arguments
 
 The naive decorator that we've implemented above will only work for functions that take no arguments. It'll fail and raise `TypeError` if your try to decorate a function having arguments with `deco`. Now let's create another decorator called `yell` which will take in a function that returns a string value and transform that string value to uppercase.
 
@@ -255,7 +255,7 @@ hello("redowan")
 
 Function `hello` takes a `name:string` as parameter and returns a message as string. Look how the `yell` decorator is modifying the original return string, transforming that to uppercase and adding an extra `!` sign without directly changing any code in the `hello` function.
 
-## Solving Identity Crisis
+## Solving identity crisis
 
 In Python, you can introspect any object and its properties via the interactive shell. A function knows its identity, docstring etc. For instance, you can inspect the built in `print` function in the following ways:
 
@@ -325,7 +325,7 @@ help(hello)
 Now what's going on there. The decorator `yell` has made the function `hello` confused about its own identity. Instead of reporting its own name, it takes the identity of the inner function `wrapper`. This can be confusing while doing debugging. You can fix this by using builtin `wraps` decorator from the `functools` module. This will make sure that the original identity of the decorated function stays preserved.
 
 ```python
-from functools import wraps
+import functools
 
 
 def yell(func):
@@ -374,7 +374,7 @@ help(hello)
         Hello from the other side.
 ```
 
-## Decorators in the Wild
+## Decorators in the wild
 
 Before moving on to the next section let's see a few real world examples of decorators. To define all the decorators, we'll be using the following template that we've perfected so far.
 
@@ -400,8 +400,8 @@ Timer decorator will help you time your callables in a non-intrusive way. It can
 
 
 ```python
-from time import perf_counter
 from functools import wraps
+from time import perf_counter
 
 
 def timer(func):
@@ -437,7 +437,7 @@ dothings(100_000)
 ```
 
 
-### Exception Logger
+### Exception logger
 
 Just like the `timer` decorator, we can define a logger decorator that will log the state of a callable. For this demonstration, I'll be defining a exception logger that will show additional information like timestamp, argument names when an exception occurs inside of the decorated callable.
 
@@ -493,7 +493,7 @@ divint(1, 0)
 
 The decorator first prints a few info regarding the function and then raises the original error.
 
-### Validation & Runtime Checks
+### Validation & runtime checks
 
 Python’s type system is strongly typed, but very dynamic. For all its benefits, this means some bugs can try to creep in, which more statically typed languages (like Java) would catch at compile time. Looking beyond even that, you may want to enforce more sophisticated, custom checks on data going in or out. Decorators can let you easily handle all of this, and apply it to many functions at once.
 
@@ -548,8 +548,8 @@ print(long_summary())
 Imagine a situation where your defined callable fails due to some I/O related issues and you'd like to retry that again. Decorator can help you to achieve that in a reusable manner. Let's define a `retry` decorator that will rerun the decorated function multiple times if an http error occurs.
 
 ```python
-from functools import wraps
 import requests
+from functools import wraps
 
 
 def retry(func):
@@ -562,7 +562,11 @@ def retry(func):
         tries = 0
         while True:
             resp = func(*args, **kwargs)
-            if resp.status_code == 500 or resp.status_code == 404 and tries < n_tries:
+            if (
+                resp.status_code == 500
+                or resp.status_code == 404
+                and tries < n_tries
+            ):
                 print(f"retrying... ({tries})")
                 tries += 1
                 continue
@@ -591,7 +595,7 @@ resp.text
 ```
 
 
-## Applying Multiple Decorators
+## Applying multiple decorators
 
 You can apply multiple decorators to a function by stacking them on top of each other. Let's define two simple decorators and use them both on a function.
 
@@ -637,7 +641,7 @@ getname("Nafi")
 
 The decorators are called in a bottom up order. First, the decorator `greet` gets applied on the result of `getname` function and then the result of `greet` gets passed to the `flare` decorator. The decorator stack above can be written as `flare(greet(getname(name)))`. Change the order of the decorators and see what happens!
 
-## Decorators with Arguments
+## Decorators with arguments
 
 While defining the `retry` decorator in the previous section, you may have noticed that I've hard coded the number of times I'd like the function to retry if an error occurs. It'd be handy if you could inject the number of tries as a parameter into the decorator and make it work accordingly. This is not a trivial task and you'll need three levels of nested functions to achieve that.
 
@@ -703,7 +707,7 @@ There are a few subtle things happening in the `joinby()` function:
 * The `delimiter` argument is seemingly not used in `joinby()` itself. But by passing `delimiter` a closure is created where the value of `delimiter` is stored until it will be used later by `inner_wrapper()`
 
 
-## Decorators with & without Arguments
+## Decorators with & without arguments
 
 You saw earlier that a decorator specifically designed to take parameters can't be used without parameters; you need to at least apply parenthesis after the decorator `deco()` to use it without explicitly providing the arguments. But what if you want to design one that can used both with and without arguments. Let's redefine the `joinby` decorator so that you can use it with parameters or just like an ordinary parameter-less decorator that we've seen before.
 
@@ -757,17 +761,17 @@ Here, the `_func` argument acts as a marker, noting whether the decorator has be
 
 If `joinby` has been called without arguments, the decorated function will be passed in as `_func`. If it has been called with arguments, then `_func` will be None. The * in the argument list means that the remaining arguments can’t be called as positional arguments. This time you can use `joinby` with or without arguments and function `hello` and `greet` above demonstrate that.
 
-## A Generic Pattern
+## A generic pattern
 
 Personally, I find it cumbersome how you need three layers of nested functions to define a generalized decorator that can be used with or without arguments. [David Beazly](https://www.dabeaz.com/) in his book [Python Cookbook](https://realpython.com/asins/1449340377/) shows an excellent way to define generalized decorators without writing three levels of nested functions. It uses the built in `functools.partial` function to achieve that. The following is a pattern you can use to define generalized decorators in a more elegant way:
 
 ```python
-from functools import wraps
+from functools import partial, wraps
 
 
 def decorator(func=None, foo="spam"):
     if func is None:
-        return functools.partial(decorator, foo=foo)
+        return partial(decorator, foo=foo)
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -792,19 +796,23 @@ def f(*args, **kwargs):
 Let's redefine our `retry` decorator using this pattern.
 
 ```python
-from functools import wraps
+from functools import partial, wraps
 
 
 def retry(func=None, n_tries=4):
     if func is None:
-        return functools.partial(retry, n_tries=n_tries)
+        return partial(retry, n_tries=n_tries)
 
     @wraps(func)
     def wrapper(*args, **kwargs):
         tries = 0
         while True:
             ret = func(*args, **kwargs)
-            if ret.status_code == 500 or ret.status_code == 404 and tries < n_tries:
+            if (
+                ret.status_code == 500
+                or ret.status_code == 404
+                and tries < n_tries
+            ):
                 print(f"retrying... ({tries})")
                 tries += 1
                 continue
@@ -855,17 +863,18 @@ def partial(func, *part_args):
 
 This eliminates the need to write multiple layers of nested factory function get a generalized decorator.
 
-## Defining Decorators with Classes
+## Defining decorators with classes
 
 This time, I'll be using a class to compose a decorator. Classes can be handy to avoid nested architecture while writing decorators. Also, it can be helpful to use a class while writing stateful decorators. You can follow the pattern below to compose decorators with classes.
 
 ```python
-from functools import update_wrapper
+import functools
 
 
 class ClassDeco:
     def __init__(self, func):
-        update_wrapper(self, func)
+        # Does the work of the 'functools.wraps' in methods.
+        functools.update_wrapper(self, func)
         self.func = func
 
     def __call__(self, *args, **kwargs):
@@ -881,12 +890,12 @@ class ClassDeco:
 Let's use the above template to write a decorator named `Emphasis` that will add bold tags `<b></b>`to the string output of a function.
 
 ```python
-from functools import update_wrapper
+import functools
 
 
 class Emphasis:
     def __init__(self, func):
-        update_wrapper(self, func)
+        functools.update_wrapper(self, func)
         self.func = func
 
     def __call__(self, *args, **kwargs):
@@ -913,12 +922,12 @@ The __init__() method stores a reference to the function num_calls and can do ot
 Before moving on, let's write a stateful decorator using classes. Stateful decorators can remember the state of their previous run. Here's a stateful decorator called `Tally` that will keep track of the number of times decorated functions are called in a dictionary. The keys of the dictionary will hold the names of the functions and the corresponding values will hold the call count.
 
 ```python
-from functools import update_wrapper
+import functools
 
 
 class Tally:
     def __init__(self, func):
-        update_wrapper(self, func)
+        functools.update_wrapper(self, func)
         self.func = func
         self.tally = {}
         self.n_calls = 0
@@ -949,9 +958,9 @@ print(hello("Nafi"))
 
 
 
-## A Few More Examples
+## A few more examples
 
-### Caching Return Values
+### Caching return values
 
 Decorators can provide an elegant way of memoizing function return values. Imagine you have an expensive API and you'd like call that as few times as possible. The idea is to save and cache values returned by the API for particular arguments, so that if those arguments appear again, you can serve the results from the cache instead of calling the API again. This can dramatically improve your applications' performance. Here I've simulated an expensive API call and provided caching with a decorator.
 
@@ -982,10 +991,10 @@ api(3)
 You'll see that running this function takes roughly 3 seconds. To cache the result , we can use Python's built in functools.lru_cache to save the result against an argument in a dictionary and serve that when it encounters the same argument again. The only drawback here is, all the arguments need to be hashable.
 
 ```python
-from functools import lru_cache
+import functools
 
 
-@lru_cache(maxsize=32)
+@functools.lru_cache(maxsize=32)
 def api(a):
     """API takes an integer and returns the square value of it.
     To simulate a time consuming process, I've added some time delay to it."""
@@ -1012,7 +1021,7 @@ Least Recently Used (LRU) Cache organizes items in order of use, allowing you to
 The following decorator converts length from SI units to multiple other units without polluting your target function with conversion logics.
 
 ```python
-from functools import wraps, partial
+from functools import wraps
 
 
 def convert(func=None, convert_to=None):
@@ -1067,7 +1076,7 @@ area(1, 2)
 
 Using the convert decorator on the area function shows how it prints out the transformation unit before returning the desired result. Experiment with other conversion units and see what happens.
 
-### Function Registration
+### Function registration
 
 The following is an example of registering logger function in Flask framework. The decorator `register_logger` doesn't make any change to the decorated `logger` function. Rather it takes the function and registers it in a list called `logger_list` every time it's invoked.
 
@@ -1107,10 +1116,10 @@ If you run the server and hit the `http://localhost:5000/` url, it'll greet you 
 
 ## Remarks
 
-All the pieces of codes in the blog were written and tested with python 3.8 on a machine running Ubuntu 20.04.
+All the snippets of codes in this blog were tested across Python 3.6-3.10 on a UNIX based system.
 
 ## References
 
-* [Primer on Python Decorator - Real Python](https://realpython.com/primer-on-python-decorators/)
+* [Primer on Python decorator - Real Python](https://realpython.com/primer-on-python-decorators/)
 * [Decorators in Python - DataCamp](https://www.datacamp.com/community/tutorials/decorators-python)
-* [5 Reasons You Need to Write Python Decorators](https://www.oreilly.com/content/5-reasons-you-need-to-learn-to-write-python-decorators/)
+* [5 reasons you need to write Python decorators](https://www.oreilly.com/content/5-reasons-you-need-to-learn-to-write-python-decorators/)

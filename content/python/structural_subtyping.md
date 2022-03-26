@@ -1,7 +1,7 @@
 ---
-title: Structural Subtyping in Python
+title: Structural subtyping in Python
 date: 2021-12-04
-tags: Python, Type Hint
+tags: Python, Typing
 ---
 
 I love using Go's interface feature to declaratively define my public API structure. Consider this example:
@@ -83,7 +83,7 @@ from typing import TypeVar
 T = TypeVar("T")
 
 
-def find(haystack: dict, needle: T):
+def find(haystack: dict, needle: T) -> bool:
     return needle in haystack
 
 
@@ -113,7 +113,7 @@ That's because mypy expects the type to be a dict but we're passing a `set` whic
 ...
 
 
-def contains(haystack: dict | set, needle: T):
+def contains(haystack: dict | set, needle: T) -> bool:
     return needle in haystack
 
 
@@ -140,7 +140,7 @@ class ProtoHaystack(Protocol):
         ...
 
 
-def find(haystack: ProtoHaystack, needle: T):
+def find(haystack: ProtoHaystack, needle: T) -> bool:
     return needle in haystack
 
 
@@ -164,14 +164,14 @@ This pattern of strurctural duck typing is so common, that the mixins in the `co
 from collections.abc import Container
 
 
-def find(haystack: Container, needle: T):
+def find(haystack: Container, needle: T) -> bool:
     return needle in haystack
 
 
 ...
 ```
 
-## Avoid `abc` Inheritance
+## Avoid `abc` inheritance
 
 Abstract base classes in Python let you validate the structure of subclasses in runtime. Python's standard library APIs uses `abc.ABC` in many places. See this example:
 
@@ -268,7 +268,7 @@ if __name__ == "__main__":
 Notice that `Foo` is not inheriting from `ProtoFoo` and when you run mypy against the snippet, it'll statically check whether `Foo` conforms to the `ProtoFoo` interface or not. Voila, we avoided inheritance. The `isinstance` in the `run` function later checks whether `foo` is an instance of `ProtoFoo` or not.
 
 
-## Complete Example With Tests
+## Complete example with tests
 
 This example employs static duck-typing to check the type of `WebhookPayload` where the class represents the structure of the payload that is going to be sent to an URL by the `send_webhook` function.
 
@@ -299,7 +299,7 @@ class WebhookPayload:
     message: str = "Dummy message"
 
     @property
-    def json(self):
+    def json(self) -> str:
         return json.dumps(asdict(self))
 
 

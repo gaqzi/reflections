@@ -1,44 +1,61 @@
+name: CI
+
 on:
-  schedule:
-    - cron: "0 13 * * *" # Everyday at 1PM UTC.
   push:
     branches:
       - master
+
   pull_request:
     branches:
       - master
 
+  # Everyday at 1.00 UTC.
+  schedule:
+    - cron: "0 1 * * *"
+
+
+# Cancel any running workflow if the CI gets triggered again.
 concurrency:
-  group: ${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+      group: ${{ github.head_ref || github.run_id }}
+      cancel-in-progress: true
+
 
 jobs:
-  build_and_deploy:
-    name: Build & Deploy
+  run-tests:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest]
         python-version: ["3.10"]
+        include:
+        - os: ubuntu-latest
+          path: ~/.cache/pip # Cache location on Ubuntu
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Set up python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install the dependencies
+      - uses: actions/cache@v2
+        with:
+          path: ${{ matrix.path }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install the Dependencies
         run: |
-          python3.10 -m venv .venv && source .venv/bin/activate
-          echo "Upgrading pip..."
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
+          pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Check Linter
+        run: |
+          echo "Checking linter conformity..."
+          make lint-check
 
       - name: Build and deploy to gh-pages
         run: |
-          source .venv/bin/activate
           pelican-themes --install theme/elegant/
           make github

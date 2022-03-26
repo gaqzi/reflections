@@ -1,5 +1,5 @@
 ---
-title: Don't Wrap Instance Methods with 'functools.lru_cache' Decorator in Python
+title: Don't wrap instance methods with 'functools.lru_cache' decorator in Python
 date: 2022-01-15
 tags: Python
 ---
@@ -14,9 +14,8 @@ Let's consider this example:
 
 ```python
 # src.py
-
+import functools
 import time
-from functools import lru_cache
 from typing import TypeVar
 
 Number = TypeVar("Number", int, float, complex)
@@ -26,7 +25,7 @@ class SlowAdder:
     def __init__(self, delay: int = 1) -> None:
         self.delay = delay
 
-    @lru_cache
+    @functools.lru_cache
     def calculate(self, *args: Number) -> Number:
         time.sleep(self.delay)
         return sum(args)
@@ -67,7 +66,7 @@ Deleting instance ...
 
 You can see that the `lru_cache` decorator is doing its job. The second call to the `calculate` method with the same argument took noticeably less time compared to the first one. In the second case, the `lru_cache` decorator is just doing a simple dictionary lookup. This is all good but the instances of the `ShowAdder` class never get garbage collected in the lifetime of the program. Let's prove that in the next section.
 
-## Garbage Collector Can't Clear Up the Affected Instances
+## Garbage collector can't clear up the affected instances
 
 If you execute the above snippet with an `-i` flag, we can interactively prove that no garbage collection takes place. Let's do it:
 
@@ -109,15 +108,14 @@ The `cache_info()` is showing that the cache container keeps a reference to the 
 This can be dangerous if you create millions of instances and they don't get garbage collected naturally. It can overflow your working memory and cause the process to crash!
 I accidentally did it where the infected class was being instantiated millions of times via HTTP API requests.
 
-## The Solution
+## The solution
 
 To solve this, we'll have to make the cache containers local to the instances so that the reference from cache to the instance gets scraped off with the instance. Here's how you can do that:
 
 ```python
 # src_2.py
-
+import functools
 import time
-from functools import lru_cache
 from typing import TypeVar
 
 Number = TypeVar("Number", int, float, complex)
@@ -126,7 +124,7 @@ Number = TypeVar("Number", int, float, complex)
 class SlowAdder:
     def __init__(self, delay: int = 1) -> None:
         self.delay = delay
-        self.calculate = lru_cache()(self._calculate)
+        self.calculate = functools.lru_cache()(self._calculate)
 
     def _calculate(self, *args: Number) -> Number:
         time.sleep(self.delay)
@@ -155,7 +153,7 @@ Deleting instance ...
 Notice that this time, clearing out the cache wasn't necessary. I had to call `gc.collect()` to invoke explicit garbage collection. That's because this shenanigan creates cyclical references and the GC needs to do some special magic to clear the memory. In real code, Python interpreter will clean this up for you in the background without you having to call the GC.
 
 
-## The Self Dilemma
+## The self dilemma
 
 Even after applying the solution above, a weird thing happens in the case of instance methods. Let's run the `src_2.py` script interactively to demonstrate that:
 
@@ -180,19 +178,19 @@ Here, I've created another instance of the `SlowAdder` class and called `calcula
 Underneath, the `lru_cache` decorator uses a dictionary to cache the calculated values. A hash function is [applied](https://github.com/python/cpython/blob/3.10/Lib/functools.py#L448) to all the parameters of the target function to build the key of the dictionary, and the value is the return value of the function when those parameters are the inputs. This means, the first argument `self` also gets included while building the cache key. However, for different instances, this `self` object is going to be different and that makes the hashed key of the cache different for every instance even if the other parameters are the same.
     I
 
-## But What About Class Methods & Static Methods
+## But what about class methods & static methods
 
 Class methods and static methods don't suffer from the above issues as they don't have any ties to their respective instances. In their case, the cache container is local to the class, not the instances. Here, you can stack the `lru_cache` decorator as usual. Let's demonstrate that for `classmethod` first:
 
 ```python
 # src_3.py
-from functools import lru_cache
+import functools
 import time
 
 
 class Foo:
     @classmethod
-    @lru_cache
+    @functools.lru_cache
     def bar(cls, delay: int) -> int:
         # Do something with the cls.
         cls.delay = delay
@@ -237,13 +235,13 @@ Deleting instance ...
 Static methods behave exactly the same. You can use the `lru_cache` decorator in similar fashion as below:
 
 ```python
-from functools import lru_cache
+import functools
 import time
 
 
 class Foo:
     @staticmethod
-    @lru_cache
+    @functools.lru_cache
     def bar(delay: int) -> int:
         return 42
 
@@ -254,5 +252,5 @@ class Foo:
 ## References
 
 * [functools.lru_cache - Python Docs](https://docs.python.org/3/library/functools.html#functools.lru_cache)
-* [don't lru_cache methods! (intermediate) anthony explains #382](https://www.youtube.com/watch?v=sVjtp6tGo0g)
+* [Don't lru_cache methods! (intermediate) anthony explains #382](https://www.youtube.com/watch?v=sVjtp6tGo0g)
 * [Python LRU cache in a class disregards maxsize limit when decorated with a staticmethod or classmethod decorator](https://stackoverflow.com/questions/70409673/python-lru-cache-in-a-class-disregards-maxsize-limit-when-decorated-with-a-stati)

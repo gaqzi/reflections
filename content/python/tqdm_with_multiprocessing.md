@@ -1,5 +1,5 @@
 ---
-title: Running Tqdm With Python Multiprocessing
+title: Running tqdm with Python multiprocessing
 date: 2021-11-18
 tags: Python
 ---

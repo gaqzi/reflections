@@ -1,15 +1,13 @@
 ---
-title: Implementing Proxy Pattern in Python
+title: Implementing proxy pattern in Python
 date: 2020-06-16
 tags: Python
 ---
 
-***Updated on 2022-01-31***: *Syntax is now compatible with Python 3.10.*
-
 
 In Python, there's a saying that *[design patterns](https://en.wikipedia.org/wiki/Design_Patterns) are anti-patterns*. Also, in the realm of dynamic languages, design patterns have the notoriety of injecting additional abstraction layers to the core logic and making the flow gratuitously obscure. Python's dynamic nature and the treatment of functions as [first-class](https://dbader.org/blog/python-first-class-functions) objects often make Java-ish design patterns redundant. Instead of littering your code with seemingly over-engineered patterns, you can almost always take the advantage of Python's first-class objects, duck-typing, monkey-patching etc to accomplish the task at hand. However, recently there is one design pattern that I find myself using over and over again to write more maintainable code and that is the Proxy pattern. So I thought I'd document it here for future reference.
 
-## The Proxy Pattern
+## The proxy pattern
 
 Before diving into the academic definition, let's try to understand the Proxy pattern from an example.
 
@@ -59,9 +57,9 @@ Wikipedia says,
 
 Pedagogically, the proxy pattern belongs to a family of patterns called the [structural pattern](https://en.wikipedia.org/wiki/Structural_pattern).
 
-## Why Use It?
+## Why use it?
 
-### Loose Coupling
+### Loose coupling
 
 Proxy pattern let's you easily decouple your core logic from the added functionalities that might be needed on top of that. The modular nature of the code makes maintaining and extending the functionalities of your primary logic a lot quicker and easier.
 
@@ -147,11 +145,11 @@ print(klass.div(2, 0))
 
 In the example above, since both `Division` and `ProxyDivision` class implement the same interface, you can swap out the `Division` class with `ProxyDivision` and vice versa. The second class neither inherits directly from the first  class nor it adds any new method to it. This means you can easily write another class to extend the functionalities of `Division` or `DivisionProxy` class without touching their internal logics directly.
 
-### Enhanced Testability
+### Enhanced testability
 
 Another great advantage of using the proxy pattern is enhanced testability. Since your core logic is loosely coupled with the extended functionalities, you can test them out separately. This makes the test more succinct and modular. It's easy to demonstrate the benefits with our previously mentioned `Division` and `ProxyDivision` classes. Here, the logic of the primary class is easy to follow and since this class only holds the core logic, it's crucial to write unit test for this before testing the added functionalities. Testing out the `Division` class is much cleaner than testing the previously defined `division` function that tries to do multiple things at once. Once you're done testing the primary class, you can proceed with the additional functionalities. Usually, this decoupling of core logic from the cruft and the encapsulation of additional functionalities result in more reliable and rigorous unit tests.
 
-## Proxy Pattern with Interface
+## Proxy pattern with interface
 
 In the real world, your class won't look like the simple `Division` class having only a single method. Usually your primary class will have multiple methods and they will carry out multiple sophisticated tasks. By now, you probably have grasped the fact that the proxy classes need to implement all of the methods of the primary class. While writing a proxy class for a complicated primary class, the author of that class might forget to implement all the methods of the primary class.This will lead to a violation of the proxy pattern. Also, it can be hard to follow all the methods of the primary class if the class is large and complicated.
 
@@ -219,7 +217,7 @@ The second class `Concrete` is the actual class that inherits from the abstract 
 
 The third class `Proxy` extends the functionalities of the base concrete class `Concrete`. It calls the `Concrete` class using the composition pattern and implements all the methods. However, in this case, I used the results from the concrete methods and extended their functionalities without code duplication.
 
-## Another Practical Example
+## Another practical example
 
 Let's play around with one last real-world example to concretize the concept. Suppose, you want to collect data from an external API endpoint. To do so, you hit the endpoint with `GET` requests from your http client and collect the responses in `json` format. Then say, you also want to inspect the response `header` and the `arguments` that were passed while making the request.
 
@@ -248,6 +246,7 @@ Since, by now, you're already familiar with the workflow of the proxy pattern, l
 ```python
 from __future__ import annotations
 
+import functools
 import logging
 import sys
 from abc import ABC, abstractmethod
@@ -256,7 +255,6 @@ from pprint import pprint
 
 import httpx
 from httpx import ConnectTimeout, ReadTimeout
-from functools import lru_cache
 from typing import Any
 
 
@@ -331,7 +329,7 @@ class ExcFetchUrl(IFetchUrl):
 class CacheFetchUrl(IFetchUrl):
     def __init__(self) -> None:
         self._fetch_url = ExcFetchUrl()
-        self.get_data = lru_cache()(self.get_data)  # type: ignore
+        self.get_data = functools.lru_cache()(self.get_data)  # type: ignore
 
     def get_data(self, url: str) -> D:
         data = self._fetch_url.get_data(url)
@@ -394,14 +392,14 @@ In the main section, you can use any of the `FetchUrl`, `ExcFetchUrl` or `CacheF
 The output basically prints out the results returned by the `get_headers` and `get_args` methods. Also notice, how I picked the endpoint arguments to simulate caching. The `Cache Info:` on the third line of the output shows when data is served from the cache. Here `hits=0` means data is served directly from the external API. However, if you inspect the later outputs, you'll see when the query arguments get repeated ([1, 2, 3, 1, 2, 3]), `Cache Info:` will show higher hit counts. This means that the data is being served from the cache.
 
 
-## Should You Use It?
+## Should you use it?
 
 Well, yes obviously. But not always. You see, you need a little bit of planning before orchestrating declarative solution with the proxy pattern. It's not viable to write code in this manner in a throwaway script that you don't have to maintain in the long run. Also, this OOP-cursed additional layers of abstraction can make your code subjectively unreadable. So use the pattern wisely. On the flip side, proxy pattern can come extremely handy when you need to extend the functionality of some class arbitrarily as it can work a gateway to the El Dorado of loose coupling.
 
 
 ## References
 
-* [Python Patterns](https://github.com/faif/python-patterns)
-* [Design Patterns for Humans](https://github.com/kamranahmedse/design-patterns-for-humans)
-* [Design Patterns- Refactoring Guru](https://refactoring.guru/design-patterns/proxy/python/example)
-* [Design Patterns & Idioms](https://python-3-patterns-idioms-test.readthedocs.io/en/latest/Fronting.html)
+* [Python patterns](https://github.com/faif/python-patterns)
+* [Design patterns for humans](https://github.com/kamranahmedse/design-patterns-for-humans)
+* [Design patterns- refactoring guru](https://refactoring.guru/design-patterns/proxy/python/example)
+* [Design patterns & idioms](https://python-3-patterns-idioms-test.readthedocs.io/en/latest/Fronting.html)

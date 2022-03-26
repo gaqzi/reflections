@@ -1,5 +1,5 @@
 ---
-title: Effortless Concurrency with Python's concurrent.futures
+title: Effortless concurrency with Python's concurrent.futures
 date: 2020-04-21
 tags: Python
 ---
@@ -35,7 +35,7 @@ Executor (Abstract Base Class)
 ```
 Internally, these two classes interact with the pools and manage the workers. `Future`s are used for managing results computed by the workers. To use a pool of workers, an application creates an instance of the appropriate executor class and then submits them for it to run. When each task is started, a `Future` instance is returned. When the result of the task is needed, an application can use the `Future` object to block until the result is available. Various APIs are provided to make it convenient to wait for tasks to complete, so that the `Future` objects do not need to be managed directly.
 
-## Executor Objects
+## Executor objects
 
 Since both `ThreadPoolExecutor` and `ProcessPoolExecutor` have the same API interface, in both cases I'll primarily talk about two methods that they provide. Their descriptions have been collected from the official docs verbatim.
 
@@ -64,7 +64,7 @@ Similar to `map(func, *iterables)` except:
 
     When using `ProcessPoolExecutor`, this method chops iterables into a number of chunks which it submits to the pool as separate tasks. The (approximate) size of these chunks can be specified by setting `chunksize` to a positive integer. For very long iterables, using a large value for `chunksize` can significantly improve performance compared to the default size of 1. With ThreadPoolExecutor, `chunksize` has no effect.
 
-## Generic Workflows for Running Tasks Concurrently
+## Generic workflows for running tasks concurrently
 
 A lot of my scripts contains some variants of the following:
 
@@ -78,7 +78,7 @@ Here, `get_tasks` returns an iterable that contains the target tasks or argument
 A general rule of thumb is using `ThreadPoolExecutor` when the tasks are primarily I/O bound like - sending multiple http requests to many urls, saving a large number of files to  disk etc. `ProcessPoolExecutor` should be used in tasks that are primarily CPU bound like - running callables that are computation heavy, applying pre-process methods over a large number of images, manipulating many text files at once etc.
 
 
-### Running Tasks with Executor.submit
+### Running tasks with executor.submit
 
 When you have a number of tasks, you can schedule them in one go and wait for them all to complete and then you can collect the results.
 
@@ -113,7 +113,7 @@ with concurrent.futures.Executor() as executor:
 
 Notice the variable `futures` where the original tasks are mapped with their corresponding futures using a dictionary.
 
-### Running Tasks with Executor.map
+### Running tasks with executor.map
 
 Another way the results can be collected in the same order they're scheduled is via using `executor.map()` method.
 
@@ -131,7 +131,7 @@ Notice how the map function takes the entire iterable at once. It spits out the 
 
 In Python 3.5+, `executor.map()` receives an optional argument: `chunksize`. While using `ProcessPoolExecutor`, for very long iterables, using a large value for chunksize can significantly improve performance compared to the default size of 1. With `ThreadPoolExecutor`, chunksize has no effect.
 
-## A Few Real World Examples
+## A few real world examples
 
 Before proceeding with the examples, let's write a small [decorator](https://www.python.org/dev/peps/pep-0318/) that'll be helpful to measure and compare the execution time between concurrent and sequential code.
 
@@ -164,7 +164,7 @@ def func(n):
 
 This will print out the name of the method and how long it took to execute it.
 
-### Download & Save Files from URLs with Multi-threading
+### Download & save files from URLs with multi-threading
 
 First, let's download some pdf files from a bunch of URLs and save them to the disk. This is presumably an I/O bound task and we'll be using the `ThreadPoolExecutor` class to carry out the operation. But before that, let's do this sequentially first.
 
@@ -371,7 +371,7 @@ if __name__ == "__main__":
 
 The above snippet should print out similar messages as before.
 
-### Running Multiple CPU Bound Subroutines with Multi-processing
+### Running multiple CPU bound subroutines with multi-processing
 
 The following example shows a CPU bound hashing function. The primary function will sequentially run a compute intensive hash algorithm multiple times. Then another function will again run the primary function multiple times. Let's run the function sequentially first.
 
@@ -429,7 +429,9 @@ def hash_all(n):
     """Function that does hashing in serial."""
 
     with ProcessPoolExecutor(max_workers=10) as executor:
-        for arg, res in zip(range(n), executor.map(hash_one, range(n), chunksize=2)):
+        for arg, res in zip(
+            range(n), executor.map(hash_one, range(n), chunksize=2)
+        ):
             pass
 
     return "done"
@@ -445,7 +447,7 @@ if __name__ == "__main__":
 
 If you look closely, even in the concurrent version, the `for` loop in `hash_one` function is running sequentially. However, the other `for` loop in the `hash_all` function is being executed through multiple processes. Here, I have used 10 workers and a chunksize of 2. The number of workers and chunksize were adjusted to achieve maximum performance. As you can see the concurrent version of the above CPU intensive operation is about 11 times faster than its sequential counterpart.
 
-## Avoiding Concurrency Pitfalls
+## Avoiding concurrency pitfalls
 
 Since the `concurrent.futures` provides such a simple API, you might be tempted to apply concurrency to every simple tasks at hand. However, that's not a good idea. First, the simplicity has its fair share of constraints. In this way, you can apply concurrency only to the simplest of the tasks, usually mapping a function to an iterable or running a few subroutines simultaneously. If your task at hand requires queuing, spawning multiple threads from multiple processes then you will still need to resort to the lower level `threading` and `multiprocessing` modules.
 
@@ -647,6 +649,6 @@ All the pieces of codes in the blog were written and tested with python 3.8 on a
 
 ## References
 
-1. [concurrent.futures- the official documentation](https://docs.python.org/3/library/concurrent.futures.html)
-2. [Easy Concurrency in Python](http://pljung.de/posts/easy-concurrency-in-python/)
-3. [Adventures in Python with concurrent.futures](https://alexwlchan.net/2019/10/adventures-with-concurrent-futures/)
+* [concurrent.futures- the official documentation](https://docs.python.org/3/library/concurrent.futures.html)
+* [Easy concurrency in Python](http://pljung.de/posts/easy-concurrency-in-python/)
+* [Adventures in Python with concurrent.futures](https://alexwlchan.net/2019/10/adventures-with-concurrent-futures/)

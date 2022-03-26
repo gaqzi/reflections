@@ -1,5 +1,5 @@
 ---
-title: Cropping Texts in Python With 'textwrap.shorten'
+title: Cropping texts in Python with 'textwrap.shorten'
 date: 2022-01-06
 tags: Python
 ---
@@ -98,7 +98,7 @@ A quick
 
 You can see that we achieved our goal of cropping a text corpus without breaking any word. Try playing around with the `initial_indent`, `subsequent_indent`, and `placeholder` parameters and see how they change the output.
 
-## Complete Solution With Tests
+## Complete solution with tests
 
 ```python
 # src.py

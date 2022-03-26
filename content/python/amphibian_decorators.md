@@ -1,5 +1,5 @@
 ---
-title: Amphibian Decorators in Python
+title: Amphibian decorators in Python
 date: 2022-02-06
 tags: Python
 ---
@@ -19,7 +19,6 @@ Here's how you can do that:
 # src.py
 from __future__ import annotations
 
-import asyncio
 import inspect
 
 # In <Python 3.9, import these from the 'typing' module.
@@ -63,26 +62,28 @@ In the above snippet—
 You can play around with the decorator as follows:
 
 ```python
-In [1]: @tag("tag_1", "tag_2")
+In [1]: import asyncio
+
+In [2]: @tag('tag_1', 'tag_2')
    ...: async def foo():
    ...:     await asyncio.sleep(1)
    ...:     return 42
 
-In [2]: @tag("tag_3", "tag_4")
+In [3]: @tag('tag_3', 'tag_4')
    ...: def bar():
    ...:     return 24
 
-In [3]: foo._tags
-Out[3]: ('tag_1', 'tag_2')
+In [4]: foo._tags
+Out[4]: ('tag_1', 'tag_2')
 
-In [4]: bar._tags
-Out[4]: ('tag_3', 'tag_4')
+In [5]: bar._tags
+Out[5]: ('tag_3', 'tag_4')
 
-In [5]: asyncio.run(foo())
-Out[5]: 42
+In [6]: asyncio.run(foo())
+Out[6]: 42
 
-In [6]: bar()
-Out[6]: 24
+In [7]: bar()
+Out[7]: 24
 ```
 
 ## Breadcrumbs

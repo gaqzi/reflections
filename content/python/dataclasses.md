@@ -1,5 +1,5 @@
 ---
-title: Reduce Boilerplate Code with Python's Dataclasses
+title: Reduce boilerplate code with Python's dataclasses
 date: 2020-03-12
 tags: Python
 ---
@@ -94,7 +94,7 @@ class CartesianPoint(builtins.object)
  |  __hash__ = None
 ```
 
-## Using Default Values
+## Using default values
 
 You can provide default values to the fields in the following way:
 
@@ -109,7 +109,7 @@ class CartesianPoint:
     z: float = 0
 ```
 
-## Using Arbitrary Field Type
+## Using arbitrary field type
 
 If you don't want to specify your field type during type hinting, you can use `Any` type from python's `typing` module.
 
@@ -126,7 +126,7 @@ class CartesianPoint:
     z: Any
 ```
 
-## Instance Ordering
+## Instance ordering
 
 You can check if two instances are equal without making any modification to the class.
 
@@ -209,7 +209,7 @@ print(point_1 < point_2)
 
 You can see the above code prints out `True` despite the instances have different `y` and `z` attributes.
 
-## Adding Methods
+## Adding methods
 
 Methods can be added to dataclasses just like normal classes. Let's add another method called `dist` to our `CartesianPoint` class. This method calculates the distance of a point from origin.
 
@@ -240,7 +240,7 @@ print(norm)
 >>> 10.488088481701515
 ```
 
-## Making Instances Immutable
+## Making instances immutable
 
 By default, instances of dataclasses are immutable. If you want to prevent mutating your instance attributes, you can set `frozen=True` while defining your dataclass.
 
@@ -281,7 +281,7 @@ FrozenInstanceError: cannot assign to field 'x'
 ```
 
 
-## Making Instances Hashable
+## Making instances hashable
 
 You can turn on the `unsafe_hash` parameter of the `dataclass` decorator to make the class instances hashable. This may come in handy when you want to use your instances as dictionary keys or want to perform set operation on them. However, if you are using `unsafe_hash` make sure that your dataclasses do not contain any mutable data structure in it.
 
@@ -308,7 +308,7 @@ print({f"{point}": "origin"})
 >>> {'CartesianPoint(x=0, y=0, z=0)': 'origin'}
 ```
 
-## Converting Instances to Dicts
+## Converting instances to dicts
 
 The `asdict()` function converts a dataclass instance to a dict of its fields.
 
@@ -325,7 +325,7 @@ print(asdict(point))
 ```
 
 
-## Post-init Processing
+## Post-init processing
 
 When dataclass generates the `__init__` method, internally it'll call `_post_init__` method. You can add additional processing in the `__post_init__` method. Here, I have added another attribute `tup` that returns the cartesian point as a tuple.
 
@@ -354,7 +354,7 @@ print(point.tup)
 ```
 
 
-## Refactoring the Entire Cartesian Point Class
+## Refactoring the CartesianPoint class
 
 The feature rich original `CartesianPoint` looks something like this:
 
@@ -522,5 +522,5 @@ True
 
 ## References
 
-* [Python Dataclasses: Official Doc](https://docs.python.org/3/library/dataclasses.html)
-* [The Ultimate Guide to Data Classes in Python 3.7](https://realpython.com/python-data-classes/)
+* [Python dataclasses — Official docs](https://docs.python.org/3/library/dataclasses.html)
+* [The ultimate guide to dataclasses in Python 3.7](https://realpython.com/python-data-classes/)

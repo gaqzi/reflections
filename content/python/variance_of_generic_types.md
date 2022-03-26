@@ -1,12 +1,12 @@
 ---
-title: Variance of Generic Types in Python
+title: Variance of generic types in Python
 date: 2022-01-31
-tags: Python
+tags: Python, Typing
 ---
 
 I've always had a hard time explaining **variance** of generic types while working with type annotations in Python. This is an attempt to distill the things I've picked up on type variance while going through PEP-483.
 
-## A Pinch of Type Theory
+## A pinch of type theory
 
 > A generic type is a class or interface that is parameterized over types. Variance refers to how subtyping between the generic types relates to subtyping between their parameters' types.
 
@@ -42,9 +42,9 @@ def inv(x: float) -> float:
 
 If `x1 < x2`, then always `cov(x1) < cov(x2)`, and `contra(x2) < contra(x1)`, while nothing could be said about `inv`. Replacing `<` with `<:`, and **functions** with **generic type constructors**, we get examples of **covariant**, **contravariant**, and **invariant** behavior.
 
-## A Few Practical Examples
+## A few practical examples
 
-### Immutable Generic Types are Usually Type Covariant
+### Immutable generic types are usually type covariant
 
 For example:
 
@@ -53,14 +53,14 @@ if `T2 <: T1`, then `Union[T2] <: Union[T1]` for all such `T1` and `T2`.
 
 * `FrozenSet[T]` is also covariant. Let's consider `int` and `float` in place of `T`. First, `int <: float`. Second, a set of values of `FrozenSet[int]` is clearly a subset of values of `FrozenSet[float]`. Therefore, `FrozenSet[int] <: FrozenSet[float]`.
 
-### Mutable Generic Types are Usually Type Invariant
+### Mutable generic types are usually type invariant
 
 For example:
 
 * `list[T]` is invariant. Although a set of values of `list[int]` is a subset of values of `list[float]`, only an `int` could be appended to a `list[int]`. Therefore, `list[int]` is not a subtype of `list[float]`.
 
 
-### The Callable Generic Type Is Covariant in Return Type but Contravariant in the Arguments
+### The callable generic type is covariant in return type but contravariant in the arguments
 
 * `Callable[[], int] <: Callable[[], float]` .
 * If `Manager <: Employee` then `Callable[[], Manager] <: Callable[[], Employee]`.
@@ -229,7 +229,9 @@ def process_holder_contra(holder: HolderContra[float]) -> None:
 if __name__ == "__main__":
     holder_inv = HolderInv(1.0)  # ok
     holder_cov = HolderCov(1, 2)  # ok
-    holder_contra = HolderContra(1, 2)  # raises error because T is contravariant
+    holder_contra = HolderContra(
+        1, 2
+    )  # raises error because T is contravariant
 
     process_holder_inv(holder_inv)
     process_holder_cov(holder_cov)
@@ -238,4 +240,4 @@ if __name__ == "__main__":
 
 ## References
 
-* [PEP 483 -- The Theory of Type Hints](https://www.python.org/dev/peps/pep-0483/#generic-types)
+* [PEP 483 -- The theory of type hints](https://www.python.org/dev/peps/pep-0483/#generic-types)
