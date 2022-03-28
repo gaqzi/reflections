@@ -1,5 +1,5 @@
 ---
-title: Don't add extensions to bash executables
+title: Don't add extensions to shell executables
 date: 2021-11-23
 tags: Unix
 ---
