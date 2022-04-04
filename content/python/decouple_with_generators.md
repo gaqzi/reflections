@@ -37,7 +37,7 @@ infinite_counter(1, 2)
 
 Now, how'd you decouple the print statement from the `infinite_counter`? Since the function never returns, you can't collect the outputs in an iterable, return the container, and print the elements of the iterable in another function. You might be wondering why would you even need to do it. I can think of two reasons:
 
-* The `infinite_counter` function is the producer of the numbers and the `print` function is consuming them. These are two seperate responsibilites tangled in the same function which violates the [Single Responsibility Principle (SRP)](https://en.wikipedia.org/wiki/Single-responsibility_principle#:~:text=The%20single%2Dresponsibility%20principle%20(SRP,it%20should%20encapsulate%20that%20part.).
+* The `infinite_counter` function is the producer of the numbers and the `print` function is consuming them. These are two seperate responsibilites tangled in the same function which violates the [Single Responsibility Principle (SRP)](https://en.wikipedia.org/wiki/Single-responsibility_principle).
 * What'd you do if you need a version of the infinite counter where the consumer had different behavior?
 
 One way the second point can be addressed is via—accepting the consumer function as a parameter and applying that to the produced value.
