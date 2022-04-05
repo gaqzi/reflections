@@ -37,10 +37,10 @@ infinite_counter(1, 2)
 
 Now, how'd you decouple the print statement from the `infinite_counter`? Since the function never returns, you can't collect the outputs in an iterable, return the container, and print the elements of the iterable in another function. You might be wondering why would you even need to do it. I can think of two reasons:
 
-* The `infinite_counter` function is the producer of the numbers and the `print` function is consuming them. These are two seperate responsibilites tangled in the same function which violates the [Single Responsibility Principle (SRP)](https://en.wikipedia.org/wiki/Single-responsibility_principle).
+* The `infinite_counter` function is the producer of the numbers and the `print` function is consuming them. These are two separate responsibilities tangled in the same function which violates the [Single Responsibility Principle (SRP)](https://en.wikipedia.org/wiki/Single-responsibility_principle).
 * What'd you do if you need a version of the infinite counter where the consumer had different behavior?
 
-One way the second point can be addressed is via—accepting the consumer function as a parameter and applying that to the produced value.
+One way the second point can be addressed is—by accepting the consumer function as a parameter and applying that to the produced value.
 
 
 ```python
@@ -112,7 +112,7 @@ The `infinite_counter` returns a generator that can lazily be iterated to produc
 
 ## Writing a workflow that mimics 'tail -f'
 
-In a UNIX system, you can call `tail -f <filename> | grep <pattern>` to print the lines of a file in real time where the lines match a specific pattern. Running the following command on my terminal allows me to tail the `syslog` file and print out any line that contains the word `xps`:
+In a UNIX system, you can call `tail -f <filename> | grep <pattern>` to print the lines of a file in real-time where the lines match a specific pattern. Running the following command on my terminal allows me to tail the `syslog` file and print out any line that contains the word `xps`:
 
 ```
 tail -f /var/logs/syslog | grep xps
@@ -206,7 +206,7 @@ data = collect("default")
 process(data)
 ```
 
-You'll need to run a [Redis](https://redis.io) server and [Redis CLI](https://redis.io/docs/manual/cli/) to test this out. If you've got [Docker](https://www.docker.com/) installed in your system, then you can run `docker run -it redis` to quickly spin up a Redis instance. Afterwards, run the above script and start the CLI. Print the following command on the CLI prompt:
+You'll need to run a [Redis](https://redis.io) server and [Redis CLI](https://redis.io/docs/manual/cli/) to test this out. If you've got [Docker](https://www.docker.com/) installed in your system, then you can run `docker run -it redis` to quickly spin up a Redis instance. Afterward, run the above script and start the CLI. Print the following command on the CLI prompt:
 
 ```
 127.0.0.1:6379> lpush default hello world
@@ -218,7 +218,7 @@ queue_name='default', content='hello'
 queue_name='default', content='world'
 ```
 
-This allows you to define multiple consumers and run them in separate threads / processes without the producer ever knowing the existence of them.
+This allows you to define multiple consumers and run them in separate threads/processes without the producer ever knowing about their existence at all.
 
 ## References
 
