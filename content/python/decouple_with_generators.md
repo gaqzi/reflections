@@ -114,7 +114,7 @@ The `infinite_counter` returns a generator that can lazily be iterated to produc
 
 In a UNIX system, you can call `tail -f <filename> | grep <pattern>` to print the lines of a file in real-time where the lines match a specific pattern. Running the following command on my terminal allows me to tail the `syslog` file and print out any line that contains the word `xps`:
 
-```
+```sh
 tail -f /var/logs/syslog | grep xps
 ```
 
