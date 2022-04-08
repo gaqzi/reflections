@@ -1,6 +1,6 @@
 ---
 title: Decoupling producers and consumers of iterables with generators in Python
-date: 2022-04-01
+date: 2022-04-03
 tags: Python
 ---
 
