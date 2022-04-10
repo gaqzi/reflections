@@ -206,7 +206,7 @@ data = collect("default")
 process(data)
 ```
 
-You'll need to run an instance of the [Redis](https://redis.io) server and [Redis CLI](https://redis.io/docs/manual/cli/) to test this out. If you've got [Docker](https://www.docker.com/) installed in your system, then you can run `docker run -it redis` to quickly spin up a Redis instance. Afterward, run the above script and start the CLI. Print the following command on the CLI prompt:
+You'll need to run an instance of [Redis](https://redis.io) server and [Redis CLI](https://redis.io/docs/manual/cli/) to test this out. If you've got [Docker](https://www.docker.com/) installed in your system, then you can run `docker run -it redis` to quickly spin up a Redis instance. Afterward, run the above script and start the CLI. Print the following command on the CLI prompt:
 
 ```sh
 127.0.0.1:6379> lpush default hello world
