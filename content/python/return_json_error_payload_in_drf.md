@@ -75,7 +75,6 @@ And voila, now your API and non-API errors will be handled as expected!
 Here's how you can unit test the behavior of the middleware.
 
 ```python
-
 import json
 from unittest.mock import MagicMock
 
@@ -85,7 +84,9 @@ from django.test import RequestFactory, TestCase, override_settings
 from main.middleware import JSONErrorMiddleware
 
 
-@override_settings(MIDDLEWARE_CLASSES=("main.middleware.JSONErrorMiddleware",))
+@override_settings(
+    MIDDLEWARE_CLASSES=("main.middleware.JSONErrorMiddleware",),
+)
 class TestJSONErrorMiddleware(TestCase):
     def setUp(self):
         super().setUp()
@@ -93,7 +94,7 @@ class TestJSONErrorMiddleware(TestCase):
 
         def get_response(request):
             response = MagicMock()
-            response.status_code = 403
+            response.status_code = HTTPStatus.FORBIDDEN
             return response
 
         self.middleware = JSONErrorMiddleware(get_response)
@@ -118,8 +119,8 @@ class TestJSONErrorMiddleware(TestCase):
         json_data = json.loads(response.content)
         expected_json_data = {
             "error": {
-                "status_code": 403,
-                "message": "Request forbidden -- authorization will not help",
+                "status_code": HTTPStatus.FORBIDDEN,
+                "message": HTTPStatus.FORBIDDEN.description,
                 "detail": {"url": "/account"},
             }
         }
