@@ -23,7 +23,8 @@ from http import HTTPStatus
 
 
 class JSONErrorMiddleware:
-    """Without this middleware, APIs would respond with html/text whenever there's an error."""
+    """Without this middleware, APIs would respond with
+    html/text whenever there's an error."""
 
     def __init__(self, get_response):
         self.get_response = get_response
