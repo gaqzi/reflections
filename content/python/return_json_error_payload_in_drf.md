@@ -35,11 +35,12 @@ class JSONErrorMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
 
-        # If the content_type isn't 'application/json', don't do anything.
+        # If the content_type isn't 'application/json', do nothing.
         if not request.content_type == "application/json":
             return response
 
-        # If there's no error, let Django and DRF's default views deal with it.
+        # If there's no error, let Django and DRF's default views deal
+        # with it.
         status_code = response.status_code
         if (
             not HTTPStatus.BAD_REQUEST
