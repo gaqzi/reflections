@@ -14,7 +14,7 @@ In our case, we already had to override the default error handlers to display cu
 
 ## The solution
 
-To fix the dilemma, I wrote a `JSONErrorMiddleware` that returns the expected response based on the content type value in the request header. If the header has `Content-Type: html/text` and it experiences an error, the server returns the appropriate HTML page. On the contrary, if the incoming request header has `Content-Type: application/json`, the server responds with a JSON error payload. Here's how the middleware looks:
+To fix the dilemma, I wrote a middleware called `JSONErrorMiddleware` that returns the expected response based on the content type in the request header. If the header has `Content-Type: html/text` and it experiences an error, the server returns an appropriate HTML page. On the contrary, if the incoming request header has `Content-Type: application/json` and the server sees an error, it responds with a JSON error payload instead. Here's how the middleware looks:
 
 ```python
 # <app>/middleware.py
@@ -63,17 +63,17 @@ class JSONErrorMiddleware:
         return r
 ```
 
-Now, you'll have to add this middleware to the list of middlewares in the `settings.py` file:
+You'll have to add this middleware to the list of middlewares in the `settings.py` file:
 
 ```python
 MIDDLEWARE = [..., "<app>.middleware.JSONErrorMiddleware"]
 ```
 
-And voila, now your API and non-API errors will be handled as expected!
+And voila, now the API and non-API errors will be handled differently as expected!
 
 ## Test
 
-Here's how you can unit test the behavior of the middleware.
+Here's how you can unit test the behavior of the middleware:
 
 ```python
 import json
