@@ -1,12 +1,12 @@
 ---
-title: Return JSON error payloads instead of HTML texts in DRF
+title: Return JSON error payload instead of HTML text in DRF
 date: 2022-04-13
 tags: Python, API
 ---
 
 At my workplace, we have a large Django monolith that powers the main website and works as the primary REST API server at the same time. We use Django Rest Framework (DRF) to build and serve the API endpoints. This means, whenever there's an error, based on the incoming request header—we've to return different formats of error responses to the website and API users.
 
-The default DRF configuration returns a JSON response when the system experiences an HTTP 400 (bad request) error. However, the server returns an HTML error page to the API users whenever HTTP 403 (forbidden), HTTP 404 (not found), or HTTP 500 (internal server error) occurs. This is suboptimal; JSON APIs should never return HTML text whenever something goes wrong. On the other hand, the website needs those error texts to appear accordingly.
+The default DRF configuration returns a JSON response when the system experiences an HTTP 400 (bad request) error. However, the server returns an HTML error page to the API users whenever HTTP 403 (forbidden), HTTP 404 (not found), or HTTP 500 (internal server error) occurs. This is suboptimal; JSON APIs should never return HTML text whenever something goes wrong. On the other hand, the website needs those error text to appear accordingly.
 
 This happens because 403, 404, and 500 are handled by Django's default handlers for those errors and not by DRF's exception handlers. As the DRF doc [suggests](https://www.django-rest-framework.org/api-guide/exceptions/#generic-error-views), overriding the error handlers is one way of solving it. But this will only work if the application is an API-only backend or if you haven't already overridden the error handlers for custom error pages.
 
