@@ -1,7 +1,7 @@
 ---
 title: Return JSON error payload instead of HTML text in DRF
 date: 2022-04-13
-tags: Python, API
+tags: Python, API, Django
 ---
 
 At my workplace, we have a large Django monolith that powers the main website and works as the primary REST API server at the same time. We use Django Rest Framework (DRF) to build and serve the API endpoints. This means, whenever there's an error, based on the incoming request header—we've to return different formats of error responses to the website and API users.
