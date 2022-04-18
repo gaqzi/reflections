@@ -4,7 +4,7 @@ date: 2022-04-18
 tags: Unix
 ---
 
-While working on a project with [EdgeDB]() and [FastAPI](), I wanted to perform health checks against the FastAPI server in the GitHub CI. This would notify me about the working state of the application. The idea is to—
+While working on a project with [EdgeDB](https://www.edgedb.com/) and [FastAPI](https://fastapi.tiangolo.com/), I wanted to perform health checks against the FastAPI server in the GitHub CI. This would notify me about the working state of the application. The idea is to—
 
 * Run the server in the background.
 * Run the commands against the server that'll denote that the app is in a working state.
