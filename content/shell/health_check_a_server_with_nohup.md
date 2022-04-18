@@ -22,7 +22,7 @@ The following shell script demonstrates a similar workflow with a Python HTTP se
 
 set -euo pipefail
 
-# Run the Python servHANGUPer in the background.
+# Run the Python server in the background.
 nohup python3 -m http.server 5000 >> /dev/null &
 
 # Give the server enough time to be ready before accepting requests.
