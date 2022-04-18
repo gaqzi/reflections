@@ -1,5 +1,5 @@
 ---
-title: Health check a server with nohup$(cmd)&
+title: Health check a server with 'nohup $(cmd) &'
 date: 2022-04-18
 tags: Unix
 ---
