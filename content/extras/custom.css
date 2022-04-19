@@ -65,6 +65,7 @@ pre code{
   font-size: 140%;
   font-family: var(--sansFontFamily);
   text-align: left;
+  line-height: 1.5em;
 }
 
 header.page-header h1 {
