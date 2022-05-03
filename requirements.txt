@@ -12,7 +12,7 @@ docutils==0.18.1
     # via pelican
 feedgenerator==2.0.0
     # via pelican
-ghp-import==2.0.2
+ghp-import==2.1.0
     # via -r requirements.in
 jinja2==3.1.1
     # via pelican
