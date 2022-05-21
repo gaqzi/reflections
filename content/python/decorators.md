@@ -422,7 +422,7 @@ def timer(func):
 @timer
 def dothings(n_times):
     for _ in range(n_times):
-        return sum((i ** 3 for i in range(100_000)))
+        return sum((i**3 for i in range(100_000)))
 ```
 
 In the above way, we can introspect the time it requires for function `dothings` to complete its execution.
