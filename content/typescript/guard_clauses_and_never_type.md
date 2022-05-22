@@ -1,5 +1,5 @@
 ---
-title: Guard clauses and exhaustiveness type checking
+title: Guard clause and exhaustiveness checking
 date: 2022-05-22
 tags: TypeScript, Python, Typing
 ---
@@ -69,13 +69,14 @@ function processSignal(signal: Signal) {
 }
 ```
 
-Notice that the model has more flatter structure and now it's gracefully handling the
-`undefined` return path. However, the third issue still persists. In an alien world, if someone added a fourth member to the `Signal` enum, that'd make the conditional flow in
+This model has more flatter structure and now it's gracefully handling the `undefined`
+return path. However, the third issue still persists. In an alien world, if someone
+added a fourth member to the `Signal` enum, that'd make the conditional flow in
 the `processSignal` function incomplete since it wouldn't be covering that newly added
 fouth enum member. In that case, the above snippet will execute the final catch-all conditional statement; not something that we'd want.
 
-TypeScript provides the `never` type to throw a compilation error if a new memeber isn't
-covered by the conditional flow. Here's how you'd use it:
+TypeScript provides a `never` type to throw a compilation error if a new memeber isn't
+covered by the conditional flow. Here's how you'd leverage it:
 
 ```ts
 // src.ts
@@ -121,7 +122,7 @@ The same idea can be demonstrated in Python using Python3.10's `match` statement
 `typing.NoReturn` type.
 
 ```python
-# src.py (Python 3.10)
+# src.py (Python 3.10+)
 
 from __future__ import annotations
 
@@ -165,11 +166,31 @@ if __name__ == "__main__":
 ```
 
 Similar to TypeScript, mypy will complain if you add a new memeber to the enum but
-forget to handle that in the processor function. Python3.11 added the  `Never` type
+forget to handle that in the processor function. Python 3.11 added the  `Never` type
 and `assert_never` function to the `typing` module. Underneath, `Never` is an alias
-to the `NoReturn` type. You can also use the backported versions of the type and function via the `typing_extensions` module.
+to the `NoReturn` type; so you can use them interchangeably. However, in this case,
+`Never` seems to communicate the intent better. You may also choose to use the backported
+versions of the type and function from the `typing_extensions` module. Here's how:
+
+```python
+# src.py
+
+from __future__ import annotations
+
+import sys
+from enum import Enum
+
+if sys.version_info < (3, 11):
+    from typing_extensions import assert_never
+else:
+    from typing import assert_never
+
+...
+
+```
 
 ## References
 
 * [Guard clause, guard code, or guard statement](https://en.wikipedia.org/wiki/Guard_(computer_science))
-* []()
+* [Never type in TypeScript](https://www.zhenghao.io/posts/ts-never)
+* [Unreachable Code and Exhaustiveness Checking in Python](https://typing.readthedocs.io/en/latest/source/unreachable.html)
