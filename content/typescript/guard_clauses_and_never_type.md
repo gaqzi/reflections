@@ -11,6 +11,7 @@ code. The following piece mimics the actions of a traffic signal:
 
 ```ts
 // src.ts
+
 enum Signal {
   YELLOW = "Yellow",
   RED = "Red",
@@ -69,13 +70,13 @@ function processSignal(signal: Signal) {
 }
 ```
 
-This model has more flatter structure and now it's gracefully handling the `undefined`
+This model has a flatter structure and now it's gracefully handling the `undefined`
 return path. However, the third issue still persists. In an alien world, if someone
 added a fourth member to the `Signal` enum, that'd make the conditional flow in
 the `processSignal` function incomplete since it wouldn't be covering that newly added
-fouth enum member. In that case, the above snippet will execute the final catch-all conditional statement; not something that we'd want.
+fourth enum member. In that case, the above snippet will execute the final catch-all conditional statement; not something that we'd want.
 
-TypeScript provides a `never` type to throw a compilation error if a new memeber isn't
+TypeScript provides a `never` type to throw a compilation error if a new member isn't
 covered by the conditional flow. Here's how you'd leverage it:
 
 ```ts
@@ -112,9 +113,9 @@ function processSignal(signal: Signal) {
 processSignal(Signal.PURPLE);
 ```
 
-Ideally, the `assertNever` should never be called. Try removing a conditionals and see
+Ideally, the `assertNever` should never be called. Try removing a conditional and see
 how TypeScript starts screaming at you regarding the unhandled case. The `assertNever`
-function will also raise a runtime error of any case is remained unhandled.
+function will also raise a runtime error if any case remains unhandled.
 
 ## Example in Python
 
@@ -165,7 +166,7 @@ if __name__ == "__main__":
     print(process_signal(Signal.PURPLE))
 ```
 
-Similar to TypeScript, mypy will complain if you add a new memeber to the enum but
+Similar to TypeScript, mypy will complain if you add a new member to the enum but
 forget to handle that in the processor function. Python 3.11 added the  `Never` type
 and `assert_never` function to the `typing` module. Underneath, `Never` is an alias
 to the `NoReturn` type; so you can use them interchangeably. However, in this case,
