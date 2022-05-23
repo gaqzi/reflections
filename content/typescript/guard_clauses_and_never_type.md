@@ -81,6 +81,7 @@ covered by the conditional flow. Here's how you'd leverage it:
 
 ```ts
 // src.ts
+
 enum Signal {
   YELLOW = "Yellow",
   RED = "Red",
