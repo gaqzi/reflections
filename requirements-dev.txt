@@ -32,7 +32,7 @@ flake8==4.0.1
     # via -r requirements-dev.in
 identify==2.4.12
     # via pre-commit
-ipython==8.3.0
+ipython==8.4.0
     # via -r requirements-dev.in
 isort==5.10.1
     # via -r requirements-dev.in
