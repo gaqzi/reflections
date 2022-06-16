@@ -159,7 +159,6 @@ isn't meant to be subclassed. So, our only option is to rewrite it. The good new
 
 ```python
 # src.py
-# src.py
 from collections.abc import Mapping
 
 
