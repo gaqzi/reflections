@@ -175,7 +175,8 @@ _NOTHING = _Nothing()
 
 class safe_itemgetter:
     """
-    Return a callable object that fetches the given item(s) from its operand.
+    Return a callable object that fetches the given item(s)
+    from its operand.
     """
 
     __slots__ = ("_items", "_call")
