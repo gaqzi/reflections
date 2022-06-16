@@ -90,7 +90,7 @@ lint-check:  ## Check whether the codebase satisfies the linter rules.
 	@echo "Checking linter rules..."
 	@echo "========================"
 	@echo
-	@black --check $(path)
+	@black --check $(path) -l 80
 	@isort --check $(path)
 	@flake8 $(path)
 	@mypy $(path)
