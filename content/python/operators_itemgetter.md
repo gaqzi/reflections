@@ -159,6 +159,7 @@ isn't meant to be subclassed. So, our only option is to rewrite it. The good new
 
 ```python
 # src.py
+# src.py
 from collections.abc import Mapping
 
 
@@ -186,7 +187,9 @@ class safe_itemgetter:
             def func(obj):
                 if isinstance(obj, Mapping):
                     return obj.get(item, default)
-                if len(obj) <= abs(item):
+                if (item > 0 and len(obj) <= item) or (
+                    item < 0 and len(obj) < abs(item)
+                ):
                     return default
                 return obj[item]
 
@@ -200,7 +203,11 @@ class safe_itemgetter:
                     return tuple(get(i, default) for i in items)
 
                 return tuple(
-                    obj[i] if len(obj) >= abs(i) else default for i in items
+                    default
+                    if (i > 0 and len(obj) <= i)
+                    or (i < 0 and len(obj) < abs(i))
+                    else obj[i]
+                    for i in items
                 )
 
             self._call = func

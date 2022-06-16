@@ -100,7 +100,7 @@ black: ## Apply black.
 	@echo "Applying black..."
 	@echo "================="
 	@echo
-	@black --fast $(path)
+	@black --fast $(path) -l 80
 	@echo
 
 
