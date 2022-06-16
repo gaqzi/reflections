@@ -5,8 +5,8 @@ tags: Python
 ---
 
 Python's `operator.itemgetter` is quite versatile. It works on pretty much any iterables
-and allows you to fetch elements from that. The following snippet shows how you can use
-it to sort a list of tuples by the first element of the tuple:
+and map-like objects and allows you to fetch elements from them. The following snippet
+shows how you can use it to sort a list of tuples by the first element of the tuple:
 
 ```python
 In [2]: from operator import itemgetter
@@ -20,8 +20,8 @@ Out[3]: [(0, 55), (1, 3), (4, 8), (6, 7), (10, 9)]
 
 Here, the `itemgetter` callable is doing the work of selecting the first element of every
 tuple inside the list and then the `sorted` function is using those values to sort the
-list. Also, this is faster than using a lambda function and passing that to the `key`
-parameter to do the sorting:
+elements. Also, this is faster than using a lambda function and passing that to the
+`key` parameter to do the sorting:
 
 
 ```python
@@ -57,6 +57,7 @@ simple. Here's the entire thing:
 
 ```python
 # operator.py
+
 
 class itemgetter:
     """
@@ -122,7 +123,8 @@ KeyError: 'fiz'
 ```
 
 In the above snippet, `itemgetter` can't find the key `fiz` in the dict `d` and it
-complains when we try to fetch the value against it. In a sequence, it looks like this:
+complains when we try to fetch the value against it. In a sequence, the error looks
+like this:
 
 ```python
 
@@ -144,11 +146,11 @@ IndexError: list index out of range
 ## A more tolerant version of 'operator.itemgetter'
 
 I wanted something that works similar to `itemgetter` but doesn't raise these
-exceptions when it can't find the key or the index is out of range. Instead, it'd return
-a default value when these issues occur. So, to avoid `KeyError` in a map, it'd use
-`d.get(key, default)` instead of `d[key]` to fetch the value. Similarly, in a sequence,
-it'd first compare the length of the sequence with the index and return a default value
-if the index is out of range.
+exceptions when it can't find the key in a dict or the index of a sequence is out of
+range. Instead, it'd return a default value when these exceptions occur. So, to avoid
+`KeyError` in a map, it'd use `d.get(key, default)` instead of `d[key]` to fetch the
+value. Similarly, in a sequence, it'd first compare the length of the sequence with the
+index and return a default value if the index is out of range.
 
 Since `operator.itemgetter` is a class, we could inherit it and overwrite the `__init__`
 method. However, your type-checker will complain if you do so. That's because, in the
@@ -197,7 +199,9 @@ class safe_itemgetter:
                     get = obj.get  # Reduce attibute search call.
                     return tuple(get(i, default) for i in items)
 
-                return tuple(obj[i] if len(obj) >= abs(i) else default for i in items)
+                return tuple(
+                    obj[i] if len(obj) >= abs(i) else default for i in items
+                )
 
             self._call = func
 
@@ -236,17 +240,16 @@ and the rest of the positions are filled with the `default` value; in this case,
 `<NOTHING>` sentinel. We can pass any default value there:
 
 ```python
-
-In [14]: safe_itemgetter(-5, -3, -33, 'baz', 1, default='default')(d)
-Out[14]: ('default', 'default', 'default', 42, 'default')
+In[14]: safe_itemgetter(-5, -3, -33, "baz", 1, default="default")(d)
+Out[14]: ("default", "default", "default", 42, "default")
 ```
 
 This works similarly when a sequence is passed:
 
 ```python
-In [18]: l = [(10, 9), (1, 3), (4, 8), (0, 55), (6, 7)]
+In[18]: l = [(10, 9), (1, 3), (4, 8), (0, 55), (6, 7)]
 
-In [19]: safe_itemgetter(-11, default=())(l)
+In[19]: safe_itemgetter(-11, default=())(l)
 Out[19]: ()
 ```
 
