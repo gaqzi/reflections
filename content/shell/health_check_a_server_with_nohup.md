@@ -4,7 +4,10 @@ date: 2022-04-18
 tags: Unix
 ---
 
-While working on a project with [EdgeDB](https://www.edgedb.com/) and [FastAPI](https://fastapi.tiangolo.com/), I wanted to perform health checks against the FastAPI server in the GitHub CI. This would notify me about the working state of the application. The idea is to—
+While working on a project with [EdgeDB](https://www.edgedb.com/) and
+[FastAPI](https://fastapi.tiangolo.com/), I wanted to perform health checks against the
+FastAPI server in the GitHub CI. This would notify me about the working state of the
+application. The idea is to—
 
 * Run the server in the background.
 * Run the commands against the server that'll denote that the app is in a working state.
@@ -40,7 +43,12 @@ fi
 pkill -9 -ecfi python
 ```
 
-The `nohup` before the `python3 -m http.server 5000` makes sure that the `SIGHUP` signal can't reach the server and shut down the process. The ampersand `&` after the command runs the process in the background. Afterward, the script waits for two seconds to allow the server to be ready to process the health check requests. If the health check command fails, that terminates the script with `exit 1`. Otherwise, the `pkill` command cleans up the background processes with `SIGKILL` and the script exits with code 0.
+The `nohup` before the `python3 -m http.server 5000` makes sure that the `SIGHUP` signal
+can't reach the server and shut down the process. The ampersand `&` after the command
+runs the process in the background. Afterward, the script waits for two seconds to allow
+the server to be ready to process the health check requests. If the health check command
+fails, that terminates the script with `exit 1`. Otherwise, the `pkill` command cleans
+up the background processes with `SIGKILL` and the script exits with code 0.
 
 Finally, I would add the script invocation command to the CI file to make it automatic.
 

@@ -4,7 +4,8 @@ date: 2021-11-11
 tags: General
 ---
 
-Writing consistent commit messages helps you to weave a coherent story with your git history. Recently, I've started paying attention to my commit messages. Before this, my commit messages in this repository used to look like this:
+Writing consistent commit messages helps you to weave a coherent story with your git
+history. Recently, I've started paying attention to my commit messages. Before this, my commit messages in this repository used to look like this:
 
 ```
 $ git log --oneline -5
@@ -16,12 +17,14 @@ ec9191c added unfinished indexing script
 18e41c8 Bash tils
 ```
 
-With all the misuse of letter casings and punctuations, clearly, the message formatting is all over the place. To tame this mayhem, I've adopted these 7 rules of writing great commit messages:
+With all the misuse of letter casings and punctuations, clearly, the message formatting
+is all over the place. To tame this mayhem, I've adopted these 7 rules of writing great commit messages:
 
 ## The seven rules of writing consistent git commit messages
 
 1. Separate subject from body with a blank line
-2. Limit the subject line to 50 characters (I often break this when there's no message body)
+2. Limit the subject line to 50 characters (I often break this when there's no message
+body)
 3. Capitalize the subject line
 4. Do not end the subject line with a period
 5. Use the imperative mood in the subject line
