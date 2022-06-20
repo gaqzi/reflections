@@ -43,10 +43,10 @@ could bring the entire server down to its knees by posting a link to a ginormous
 The server would be busy downloading the file and keep consuming resources.
 
 I didn't want to use `urllib` at all for this purpose and went for
-[HTTPx](https://www.python-httpx.org/). It exposes a neat API to perform streaming file download. Also, I
-didn't want to peek into the `Content-Length` header to assess the file size since the
-file server can choose not to include that header key. I was looking for something more
-dependable than that. Here's how I solved it:
+[HTTPx](https://www.python-httpx.org/). It exposes a neat API to perform streaming file
+download. Also, I didn't want to peek into the `Content-Length` header to assess the
+file size since the file server can choose not to include that header key. I was looking
+for something more dependable than that. Here's how I solved it:
 
 ```python
 # src
