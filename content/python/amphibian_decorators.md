@@ -11,7 +11,8 @@ Projects like [Starlette](https://www.starlette.io/),
 [HTTPx](https://www.python-httpx.org/) can give you some clever pointers on how to craft
 APIs that are compatible with both sync and async code.
 
-> Lately, I've been calling constructs that are compatible with both synchronous and asynchronous paradigms as Amphibian Constructs.
+> Lately, I've been calling constructs that are compatible with both synchronous and
+> asynchronous paradigms as Amphibian Constructs.
 
 So, I wanted to write an amphibian decorator that'd work with both sync and async
 functions. Let's consider writing a trivial decorator that'll tag the wrapped function.
