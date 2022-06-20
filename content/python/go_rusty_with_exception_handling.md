@@ -4,9 +4,15 @@ date: 2022-02-02
 tags: Python
 ---
 
-While grokking [Black's](https://github.com/psf/black) codebase, I came across [this](https://github.com/psf/black/blob/main/src/black/rusty.py) interesting way of handling exceptions in Python. Exception handling in Python usually follows the EAFP paradigm where it's easier to ask for forgiveness than permission.
+While grokking [Black's](https://github.com/psf/black) codebase, I came across
+[this](https://github.com/psf/black/blob/main/src/black/rusty.py) interesting way of
+handling exceptions in Python. Exception handling in Python usually follows the EAFP
+paradigm where it's easier to ask for forgiveness than permission.
 
-However, Rust has [this](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html) recoverable error handling workflow that leverages generic Enums. I wanted to explore how Black emulates that in Python. This is how it works:
+However, Rust has
+[this](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html)
+recoverable error handling workflow that leverages generic Enums. I wanted to explore
+how Black emulates that in Python. This is how it works:
 
 
 ```python
@@ -38,7 +44,9 @@ class Err(Generic[E]):
 Result = Union[Ok[T], Err[E]]
 ```
 
-In the above snippet, two generic types `Ok` and `Err` represent the return type and the error types of a callable respectively. These two generics were then combined into one `Result` generic type. You'd use the `Result` generic to handle exceptions as follows:
+In the above snippet, two generic types `Ok` and `Err` represent the return type and the
+error types of a callable respectively. These two generics were then combined into one
+`Result` generic type. You'd use the `Result` generic to handle exceptions as follows:
 
 ```python
 # src.py
@@ -113,9 +121,13 @@ In this case, Mypy will catch the type inconsistency before runtime.
 
 ## Breadcrumbs
 
-Black extensively uses this [pattern](https://github.com/psf/black/blob/6417c99bfdbdc057e4a10aeff9967a751f4f85e9/src/black/trans.py#L61) in the transformation part of the codebase. This showed me another way of thinking about handling recoverable exceptions while ensuring type safety in a Python codebase.
+Black extensively uses this [pattern](https://github.com/psf/black/blob/6417c99bfdbdc057e4a10aeff9967a751f4f85e9/src/black/trans.py#L61) in the transformation
+part of the codebase. This showed me another way of thinking about handling recoverable
+exceptions while ensuring type safety in a Python codebase.
 
-However, I wouldn't go about and mindlessly refactor any exception handling logic that I come across to follow this pattern. You might find it useful if you need to handle exceptions in a recoverable fashion and need additional type safety around the logic.
+However, I wouldn't go about and mindlessly refactor any exception handling logic that I
+come across to follow this pattern. You might find it useful if you need to handle
+exceptions in a recoverable fashion and need additional type safety around the logic.
 
 
 ## References
