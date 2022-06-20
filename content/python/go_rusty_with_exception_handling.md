@@ -122,9 +122,9 @@ In this case, Mypy will catch the type inconsistency before runtime.
 ## Breadcrumbs
 
 Black extensively uses this
-[pattern](https://github.com/psf/black/blob/6417c99bfdbdc057e4a10aeff9967a751f4f85e9/src/black/trans.py#L61) in the transformation part of the codebase. This showed me another
-way of thinking about handling recoverable exceptions while ensuring type safety in a
-Python codebase.
+[pattern](https://github.com/psf/black/blob/6417c99bfdbdc057e4a10aeff9967a751f4f85e9/src/black/trans.py#L61)
+in the transformation part of the codebase. This showed me another way of thinking about
+handling recoverable exceptions while ensuring type safety in a Python codebase.
 
 However, I wouldn't go about and mindlessly refactor any exception handling logic that I
 come across to follow this pattern. You might find it useful if you need to handle
