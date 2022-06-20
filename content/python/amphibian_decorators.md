@@ -69,7 +69,8 @@ In the above snippet—
 * The decorator `tag` is a variadic function that accepts the names of the tags.
 
 * I attached the tag to a function before dealing with the sync and async functions. The
-tag attachment is done via `func._tags = names` statement. Placing them outside of the wrapped function also makes sure that the attachment happens during the definition time
+tag attachment is done via `func._tags = names` statement. Placing them outside of the
+wrapped function also makes sure that the attachment happens during the definition time
 of the wrapped function; not during runtime. Otherwise, it'll raise AttributeError if
 you try to access `func._tags` to inspect the tags.
 
