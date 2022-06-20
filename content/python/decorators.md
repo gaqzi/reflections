@@ -886,7 +886,8 @@ arguments. This time you can use `joinby` with or without arguments and function
 Personally, I find it cumbersome how you need three layers of nested functions to
 define a generalized decorator that can be used with or without arguments.
 [David Beazly](https://www.dabeaz.com/) in his book
-[Python Cookbook](https://realpython.com/asins/1449340377/) shows an excellent way to define generalized decorators without writing three levels of nested functions. It uses
+[Python Cookbook](https://realpython.com/asins/1449340377/) shows an excellent way to
+define generalized decorators without writing three levels of nested functions. It uses
 the built in `functools.partial` function to achieve that. The following is a pattern
 you can use to define generalized decorators in a more elegant way:
 
