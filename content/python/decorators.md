@@ -209,7 +209,8 @@ function and modifies its behavior.
 > The decorator function runs at the time the decorated function is imported/defined,
 > not when it is called.
 
-Before moving onto the next section, let's see how we can get the return value of target function instead of just printing it.
+Before moving onto the next section, let's see how we can get the return value of
+target function instead of just printing it.
 
 
 ```python
