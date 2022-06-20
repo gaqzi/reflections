@@ -391,7 +391,8 @@ with 12 threads. So 13 is the value I chose.
 There is one small problem with the example above. The `executor.map()` method returns a
 generator which allows to iterate through the results once ready. That means if any
 error occurs inside `map`, it's not possible to handle that and resume the generator
-after the exception occurs. From [PEP255](https://www.python.org/dev/peps/pep-0255/#specification-generators-and-exception-propagation):
+after the exception occurs. From 
+[PEP255](https://www.python.org/dev/peps/pep-0255/#specification-generators-and-exception-propagation):
 
 > If an unhandled exception-- including, but not limited to, StopIteration --is raised
 > by, or passes through, a generator function, then the exception is passed on to the
