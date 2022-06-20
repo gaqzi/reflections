@@ -123,7 +123,8 @@ The `cache_info()` is showing that the cache container keeps a reference to the 
 until it gets cleared. When I manually cleared the cache and reassigned the variable
 `slow_adder` to `None`, only then did the garbage collector remove the instance. By
 default, the size of the `lru_cache` is 128 but if I had applied
-`lru_cache(maxsize=None)`, that would've kept the cache forever and the garbage collector would wait for the reference count to drop to zero but that'd never happen
+`lru_cache(maxsize=None)`, that would've kept the cache forever and the garbage
+collector would wait for the reference count to drop to zero but that'd never happen
 within the lifetime of the process.
 
 This can be dangerous if you create millions of instances and they don't get garbage
@@ -179,7 +180,10 @@ Deleting instance ...
 ```
 
 Notice that this time, clearing out the cache wasn't necessary. I had to call
-`gc.collect()` to invoke explicit garbage collection. That's because this shenanigan creates cyclical references and the GC needs to do some special magic to clear the memory. In real code, Python interpreter will clean this up for you in the background without you having to call the GC.
+`gc.collect()` to invoke explicit garbage collection. That's because this shenanigan
+creates cyclical references and the GC needs to do some special magic to clear the
+memory. In real code, Python interpreter will clean this up for you in the background
+without you having to call the GC.
 
 
 ## The self dilemma
