@@ -95,7 +95,8 @@ finally:
     <cleanup>
 ```
 
-The setup code goes before the `try..finally` block. Notice the point where the generator yields. This is where the code block nested in the `with` statement gets
+The setup code goes before the `try..finally` block. Notice the point where the
+generator yields. This is where the code block nested in the `with` statement gets
 executed. After the completion of the code block, the generator is then resumed. If an
 unhandled exception occurs in the block, it's re-raised inside the generator at the
 point where the `yield` occurred and then the `finally` block is executed. If no
@@ -347,7 +348,8 @@ with ExitStack() as stack:
 
 If you are familiar with SQLALchemy, Python's SQL toolkit and Object Relational Mapper,
 then you probably know the usage of `Session` to run a query. A `Session` basically
-turns any query into a transaction and make it atomic. Context managers can help you write a transaction session in a very elegant way. A basic querying workflow in
+turns any query into a transaction and make it atomic. Context managers can help you
+write a transaction session in a very elegant way. A basic querying workflow in
 SQLAlchemy may look like this:
 
 
@@ -526,7 +528,8 @@ None
 ## Persistent parameters across HTTP requests with context managers
 
 Another great use case for context managers is making parameters persistent across
-multiple http requests. Python's `requests` library has a `Session` object that will let you easily achieve this. So, if you’re making several requests to the same host, the
+multiple http requests. Python's `requests` library has a `Session` object that will let
+you easily achieve this. So, if you’re making several requests to the same host, the
 underlying TCP connection will be reused, which can result in a significant performance
 increase. The following example is taken directly from
 [requests'](https://2.python-requests.org/en/v2.8.1/user/advanced/) official docs. Let's
@@ -552,7 +555,8 @@ This should show:
 
 ## Remarks
 
-To avoid redundencies, I have purposefully excluded examples of nested with statements and now deprecated `contextlib.nested` function to create nested context managers.
+To avoid redundencies, I have purposefully excluded examples of nested with statements
+and now deprecated `contextlib.nested` function to create nested context managers.
 
 ## Resources
 
