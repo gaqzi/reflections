@@ -4,9 +4,14 @@ date: 2021-11-26
 tags: Python
 ---
 
-I wanted to add a helper method to an Enum class. However, I didn't want to make it a `classmethod` as `property` method made more sense in this particular case. Problem is, you aren't supposed to initialize an enum class, and `property` methods can only be accessed from the instances of a class; not from the class itself.
+I wanted to add a helper method to an Enum class. However, I didn't want to make it a
+`classmethod` as `property` method made more sense in this particular case. Problem is,
+you aren't supposed to initialize an enum class, and `property` methods can only be
+accessed from the instances of a class; not from the class itself.
 
-While sifting through Django 3.2's codebase, I found this neat trick to make a `classmethod` that acts like a `property` method and can be accessed directly from the class without initializing it.
+While sifting through Django 3.2's codebase, I found this neat trick to make a
+`classmethod` that acts like a `property` method and can be accessed directly from the
+class without initializing it.
 
 
 ```python
@@ -37,7 +42,10 @@ $ python3.8 src.py
 [('EARTH', 'earth'), ('MARS', 'mars')]
 ```
 
-While the previous example is quite impressive, I still don't like the solution as it requires creating a metaclass and doing a bunch of magic to achieve something so simple. Luckily, Python3.9+ makes it possible without any additional magic. Notice the example below:
+While the previous example is quite impressive, I still don't like the solution as it
+requires creating a metaclass and doing a bunch of magic to achieve something so simple.
+Luckily, Python3.9+ makes it possible without any additional magic. Notice the example
+below:
 
 ```python
 # src.py
@@ -56,7 +64,9 @@ class ModernPlanets(Enum):
 print(ModernPlanets.choices)
 ```
 
-The only thing that matters here is the order of the `property` and `classmethod` decorator. Python applies them from bottom to top. Changing the order will make it behave unexpectedly.
+The only thing that matters here is the order of the `property` and `classmethod`
+decorator. Python applies them from bottom to top. Changing the order will make it
+behave unexpectedly.
 
 
 ## Complete example with tests

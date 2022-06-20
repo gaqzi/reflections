@@ -4,7 +4,12 @@ date: 2021-11-28
 tags: Python
 ---
 
-While trying to avoid inheritance in an API that I was working on, I came across this neat trick to perform attribute delegation on composed classes. Let's say there's a class called `Engine` and you want to put an engine instance in a `Car`. In this case, the car has a classic 'has a' (inheritance usually refers to 'is a' relationships) relationship with the engine. So, composition makes more sense than inheritance here. Consider this example:
+While trying to avoid inheritance in an API that I was working on, I came across this
+neat trick to perform attribute delegation on composed classes. Let's say there's a
+class called `Engine` and you want to put an engine instance in a `Car`. In this case,
+the car has a classic 'has a' (inheritance usually refers to 'is a' relationships)
+relationship with the engine. So, composition makes more sense than inheritance here.
+Consider this example:
 
 
 ```python
@@ -52,7 +57,9 @@ w16
 vroom
 ```
 
-However, I wanted free attribute access, just like we get in inheritance. We should be able to do `car.name`, not `car.engine.name`, and get the name of the engine instance. With a little bit of `__getattr__` magic, it's easy to do so:
+However, I wanted free attribute access, just like we get in inheritance. We should be
+able to do `car.name`, not `car.engine.name`, and get the name of the engine instance.
+With a little bit of `__getattr__` magic, it's easy to do so:
 
 
 ```python
@@ -83,7 +90,13 @@ class Car:
         return getattr(self.engine, attr)
 ```
 
-This snippet is exactly the same as before and the only thing that was added here is the `__getattr__` method in the `Car` class. Whenever you'll try to access an attribute or a method on an instance of the `Car` class, the `__getattr__` will intervene. It'll first look for the attribute in the instance of the `Car` class and if it can't find it there, then it'll look for the attribute in the instance of the `Engine` class; just like type inheritance. This will work in case of method access as well. So now you can use the classes as below:
+This snippet is exactly the same as before and the only thing that was added here is the
+`__getattr__` method in the `Car` class. Whenever you'll try to access an attribute or a
+method on an instance of the `Car` class, the `__getattr__` will intervene. It'll first
+look for the attribute in the instance of the `Car` class and if it can't find it there,
+then it'll look for the attribute in the instance of the `Engine` class; just like type
+inheritance. This will work in case of method access as well. So now you can use the
+classes as below:
 
 ```python
 engine = Engine("w16", "vroom")
@@ -106,7 +119,10 @@ Engine w16 goes vroom!
 ```
 
 !!! Warning
-    While this was all fun and dandy, I don't recommend putting it in any serious code as it can obfuscate the program's intent and can make obvious things not-so-obvious. Also, in case of attributes and methods with the same names in different classes, this can get hairy. I just found this gymnastics intellectually stimulating.
+    While this was all fun and dandy, I don't recommend putting it in any serious code
+    as it can obfuscate the program's intent and can make obvious things not-so-obvious.
+    Also, in case of attributes and methods with the same names in different classes,
+    this can get hairy. I just found this gymnastics intellectually stimulating.
 
 ## Complete example with tests
 

@@ -11,9 +11,14 @@ def is_power_of_two(x: int) -> bool:
     return x > 0 and hex(x)[-1] in ("0", "2", "4", "8")
 ```
 
-While this [works](https://twitter.com/rednafi/status/1484326191687696391/photo/1), I've never liked explaining the pattern matching hack that's going on here.
+While this
+[works](https://twitter.com/rednafi/status/1484326191687696391/photo/1), I've never
+liked explaining the pattern matching hack that's going on here.
 
-Today, I came across this [tweet](https://twitter.com/raymondh/status/1483948152906522625) by [Raymond Hettinger](https://twitter.com/raymondh) where he proposed a solution to the problem. Here's how it goes:
+Today, I came across this
+[tweet](https://twitter.com/raymondh/status/1483948152906522625) by
+[Raymond Hettinger](https://twitter.com/raymondh) where he proposed an elegant solution
+to the problem. Here's how it goes:
 
 
 ```python
@@ -21,7 +26,8 @@ def is_power_of_two(x: int) -> bool:
     return x > 0 and x.bit_count() == 1
 ```
 
-This is neat as there's no hack and it uses a mathematical invariant to check whether an integer is a power of `2` or not. Also, it's a tad bit faster.
+This is neat as there's no hack and it uses a mathematical invariant to check whether an
+integer is a power of `2` or not. Also, it's a tad bit faster.
 
 ## Explanation
 
@@ -41,7 +47,8 @@ For example:
 >>>
 ```
 
-The `.bit_count()` function checks how many on-bits (`1`) are there in the binary representation of an integer.
+The `.bit_count()` function checks how many on-bits (`1`) are there in the binary
+representation of an integer.
 
 
 ## Complete example with tests
