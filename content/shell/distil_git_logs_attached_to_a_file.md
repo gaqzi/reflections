@@ -26,11 +26,14 @@ Running the command on the markdown file that you're currently reading prints ou
 following:
 
 ```bash
-git log --oneline
+git log --oneline \
+    --follow content/shell/distil_git_logs_attached_to_a_file.md
 ```
 
 ```bash
-f5d2d4a (HEAD -> master) Git log follow post, closes #132
+7a21b3d (HEAD -> master, origin/master, origin/HEAD) Nit, refs #132
+6c08934 Publish distil git logs blog, refs #132
+f5d2d4a Git log follow post, closes #132
 ```
 
 Unfortunately, this command doesn't support flag chaining. So, you can't use the
