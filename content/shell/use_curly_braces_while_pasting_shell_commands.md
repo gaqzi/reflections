@@ -1,7 +1,7 @@
 ---
 title: Use curly braces while pasting shell commands
 date: 2021-11-08
-tags: Unix
+tags: Shell
 ---
 
 Pasting shell commands can be a pain when they include hidden return `\n` characters. In
