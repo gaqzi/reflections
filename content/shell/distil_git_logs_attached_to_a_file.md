@@ -22,7 +22,8 @@ the changes made to a particular file. Here's the command that does exactly that
 git logs --oneline --follow <file_path>
 ```
 
-Running the command on the markdown file that you're currently reading gives this:
+Running the command on the markdown file that you're currently reading prints out the
+following:
 
 ```bash
 git log --oneline
