@@ -34,7 +34,7 @@ f5d2d4a (HEAD -> master) Git log follow post, closes #132
 ```
 
 Unfortunately, this command doesn't support flag chaining. So, you can't use the
-`--follow`` flag multiple times to concatenate the logs for multiple files. But there's
+`--follow` flag multiple times to concatenate the logs for multiple files. But there's
 a way to do it via shell command. Here's how:
 
 ```bash
