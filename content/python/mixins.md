@@ -703,9 +703,9 @@ abstract method `multiply`, a concrete method `multiply_show` and doesn't store 
 instance variable.
 
 If you really want to dive deeper into mixins and their real-life use cases, checkout
-the codebase of the famous [Requests](https://github.com/psf/requests/blob/8149e9fe54c36951290f198e90d83c8a0498289c/requests/models.py#L60) library. It defines
-and employs many powerful mixin classes to bestow superpowers upon different concrete
-classes.
+the codebase of the famous [Requests](https://github.com/psf/requests/blob/8149e9fe54c36951290f198e90d83c8a0498289c/requests/models.py#L60)
+library. It defines and employs many powerful mixin classes to bestow superpowers upon 
+different concrete classes.
 
 ## Building powerful custom data structures with mixins
 
@@ -1280,8 +1280,9 @@ VerboseDict({'a': 'pepsi'})
 This section discusses two advanced data structures that I mentioned at the beginning
 of the post.
 
-* BitSet : Mutable set-like data structure that doesn't perform hashing
-* SQLAlchemyDict: Mutable dict-like data structure that can store key-value pairs in any SQLAlchemy supported relational database
+* BitSet : Mutable set-like data structure that doesn't perform hashing.
+* SQLAlchemyDict: Mutable dict-like data structure that can store key-value pairs in 
+any SQLAlchemy supported relational database.
 
 
 ### BitSet
