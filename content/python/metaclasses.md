@@ -887,7 +887,12 @@ TypeError                                 Traceback (most recent call last)
 TypeError: Can't instantiate abstract class ICalc with abstract methods add, div, mul, sub
 ```
 
-Although it seems like interface `ICalc` is simply inheriting from the class `ABC`, in fact, `ABC` is attaching a metaclass `ABCMeta` to `ICalc`. This metaclass transforms the `ICalc` class into an abstract class. You can see that the class `ICalc` gives `TypeError` when you take an attempt to initialize it. The only way to use this interface is via creating subclasses from `ICalc` base class and implementing all the abstract methods there. The snippet below shows that:
+Although it seems like interface `ICalc` is simply inheriting from the class `ABC`, in
+fact, `ABC` is attaching a metaclass `ABCMeta` to `ICalc`. This metaclass transforms
+the `ICalc` class into an abstract class. You can see that the class `ICalc` gives
+`TypeError` when you take an attempt to initialize it. The only way to use this
+interface is via creating subclasses from `ICalc` base class and implementing all the
+abstract methods there. The snippet below shows that:
 
 ```python
 class Calc(ICalc):
