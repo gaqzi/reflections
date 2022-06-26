@@ -9,9 +9,8 @@ processing on it, and then create or update objects in the production database u
 the parsed information from the file. In Python, it's trivial to download any file from
 s3 via [boto3][2], and then the file can be read with the `csv` module from the standard
 library. However, these scripts are usually run from a separate script server and I
-prefer not to clutter the server's disk with random CSV files. Loading the s3 file in
-memory and reading its contents isn't difficult but the process has some subtleties. I do this
-often enough to justify documenting the workflow here.
+prefer not to clutter the server's disk with random CSV files. Loading the s3 file
+directly into memory and reading its contents isn't difficult but the process has some subtleties. I do this often enough to justify documenting the workflow here.
 
 Along with boto3, we can leverage Python's [`tempfile.NamedTemporaryFile`][3] to
 directly download the contents of the file in a temporary in-memory file. Afterward, we
