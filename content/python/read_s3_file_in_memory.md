@@ -92,7 +92,7 @@ with tempfile.NamedTemporaryFile("w+b") as f:
         io.TextIOWrapper(f, encoding="utf-8"),
     )
 
-    # Now your good to go.
+    # Now you're good to go.
     for row in csv_reader:
         # ... do processing
         ...
