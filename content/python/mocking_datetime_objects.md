@@ -21,7 +21,8 @@ def get_utcnow_isoformat() -> str:
 ```
 
 How'd you test it? Mocking out `datetime.datetime` is tricky because of its immutable
-nature. Third-party libraries like [freezegun](https://github.com/spulec/freezegun) make it easier to mock and test functions like the one above. However, it's not too difficult
+nature. Third-party libraries like [freezegun](https://github.com/spulec/freezegun)
+make it easier to mock and test functions like the one above. However, it's not too difficult
 to cover this simple case without any additional dependencies. Here's one way to achieve
 the goal:
 
