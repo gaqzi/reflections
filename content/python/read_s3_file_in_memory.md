@@ -4,7 +4,7 @@ date: 2022-06-26
 tags: Python
 ---
 
-I frequently write ad-hoc scripts that download a CSV file from [s3][1], do some
+I frequently have to write ad-hoc scripts that download a CSV file from [s3][1], do some
 processing on it, and then create or update objects in the production database using
 the parsed information from the file. In Python, it's trivial to download any file from
 s3 via [boto3][2], and then the file can be read with the `csv` module from the standard
