@@ -4,7 +4,9 @@ date: 2022-03-10
 tags: Python, Testing
 ---
 
-While most of my Pytest fixtures don't react to the dynamically-passed values of function parameters, there have been situations where I've definitely felt the need for that. Consider this example:
+While most of my Pytest fixtures don't react to the dynamically-passed values of
+function parameters, there have been situations where I've definitely felt the need for
+that. Consider this example:
 
 ```python
 # test_src.py
@@ -30,11 +32,17 @@ def test_file_creation(create_file):
     assert file.name == "foo.md"
 ```
 
-Here, in the `create_file` fixture, I've created a file named `foo.md` in the `tmp` folder. Notice that the name of the file `foo.md` is hardcoded inside the body of the fixture function. The fixture yields the path of the directory and the created file.
+Here, in the `create_file` fixture, I've created a file named `foo.md` in the `tmp`
+folder. Notice that the name of the file `foo.md` is hardcoded inside the body of the
+fixture function. The fixture yields the path of the directory and the created file.
 
-Later on, the `test_file_creation` function just checks whether the fixture is working as expected. This snippet will pass successfully if you execute it with the `pytest` command.
+Later on, the `test_file_creation` function just checks whether the fixture is working
+as expected. This snippet will pass successfully if you execute it with the `pytest`
+command.
 
-Now, if you needed to create three files—`foo.md`, `bar.md`, `baz.md`—how'd you do that in the fixture? You could hardcode the names of the three files in the fixture as follows:
+Now, if you needed to create three files—`foo.md`, `bar.md`, `baz.md`—how'd you do that
+in the fixture? You could hardcode the names of the three files in the fixture as
+follows:
 
 ```python
 # test_src.py
@@ -64,11 +72,18 @@ def test_file_creation(create_files):
     assert any(file.name for file in files if file.name in filenames)
 ```
 
-I had to change the name of the fixture from `create_file` to `create_files` because the output signature of the fixture was changed to yield the directory path and a list of the paths of the three newly created files.
+I had to change the name of the fixture from `create_file` to `create_files` because the
+output signature of the fixture was changed to yield the directory path and a list of
+the paths of the three newly created files.
 
-While this works, it's cumbersome and inflexible. What if one of your tests needs one file and another one demands two files to be created? How'd you tackle that?
+While this works, it's cumbersome and inflexible. What if one of your tests needs one
+file and another one demands two files to be created? How'd you tackle that?
 
-It'd be much better if we could just pass the filename to the fixture as a parameter and the fixture would then create the corresponding file in the temporary folder. Also, if we need `n` files to be created, then we'll just have to execute the fixture `n` times. There's a way to do so by leveraging fixture parameters and `@pytest.mark.parameterize` decorator. This is how you can do it:
+It'd be much better if we could just pass the filename to the fixture as a parameter and
+the fixture would then create the corresponding file in the temporary folder. Also, if
+we need `n` files to be created, then we'll just have to execute the fixture `n` times.
+There's a way to do so by leveraging fixture parameters and `@pytest.mark.parameterize`
+decorator. This is how you can do it:
 
 ```python
 # test_src.py
@@ -97,7 +112,13 @@ def test_file_creation(create_file):
     assert any(f for f in filenames if file.name == f)
 ```
 
-In this case, the fixture `create_file` takes an additional parameter called `filename` and then yields the directory path and the file path; just as the first snippet. Later on, in the `test_file_creation` function, the desired values of the `filename` parameter is injected into the fixture via the `@pytest.mark.parametrize` decorator. In the above snippet, Pytest runs the fixture 3 times and creates the desired files in 3 passes—just like how a normal function call would behave.
+In this case, the fixture `create_file` takes an additional parameter called `filename`
+and then yields the directory path and the file path; just as the first snippet. Later
+on, in the `test_file_creation` function, the desired values of the `filename` parameter
+is injected into the fixture via the `@pytest.mark.parametrize` decorator. In the above
+snippet, Pytest runs the fixture 3 times and creates the desired files in 3 passes—just
+like how a normal function call would behave.
+
 
 ## References
 

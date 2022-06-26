@@ -4,7 +4,9 @@ date: 2022-03-16
 tags: Python, Testing
 ---
 
-This is the 4th time in a row that I've wasted time figuring out how to mock out a function during testing that calls the chained methods of a `datetime.datetime` object in the function body. So I thought I'd document it here. Consider this function:
+This is the 4th time in a row that I've wasted time figuring out how to mock out a
+function during testing that calls the chained methods of a `datetime.datetime` object
+in the function body. So I thought I'd document it here. Consider this function:
 
 ```python
 # src.py
@@ -18,7 +20,10 @@ def get_utcnow_isoformat() -> str:
     return datetime.datetime.utcnow().isoformat()
 ```
 
-How'd you test it? Mocking out `datetime.datetime` is tricky because of its immutable nature. Third-party libraries like [freezegun](https://github.com/spulec/freezegun) make it easier to mock and test functions like the one above. However, it's not too difficult to cover this simple case without any additional dependencies. Here's one way to achieve the goal:
+How'd you test it? Mocking out `datetime.datetime` is tricky because of its immutable
+nature. Third-party libraries like [freezegun](https://github.com/spulec/freezegun) make it easier to mock and test functions like the one above. However, it's not too difficult
+to cover this simple case without any additional dependencies. Here's one way to achieve
+the goal:
 
 ```python
 # src.py
@@ -49,7 +54,10 @@ def test_get_utcnow_isoformat(mock_datetime):
     assert get_utcnow_isoformat() == frozen_date
 ```
 
-Here, the `mock_datetime` fixture function makes the output of the chained calls on the datetime object deterministic. Then I used it in the `test_get_utcnow_isoformat` function to get a frozen output every time the function `get_utcnow_isoformat` gets called. If you run the above snippet with Python, it'll pass.
+Here, the `mock_datetime` fixture function makes the output of the chained calls on the
+datetime object deterministic. Then I used it in the `test_get_utcnow_isoformat`
+function to get a frozen output every time the function `get_utcnow_isoformat` gets
+called. If you run the above snippet with Python, it'll pass.
 
 ```
 ======test session starts ======

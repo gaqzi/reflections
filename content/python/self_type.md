@@ -4,9 +4,13 @@ date: 2022-02-28
 tags: Python, Typing
 ---
 
-[PEP-673](https://www.python.org/dev/peps/pep-0673/) introduces the `Self` type and it's coming to Python 3.11. However, you can already use that now via the [`typing_extenstions`](https://typing.readthedocs.io/) module.
+[PEP-673](https://www.python.org/dev/peps/pep-0673/) introduces the `Self` type and it's
+coming to Python 3.11. However, you can already use that now via the
+[`typing_extenstions`](https://typing.readthedocs.io/) module.
 
-The `Self` type makes annotating methods that return the instances of the corresponding classes trivial. Before this, you'd have to do some mental gymnastics to statically type situations as follows:
+The `Self` type makes annotating methods that return the instances of the corresponding
+classes trivial. Before this, you'd have to do some mental gymnastics to statically type
+situations as follows:
 
 ```python
 # src.py
@@ -40,7 +44,12 @@ if __name__ == "__main__":
     print(dog.legs)  # Mypy complains here!
 ```
 
-The class `Animal` has a `from_description` class method that acts as an additional constructor. It takes a description string, and then builds and returns an instance of the same class. The return type of the method is annotated as `Animal` here. However, doing this makes the child class `Dog` conflate its identity with the `Animal` class. If you execute the snippet, it won't raise any runtime error. Also, Mypy will complain about the type:
+The class `Animal` has a `from_description` class method that acts as an additional
+constructor. It takes a description string, and then builds and returns an instance of
+the same class. The return type of the method is annotated as `Animal` here. However,
+doing this makes the child class `Dog` conflate its identity with the `Animal` class. If
+you execute the snippet, it won't raise any runtime error. Also, Mypy will complain
+about the type:
 
 ```
 src.py:27: error: "Animal" has no attribute "legs"
@@ -49,7 +58,8 @@ src.py:27: error: "Animal" has no attribute "legs"
 Found 1 error in 1 file (checked 1 source file)
 ```
 
-To fix this, we'll have to make sure that the return type of the `from_description` class method doesn't confuse the type checker. This is one way to do this:
+To fix this, we'll have to make sure that the return type of the `from_description`
+class method doesn't confuse the type checker. This is one way to do this:
 
 ```python
 from __future__ import annotations
@@ -73,7 +83,12 @@ class Animal:
 ...
 ```
 
-In the above snippet, first I had to declare a `TypeVar` and bind that to the `Animal` class. Then I had to explicitly type the `cls` variable in the `from_description` method. This time, the type checker will be happy. While this isn't a lot of work, it surely goes against the community convention. Usually, we don't explicitly type the `self`, `cls` variables and instead, let the type checker figure out their types. Also, subjectively, this sticks out like a sore thumb.
+In the above snippet, first I had to declare a `TypeVar` and bind that to the `Animal`
+class. Then I had to explicitly type the `cls` variable in the `from_description`
+method. This time, the type checker will be happy. While this isn't a lot of work, it
+surely goes against the community convention. Usually, we don't explicitly type the
+`self`, `cls` variables and instead, let the type checker figure out their types. Also,
+subjectively, this sticks out like a sore thumb.
 
 PEP-673 allows us to solve the issue elegantly:
 
@@ -104,7 +119,7 @@ class Animal:
 ...
 ```
 
-**Ideally, Mypy should be happy now. However, as of writing this post, Mypy 0.931 doesn't support this yet. So, it'll still complain.**
+If you run Mypy against the second snippet, it won't complain.
 
 
 ## Typing instance methods that return `self`
@@ -136,7 +151,9 @@ class Counter:
         return self
 ```
 
-The `increment` and `decrement` method of the `Counter` class return the instance of the same class after performing the operations on the `start` value. This is a perfect case where the `Self` type can be useful.
+The `increment` and `decrement` method of the `Counter` class return the instance of the
+same class after performing the operations on the `start` value. This is a perfect case
+where the `Self` type can be useful.
 
 
 ## Typing `__new__` methods
@@ -170,7 +187,8 @@ class Config:
         self.var = var
 ```
 
-The `__new__` method in the `Config` class validates the `var` before constructing an instance of the class. The `Self` type makes it easy to annotate the method.
+The `__new__` method in the `Config` class validates the `var` before constructing an
+instance of the class. The `Self` type makes it easy to annotate the method.
 
 * [PEP 673 -- Self Type](https://www.python.org/dev/peps/pep-0673/)
 * [Tweet by Raymond Hettinger](https://twitter.com/raymondh/status/1491187805636407298)

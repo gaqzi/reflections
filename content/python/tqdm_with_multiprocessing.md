@@ -4,10 +4,13 @@ date: 2021-11-18
 tags: Python
 ---
 
-Making tqdm play nice with multiprocessing requires some additional work. It's not always obvious and I don't want to add another third-party dependency just for this purpose.
+Making tqdm play nice with multiprocessing requires some additional work. It's not
+always obvious and I don't want to add another third-party dependency just for this
+purpose.
 
-The following example attempts to make tqdm work with `multiprocessing.imap_unordered`. However, this should also work with similar mapping methods like—`multiprocessing.map`, `multiprocessing.imap`, `multiprocessing.starmap`, etc.
-
+The following example attempts to make tqdm work with `multiprocessing.imap_unordered`.
+However, this should also work with similar mapping methods like—`multiprocessing.map`,
+`multiprocessing.imap`, `multiprocessing.starmap`, etc.
 
 
 ```python
@@ -77,25 +80,30 @@ if __name__ == "__main__":
 This will print:
 
 ```
-0%|                                                                | 0/100 [00:00<?, ?it/s]14
-1%|▌                                                       | 1/100 [00:01<01:39,  1.00s/it]6
+0%|                                                 | 0/100 [00:00<?, ?it/s]
+14
+1%|▌                                                | 1/100 [00:01<01:39,  1.00s/it]
+6
 9
 70
 ...
 
-26%|██████████████▎                                        | 26/100 [00:02<00:04, 15.10it/s]70
+26%|██████████████▎                                 | 26/100 [00:02<00:04, 15.10it/s]
+70
 42
 41
 ...
-51%|████████████████████████████                           | 51/100 [00:03<00:02, 19.61it/s]114
+51%|████████████████████████████                    | 51/100 [00:03<00:02, 19.61it/s]
+114
 135
 59
 ...
-76%|█████████████████████████████████████████▊             | 76/100 [00:04<00:01, 21.72it/s]134
+76%|█████████████████████████████████████████▊      | 76/100 [00:04<00:01, 21.72it/s]
+134
 106
 167
 ...
-100%|██████████████████████████████████████████████████████| 100/100 [00:04<00:00, 24.96it/s]
+100%|██████████████████████████████████████████████████████| 100/100 [00:04<00:00]
 ```
 
 ## Resources

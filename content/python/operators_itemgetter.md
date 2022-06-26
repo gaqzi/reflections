@@ -155,7 +155,8 @@ index and return a default value if the index is out of range.
 Since `operator.itemgetter` is a class, we could inherit it and overwrite the `__init__`
 method. However, your type-checker will complain if you do so. That's because, in the
 stub file, the `itemgetter` class is decorated with the `typing.final` decorator and
-isn't meant to be subclassed. So, our only option is to rewrite it. The good news is that this implementation is quite terse just like the original. Here it goes:
+isn't meant to be subclassed. So, our only option is to rewrite it. The good news is
+that this implementation is quite terse just like the original. Here it goes:
 
 ```python
 # src.py
@@ -271,4 +272,5 @@ Out[29]: ((6, 7), (4, 8), <NOTHING>, (1, 3))
 ```
 
 ## References
+
 * [operator.itemgetter - Python docs](https://docs.python.org/3/library/operator.html#operator.itemgetter)

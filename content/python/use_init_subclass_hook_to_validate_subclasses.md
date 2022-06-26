@@ -4,9 +4,13 @@ date: 2021-11-20
 tags: Python
 ---
 
-At my workplace, we have a fairly large Celery config file where you're expected to subclass from a base class and extend that if there's a new domain. However, the subclass expects the configuration in a specific schema. So, having a way to enforce that schema in the subclasses and raising appropriate runtime exceptions is nice.
+At my workplace, we have a fairly large Celery config file where you're expected to
+subclass from a base class and extend that if there's a new domain. However, the
+subclass expects the configuration in a specific schema. So, having a way to enforce
+that schema in the subclasses and raising appropriate runtime exceptions is nice.
 
-Wrote a fancy Python 3.6+ `__init_subclasshook__` to validate the subclasses as below. This is neater than writing a metaclass.
+Wrote a fancy Python 3.6+ `__init_subclasshook__` to validate the subclasses as below.
+This is neater than writing a metaclass.
 
 
 ```python

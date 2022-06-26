@@ -4,7 +4,9 @@ date: 2021-11-18
 tags: Python
 ---
 
-Python's daemon threads are cool. A Python script will stop when the main thread is done and only daemon threads are running. To test a simple `hello` function that runs indefinitely, you can do the following:
+Python's daemon threads are cool. A Python script will stop when the main thread is done
+and only daemon threads are running. To test a simple `hello` function that runs
+indefinitely, you can do the following:
 
 
 ```python
@@ -37,7 +39,8 @@ async def test_hello(mock_asyncio_sleep, capsys):
     mock_asyncio_sleep.assert_awaited()
 ```
 
-To execute the script, make sure you've your virtual env actiavated. Also you'll need to install `pytest` and `pytest-asyncio`. Then run:
+To execute the script, make sure you've your virtual env actiavated. Also you'll need to
+install `pytest` and `pytest-asyncio`. Then run:
 
 ```
 pytest -v -s --asyncio-mode=auto

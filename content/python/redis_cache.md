@@ -6,24 +6,40 @@ tags: Python, API
 
 ***Updated on 2020-07-13***: *Removed duplicate keys in docker-compose.yml*
 
-Recently, I was working with [MapBox](https://www.mapbox.com/)'s [Route Optimization API](https://docs.mapbox.com/api/navigation/#optimization). Basically, it tries to solve the [traveling salesman problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem) where you provide the API with coordinates of multiple places and it returns a duration-optimized route between those locations. This is a perfect usecase where [Redis](https://redis.io/) caching can come handy. Redis is a blazingly fast, lightweight in-memory database with additional persistence options; making it a perfect candidate for the task at hand. Here, caching can save you from making redundant API requests and also, it can dramatically improve the response time as well.
+Recently, I was working with [MapBox](https://www.mapbox.com/)'s [Route Optimization API](https://docs.mapbox.com/api/navigation/#optimization). Basically, it tries to solve the
+[traveling salesman problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem)
+where you provide the API with coordinates of multiple places and it returns a
+duration-optimized route between those locations. This is a perfect usecase where
+[Redis](https://redis.io/) caching can come handy. Redis is a blazingly fast,
+lightweight in-memory database with additional persistence options; making it a perfect
+candidate for the task at hand. Here, caching can save you from making redundant API
+requests and also, it can dramatically improve the response time as well.
 
-I found that in my country, the optimized routes returned by the API do not change dramatically for at least for a couple of hours. So the workflow will look something like this:
+I found that in my country, the optimized routes returned by the API do not change
+dramatically for at least for a couple of hours. So the workflow will look something
+like this:
 
-* Caching the API response in Redis using the key-value data structure. Here the requested coordinate-string will be the key and the response will be the corresponding value
+* Caching the API response in Redis using the key-value data structure. Here the
+requested coordinate-string will be the key and the response will be the corresponding
+value
 * Setting a timeout on the records
 * Serving new requests from cache if the records exist
-* Only send a new request to MapBox API if the response is not cached and then add that response to cache
+* Only send a new request to MapBox API if the response is not cached and then add that
+response to cache
 
 
 ## Setting up Redis & RedisInsight
 
-To proceed with the above workflow, you'll need to install and setup Redis database on your system. For monitoring the database, I'll be using  [RedisInsight](https://redislabs.com/redisinsight/). The easiest way to setup Redis and RedisInsight is through [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose/). Here's a docker-compose that you can use to setup everything with a single command.
+To proceed with the above workflow, you'll need to install and setup Redis database on
+your system. For monitoring the database, I'll be using
+[RedisInsight](https://redislabs.com/redisinsight/). The easiest way to setup Redis and
+RedisInsight is through [docker](https://www.docker.com/) and
+[docker-compose](https://docs.docker.com/compose/). Here's a docker-compose that you can use to setup everything with a single command.
 
 ```yml
 # docker-compose.yml
 
-version: "3.2"
+version: "3.9"
 services:
   redis:
     container_name: redis-cont
@@ -55,24 +71,35 @@ volumes:
   redisinsight:
 ```
 
-The above `docker-compose` file has two services, `redis` and `redisinsight`. I've set up the database with a dummy password `ubuntu` and made it persistent using a folder named `redis-data` in the current working directory. The database listens in localhost's port `6379`. You can monitor the database using `redisinsight` in port 8000. To spin up Redis and RedisInsight containers, run:
+The above `docker-compose` file has two services, `redis` and `redisinsight`. I've set
+up the database with a dummy password `ubuntu` and made it persistent using a folder
+named `redis-data` in the current working directory. The database listens in localhost's
+port `6379`. You can monitor the database using `redisinsight` in port 8000. To spin up
+Redis and RedisInsight containers, run:
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
-This command will start the database and monitor accordingly. You can go to this `localhost:8000` link using your browser and connect redisinsight to your database. After connecting your database, you should see a dashboard like this in your redisinsight panel:
+This command will start the database and monitor accordingly. You can go to this
+`localhost:8000` link using your browser and connect redisinsight to your database.
+After connecting your database, you should see a dashboard like this in your
+redisinsight panel:
 
 ![Screenshot from 2020-05-23 19-23-21](https://user-images.githubusercontent.com/30027932/82731781-f30b1b00-9d2a-11ea-8c72-62a4753bc5f9.png)
 
 
 ## Preparing Python environment
 
-For local development, you can set up your python environment and install the dependencies using pip. Here, I'm on a Linux machine and using virtual environment for isolation. The following commands will work if you're on a \*nix based system and have `python 3.8` installed on your system. This will install the necessary dependencies in a virtual environment:
+For local development, you can set up your python environment and install the
+dependencies using pip. Here, I'm on a Linux machine and using virtual environment for
+isolation. The following commands will work if you're on a \*nix based system and have
+`python 3.8` installed on your system. This will install the necessary dependencies in a
+virtual environment:
 
 ```bash
-python3.8 -m venv venv
-source venv/bin/activate
+python3.10 -m venv .venv
+source .venv/bin/activate
 pip install redis httpx
 ```
 
@@ -80,7 +107,8 @@ pip install redis httpx
 
 ### Connecting Python client to Redis
 
-Assuming the database server is running and you've installed the dependencies, the following snippet connects `redis-py` client to the database.
+Assuming the database server is running and you've installed the dependencies, the
+following snippet connects `redis-py` client to the database.
 
 
 ```python
@@ -108,7 +136,15 @@ def redis_connect() -> redis.client.Redis:
 client = redis_connect()
 ```
 
-The above excerpt tries to connect to the `Redis` database server using the port `6379`. Notice, how I'm providing the password `ubuntu` via the `password` argument. Here, `client.ping()` helps you determine if a connection has been established successfully. It returns `True` if a successful connection can be established or raises specific errors in case of failures. The above function handles `AuthenticationError` and prints out an error message if the error occurs. If everything goes well, running the `redis_connect()` function will return an instance of the `redis.client.Redis` class. This instance will be used later to set and retrieve data to and from the redis database.
+The above excerpt tries to connect to the `Redis` database server using the port `6379`.
+Notice, how I'm providing the password `ubuntu` via the `password` argument. Here,
+`client.ping()` helps you determine if a connection has been established successfully.
+It returns `True` if a successful connection can be established or raises specific
+errors in case of failures. The above function handles `AuthenticationError` and prints
+out an error message if the error occurs. If everything goes well, running the
+`redis_connect()` function will return an instance of the `redis.client.Redis` class.
+This instance will be used later to set and retrieve data to and from the redis database.
+
 
 ### Getting route data from MapBox API
 
@@ -133,14 +169,25 @@ def get_routes_from_api(coordinates: str) -> dict:
         return response.json()
 ```
 
-The above code uses Python's [httpx](https://github.com/encode/httpx) library to make the get request. Httpx is almost a drop-in replacement for the ubiquitous [Requests](https://github.com/psf/requests) library but way faster and has async support. Here, I've used context manager `httpx.Client()` for better resource management while making the `get` request. You can read more about context managers and how to use them for hassle free resource management [here](https://rednafi.github.io/digressions/python/2020/03/26/python-contextmanager.html).
+The above code uses Python's [httpx](https://github.com/encode/httpx) library to make
+the get request. Httpx is almost a drop-in replacement for the ubiquitous
+[Requests](https://github.com/psf/requests) library but way faster and has async
+support. Here, I've used context manager `httpx.Client()` for better resource management
+while making the `get` request. You can read more about context managers and how to use
+them for hassle free resource management [here](https://rednafi.github.io/digressions/python/2020/03/26/python-contextmanager.html).
 
-The `base_url` is the base url of the route optimization API and the you'll need to provide your own access token in the `access_token` field. Notice, how the `url` variable builds up the final request url. The `coordinates` are provided using the `lat0,lon0;lat1,lon1;lat2,lon2...` format. Rest of the function sends the http requests and converts the response into a native dictionary object using the `response.json()` method.
+The `base_url` is the base url of the route optimization API and the you'll need to
+provide your own access token in the `access_token` field. Notice, how the `url`
+variable builds up the final request url. The `coordinates` are provided using the
+`lat0,lon0;lat1,lon1;lat2,lon2...` format. Rest of the function sends the http requests
+and converts the response into a native dictionary object using the `response.json()`
+method.
 
 
 ### Setting & retrieving data to & from Redis database
 
-The following two functions retrieves data from and sets data to redis database respectively.
+The following two functions retrieves data from and sets data to redis database
+respectively.
 
 ```python
 from datetime import timedelta
@@ -164,17 +211,24 @@ def set_routes_to_cache(key: str, value: str) -> bool:
     return state
 ```
 
-Here, both the keys and the values are strings. In the second function, `set_routes_to_cache`, the `client.setex()` method sets a timeout of 1 hour on the key. After that the key and its associated value get deleted automatically.
+Here, both the keys and the values are strings. In the second function,
+`set_routes_to_cache`, the `client.setex()` method sets a timeout of 1 hour on the key.
+After that the key and its associated value get deleted automatically.
+
 
 ### The central orchestration
 
-The `route_optima` function is the primary agent that orchestrates and executes the caching and returning of responses against requests. It roughly follows the execution flow shown below.
+The `route_optima` function is the primary agent that orchestrates and executes the
+caching and returning of responses against requests. It roughly follows the execution
+flow shown below.
 
 ![redis-cache](https://user-images.githubusercontent.com/30027932/82735908-1ba10e00-9d47-11ea-9e86-ac1fbc63628f.png)
 
 
 
-When a new request arrives, the function first checks if the return-value exists in the Redis cache. If the value exists, it shows the cached value, otherwise, it sends a new request to the MapBox API, cache that value and then shows the result.
+When a new request arrives, the function first checks if the return-value exists in the
+Redis cache. If the value exists, it shows the cached value, otherwise, it sends a new
+request to the MapBox API, cache that value and then shows the result.
 
 ```python
 def route_optima(coordinates: str) -> dict:
@@ -206,7 +260,10 @@ def route_optima(coordinates: str) -> dict:
 
 ### Exposing as an API
 
-This part of the code wraps the original Route Optimization API and exposes that as a new endpoint. I've used [fastAPI](https://fastapi.tiangolo.com/) to build the wrapper API. Doing this also hides the underlying details of authentication and the actual endpoint of the MapBox API.
+This part of the code wraps the original Route Optimization API and exposes that as a
+new endpoint. I've used [fastAPI](https://fastapi.tiangolo.com/) to build the wrapper
+API. Doing this also hides the underlying details of authentication and the actual
+endpoint of the MapBox API.
 
 ```python
 from fastapi import FastAPI
@@ -333,7 +390,9 @@ def view(coordinates: str) -> dict:
     return route_optima(coordinates)
 ```
 
-You can copy the complete code to a file named `app.py` and run the app using the command below (assuming redis, redisinsight is running and you've installed the dependencies beforehand):
+You can copy the complete code to a file named `app.py` and run the app using the
+command below (assuming redis, redisinsight is running and you've installed the
+dependencies beforehand):
 
 ```
 uvicorn app.app:app --host 0.0.0.0 --port 5000 --reload
@@ -418,39 +477,50 @@ This should return a response with the coordinates of the optimized route.
 ```
 
 
-If you've hit the above URL for the first time, the `cache` attribute of the json response should show `false`. This means that the response is being served from the original MapBox API. However, hitting the same URL with the same coordinates again will show the cached response and this time the `cache` attribute should show `true`.
+If you've hit the above URL for the first time, the `cache` attribute of the json
+response should show `false`. This means that the response is being served from the
+original MapBox API. However, hitting the same URL with the same coordinates again will
+show the cached response and this time the `cache` attribute should show `true`.
 
 ## Inspection
 
-Once you've got everything up and running you can inspect the cache via redis insight. To do so, go to the link below while your app server is running:
+Once you've got everything up and running you can inspect the cache via redis insight.
+To do so, go to the link below while your app server is running:
 
 ```
 http://localhost:8000/
 ```
 
-Select the `Browser` panel from the left menu and click on a key of your cached data. It should show something like this:
+Select the `Browser` panel from the left menu and click on a key of your cached data. It
+should show something like this:
 
 
 ![Screenshot from 2020-05-25 02-06-24](https://user-images.githubusercontent.com/30027932/82763854-6a74a380-9e2c-11ea-998d-066d25461eca.png)
 
-Also you can play around with the API in the swagger UI. To do so, go to the following link:
+Also you can play around with the API in the swagger UI. To do so, go to the following
+link:
 
 ```
 http://localhost:5000/docs
 ```
 
-This will take you to the swagger dashboard. Here you can make requests using the interactive UI. Go ahead and inspect how the caching works for new coordinates.
+This will take you to the swagger dashboard. Here you can make requests using the
+interactive UI. Go ahead and inspect how the caching works for new coordinates.
 
 ![swagger](https://user-images.githubusercontent.com/30027932/82763965-2f26a480-9e2d-11ea-906b-63c1d25c08a8.png)
 
 
 ## Remarks
 
-All the pieces of codes in the blog were written and tested with python 3.8 on a machine running Ubuntu 20.04. You can find the complete source code of the app [here](https://github.com/rednafi/redis-request-caching).
+You can find the complete source code of the app [here](https://github.com/rednafi/redis-request-caching).
+
 
 ## Disclaimer
 
-This app has been made for demonstration purpose only. So it might not reflect the best practices of production ready applications. Using APIs without authentication like this is not recommended.
+This app has been made for demonstration purpose only. So it might not reflect the best
+practices of production ready applications. Using APIs without authentication like this
+is not recommended.
+
 
 ## Resources
 

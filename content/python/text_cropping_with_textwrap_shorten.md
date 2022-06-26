@@ -51,15 +51,23 @@ or—
 
 ## Solution
 
-This is quite easily solvable by using Python's `textwrap.shorten` function. The `shorten` function takes quite a few [parameters](https://docs.python.org/3/library/textwrap.html#textwrap.shorten). However, we'll only need the following ones to do our job:
+This is quite easily solvable by using Python's `textwrap.shorten` function. The
+`shorten` function takes quite a few
+[parameters](https://docs.python.org/3/library/textwrap.html#textwrap.shorten). However,
+we'll only need the following ones to do our job:
 
 * `text: str`: Target text that we're going to operate on.
 * `width: int` : Desired width after cropping.
-* `initial_indent: str`: Character to use for the initial indentation. Provide empty string for no initial indentation.
-* `subsequent_indent: str`: Character to use for the subsequent indentation. Provide empty string for no subsequent indentation.
+* `initial_indent: str`: Character to use for the initial indentation. Provide empty
+string for no initial indentation.
+* `subsequent_indent: str`: Character to use for the subsequent indentation. Provide
+empty string for no subsequent indentation.
 * `break_long_words: bool`: Whether to break long words or not.
 * `break_on_hyphens: bool`: Whether to break words on hyphens or not.
-* `placeholder: bool`: Placeholder character. The default here is `[...]`. However, provide an empty string if you don't want any placeholder after the cropped string. The length of the placeholder is going to be included in the total length of the cropped text.
+* `placeholder: bool`: Placeholder character. The default here is `[...]`. However,
+provide an empty string if you don't want any placeholder after the cropped string. The
+length of the placeholder is going to be included in the total length of the cropped
+text.
 
 With the descriptions out of the way, let's write the `crop` function here:
 
@@ -96,7 +104,9 @@ This prints out the desired output as follows:
 A quick
 ```
 
-You can see that we achieved our goal of cropping a text corpus without breaking any word. Try playing around with the `initial_indent`, `subsequent_indent`, and `placeholder` parameters and see how they change the output.
+You can see that we achieved our goal of cropping a text corpus without breaking any
+word. Try playing around with the `initial_indent`, `subsequent_indent`, and
+`placeholder` parameters and see how they change the output.
 
 ## Complete solution with tests
 

@@ -4,13 +4,30 @@ date: 2020-04-13
 tags: Python
 ---
 
-When I first encountered Python's `pathlib` module for path manipulation, I brushed it aside assuming it to be just an OOP way of doing what `os.path` already does quite well. The official doc also dubs it as the `Object-oriented filesystem paths`. However, back in 2019 when [this](https://code.djangoproject.com/ticket/29983) ticket confirmed that Django was replacing `os.path` with `pathlib`, I got curious.
+When I first encountered Python's `pathlib` module for path manipulation, I brushed it
+aside assuming it to be just an OOP way of doing what `os.path` already does quite well.
+The official doc also dubs it as the `Object-oriented filesystem paths`. However, back
+in 2019 when [this](https://code.djangoproject.com/ticket/29983) ticket confirmed that
+Django was replacing `os.path` with `pathlib`, I got curious.
 
-The `os.path` module has always been the de facto standard for working with paths in Python. But the API can feel massive as it performs a plethora of other loosely coupled system related jobs. I've to look things up constantly even to perform some of the most basic tasks like joining multiple paths, listing all the files in a folder having a particular extension, opening multiple files in a directory etc. The `pathlib` module can do nearly everything that `os.path` offers and comes with some additional cherries on top.
+The `os.path` module has always been the de facto standard for working with paths in
+Python. But the API can feel massive as it performs a plethora of other loosely coupled
+system related jobs. I've to look things up constantly even to perform some of the most
+basic tasks like joining multiple paths, listing all the files in a folder having a
+particular extension, opening multiple files in a directory etc. The `pathlib` module
+can do nearly everything that `os.path` offers and comes with some additional cherries
+on top.
+
 
 ## Problem with Python's path handling
 
-Traditionally, Python has represented file paths as regular text strings. So far, using paths as strings with `os.path` module has been adequate although a bit cumbersome . However, paths are not actually strings and this has necessitated the usage of multiple modules to provide disparate functionalities that are scattered all around the standard library, including libraries like `os`, `glob`, and `shutil`. The following code uses three modules just to copy multiple python files from current directory to another directory called `src`.
+Traditionally, Python has represented file paths as regular text strings. So far, using
+paths as strings with `os.path` module has been adequate although a bit cumbersome.
+However, paths are not actually strings and this has necessitated the usage of multiple
+modules to provide disparate functionalities that are scattered all around the standard
+library, including libraries like `os`, `glob`, and `shutil`. The following code uses
+three modules just to copy multiple python files from current directory to another
+directory called `src`.
 
 ```python
 from glob import glob
@@ -22,18 +39,21 @@ for fname in glob("*.py"):
     shutil.copy(fname, new_path)
 ```
 
-The above pattern can get complicated fairly quickly and you have to know or look for specific modules and methods in a large search space to perform your path manipulations. Let's have a look at a few more examples of performing the same tasks using `os.path` and `pathlib` modules.
+The above pattern can get complicated fairly quickly and you have to know or look for
+specific modules and methods in a large search space to perform your path manipulations.
+Let's have a look at a few more examples of performing the same tasks using `os.path`
+and `pathlib` modules.
+
 
 ## Joining & creating new paths
 
 Say you want to achieve the following goals:
 
-* There is a file named `file.txt` in your current directory and you want to create the path for another file named `file_another.txt` in the same directory
-
+* There is a file named `file.txt` in your current directory and you want to create the
+path for another file named `file_another.txt` in the same directory
 * Then you want to save the absolute path of `file_another.txt` in a new variable.
 
 Let's see how you'd usually do this via the `os` module.
-
 
 ```python
 from os.path import abspath, dirname, join
@@ -44,7 +64,6 @@ file_another_path = join(base_dir, "file_another.txt")
 ```
 
 The variables `file_path`, `base_dir`, `file_another_path` look like this on my machine:
-
 
 ```python
 print("file_path:", file_path)
@@ -58,7 +77,13 @@ print("file_another_path:", file_another_path)
 >>> file_another_path: /home/rednafi/code/demo/file_another.txt
 ```
 
-You can use the usual string methods to transform the paths but generally, that's not a good idea. So, instead of joining two paths with `+` like regular strings, you should use `os.path.join()` to join the components of a path. This is because different operating systems do not define paths in the same way. Windows uses `"\"` while Mac and *nix based OSes use `"/"` as a separator.  Joining with `os.path.join()` ensures correct path separator on the corresponding operating system. Pathlib module uses `"/"` operator overloading and make this a little less painful.
+You can use the usual string methods to transform the paths but generally, that's not a
+good idea. So, instead of joining two paths with `+` like regular strings, you should
+use `os.path.join()` to join the components of a path. This is because different
+operating systems do not define paths in the same way. Windows uses `"\"` while Mac and
+*nix based OSes use `"/"` as a separator.  Joining with `os.path.join()` ensures correct
+path separator on the corresponding operating system. Pathlib module uses `"/"` operator
+overloading and make this a little less painful.
 
 
 ```python
@@ -80,7 +105,10 @@ print("file_another_path:", file_another_path)
 >>> file_another_path: /home/rednafi/code/demo/file_another.txt
 ```
 
-The `resolve` method finds out the absolute path of the file. From there you can use the `parent` method to find out the base directory and add the `another_file.txt` accordingly.
+The `resolve` method finds out the absolute path of the file. From there you can use the
+`parent` method to find out the base directory and add the `another_file.txt`
+accordingly.
+
 
 ## Making directories & renaming files
 
@@ -113,12 +141,15 @@ Path("src/.config").rename("src/.stuffconfig")
 ```
 
 
-Notice the output where the renamed file path is printed. It's not a simple string, rather a `PosixPath` object that indicates the type of host system (Linux in this case). You can almost always use stringified path values and the Path objects interchangeably.
+Notice the output where the renamed file path is printed. It's not a simple string,
+rather a `PosixPath` object that indicates the type of host system (Linux in this case).
+You can almost always use stringified path values and the Path objects interchangeably.
 
 
 ## Listing specific types of files in a directory
 
-Let's say you want to recursively visit nested directories and list `.py` files in a directroy called source. The directory looks like this:
+Let's say you want to recursively visit nested directories and list `.py` files in a
+directroy called source. The directory looks like this:
 
 ```
 src/
@@ -148,8 +179,9 @@ print(all_py_files)
 >>> ['src/module.py', 'src/stuff/__init__.py', 'src/stuff/submodule.py']
 ```
 
-The above approach works perfectly. However, if you don't want to use another module just for a single job, `pathlib` has embedded `glob` and `rglob` methods. You can entirely ignore glob and achieve the same result in the following way:
-
+The above approach works perfectly. However, if you don't want to use another module
+just for a single job, `pathlib` has embedded `glob` and `rglob` methods. You can
+entirely ignore glob and achieve the same result in the following way:
 
 ```python
 from pathlib import Path
@@ -160,6 +192,7 @@ all_py_files = Path("src").rglob("*.py")
 print(list(top_level_py_files))
 print(list(all_py_files))
 ```
+
 This will also print the same as before:
 
 ```
@@ -169,11 +202,16 @@ This will also print the same as before:
     PosixPath('src/stuff/submodule.py')]
 ```
 
-By default, both `Path.glob` and `Path.rglob` returns a generator object. Calling `list` on them gives you the desired result. Notice how `rglob` method can discover the desired files without you having to mention the directory structure with wildcards explicitly. Pretty neat, huh?
+By default, both `Path.glob` and `Path.rglob` returns a generator object. Calling `list`
+on them gives you the desired result. Notice how `rglob` method can discover the desired
+files without you having to mention the directory structure with wildcards explicitly.
+Pretty neat, huh?
+
 
 ## Opening multiple files & reading their contents
 
-Now let's open the `.py` files and read their contents that you recursively discovered in the previous example.
+Now let's open the `.py` files and read their contents that you recursively discovered
+in the previous example.
 
 
 ```python
@@ -208,7 +246,8 @@ print(contents)
 >>> ['from contextlib import ...']
 ```
 
-You can also cook up a more robust implementation with generator comprehension and context manager.
+You can also cook up a more robust implementation with generator comprehension and
+context manager.
 
 ```python
 from contextlib import ExitStack
@@ -231,7 +270,11 @@ print(contents)
 
 ## Anatomy of the pathlib module
 
-Primarily, `pathlib` has two high-level components, `pure path` and `concrete path`. Pure paths are absolute `Path` objects that can be instantiated regardless of the host operating system. On the other hand, to instantiate a concrete path, you need to be on the specific type of host expected by the class. These two high level components are made out of six individual classes internally coupled by inheritance. They are:
+Primarily, `pathlib` has two high-level components, `pure path` and `concrete path`.
+Pure paths are absolute `Path` objects that can be instantiated regardless of the host
+operating system. On the other hand, to instantiate a concrete path, you need to be on
+the specific type of host expected by the class. These two high level components are
+made out of six individual classes internally coupled by inheritance. They are:
 
 1. PurePath (Useful when you want to work with windows path on a Linux machine)
 2. PurePosixPath (Subclass of `PurePath`)
@@ -240,13 +283,17 @@ Primarily, `pathlib` has two high-level components, `pure path` and `concrete pa
 5. PosixPath (Concrete posix path, subclass of `Path`)
 6. WindowsPath (Concrete windows path, subclass of `Path`)
 
-This UML diagram from the official docs does a better job at explaining the internal relationships between the component classes.
+This UML diagram from the official docs does a better job at explaining the internal
+relationships between the component classes.
 
 <p align="center">
   <img src="https://docs.python.org/3/_images/pathlib-inheritance.png">
 </p>
 
-Unless you are doing cross platform path manipulation, most of the time you'll be working with the concrete `Path` object. So I'll focus on the methods and properties of `Path` class only.
+Unless you are doing cross platform path manipulation, most of the time you'll be
+working with the concrete `Path` object. So I'll focus on the methods and properties of
+`Path` class only.
+
 
 ### Operators
 
@@ -269,7 +316,11 @@ print(file_path)
 
 ### Attributes & methods
 
-The following tree shows an inexhaustive list of attributes and methods that are associated with `Path` object. I have cherry picked some of the attributes and methods that I use most of the time while doing path manipulation. Head over to the official docs for a more detailed list. We'll linearly traverse through the tree and provide necessary examples to grasp their usage.
+The following tree shows an inexhaustive list of attributes and methods that are
+associated with `Path` object. I have cherry picked some of the attributes and methods
+that I use most of the time while doing path manipulation. Head over to the official
+docs for a more detailed list. We'll linearly traverse through the tree and provide
+necessary examples to grasp their usage.
 
 ```
 Path
@@ -302,7 +353,8 @@ Path
         └── rmdir()
 ```
 
-Let's dive into their usage one by one. For all the examples, We'll be using the previously seen directory structure.
+Let's dive into their usage one by one. For all the examples, We'll be using the
+previously seen directory structure.
 
 ```
 src/
@@ -331,7 +383,8 @@ file_path.parts
 
 #### Path.parents & Path.parent
 
-`Path.parents` returns an immutable sequence containing the all logical ancestors of the path. While `Path.parent` returns the immediate predecessor of the path.
+`Path.parents` returns an immutable sequence containing the all logical ancestors of the
+path. While `Path.parent` returns the immediate predecessor of the path.
 
 ```python
 file_path = Path("src/stuff/__init__.py")
@@ -356,7 +409,8 @@ file_path.parent
 
 #### Path.name
 
-Returns the last component of a path as string. Usually used to extract file name from a path.
+Returns the last component of a path as string. Usually used to extract file name from a
+path.
 
 ```python
 from pathlib import Path
@@ -371,7 +425,8 @@ file_path.name
 
 #### Path.suffixes & Path.suffix
 
-`Path.suffixes` returns a list of extensions of the final component. `Path.suffix` only returns the last extension.
+`Path.suffixes` returns a list of extensions of the final component. `Path.suffix` only
+returns the last extension.
 
 
 ```python
@@ -426,7 +481,8 @@ file_path.is_absolute()
 
 #### Path.joinpath(*other)
 
-This method is used to combine multiple components into a complete path. This can be used as an alternative to `"/"` operator for joining path components.
+This method is used to combine multiple components into a complete path. This can be
+used as an alternative to `"/"` operator for joining path components.
 
 ```python
 from pathlib import Path
@@ -500,7 +556,8 @@ file_path.expanduser()
 
 #### Path.glob()
 
-Globs and yields all file paths matching a specific pattern. Let's discover all the files in `src/stuff/` directory that have `.py` extension.
+Globs and yields all file paths matching a specific pattern. Let's discover all the
+files in `src/stuff/` directory that have `.py` extension.
 
 ```python
 from pathlib import Path
@@ -605,10 +662,11 @@ Creates a new directory at this given path.
 
 * **mode:**(*str*) Posix permissions (mimicking the POSIX mkdir -p command)
 
-* **parents:**(*boolean*) If parents is `True`, any missing parents of this path are created as needed.
-    Otherwise, if the parent is absent, `FileNotFoundError` is raised.
+* **parents:**(*boolean*) If parents is `True`, any missing parents of this path are
+created as needed. Otherwise, if the parent is absent, `FileNotFoundError` is raised.
 
-* **exist_ok:** (*boolean*) If `False`, FileExistsError is raised if the target directory already exists. If `True`, FileExistsError is ignored.
+* **exist_ok:** (*boolean*) If `False`, FileExistsError is raised if the target
+directory already exists. If `True`, FileExistsError is ignored.
 
 ```python
 from pathlib import Path
@@ -638,7 +696,8 @@ with Path("src/module.py") as f:
 
 #### Path.rename(target)
 
-Renames this file or directory to the given target and returns a new Path instance pointing to target. This will raise `FileNotFoundError` if the file is not found.
+Renames this file or directory to the given target and returns a new Path instance
+pointing to target. This will raise `FileNotFoundError` if the file is not found.
 
 ```python
 from pathlib import Path
@@ -668,7 +727,8 @@ file_path.replace(file_path.parent / "Dockerfile")
 
 #### Path.resolve(strict=False)
 
-Make the path absolute, resolving any symlinks. A new path object is returned. If strict is `True` and the path doesn't exist, `FileNotFoundError` will be raised.
+Make the path absolute, resolving any symlinks. A new path object is returned. If strict
+is `True` and the path doesn't exist, `FileNotFoundError` will be raised.
 
 ```python
 from pathlib import Path
@@ -683,7 +743,8 @@ file_path.resolve()
 
 #### Path.rmdir()
 
-Removes a path pointing to a file or directory. The directory must be empty, otherwise, `OSError` is raised.
+Removes a path pointing to a file or directory. The directory must be empty, otherwise,
+`OSError` is raised.
 
 ```python
 from pathlib import Path
@@ -694,9 +755,14 @@ file_path.rmdir()
 
 ## So, should you use it?
 
-Pathlib was introduced in python 3.4. However, if you are working with python 3.5 or earlier, in some special cases, you might have to convert `pathlib.Path` objects to regular strings. But since python 3.6, `Path` objects work almost everywhere you are using stringified paths. Also, the `Path` object nicely abstracts away the complexity that arises while working with paths in different operating systems.
+Pathlib was introduced in python 3.4. However, if you are working with python 3.5 or
+earlier, in some special cases, you might have to convert `pathlib.Path` objects to
+regular strings. But since python 3.6, `Path` objects work almost everywhere you are
+using stringified paths. Also, the `Path` object nicely abstracts away the complexity
+that arises while working with paths in different operating systems.
 
-The ability to manipulate paths in an OO way and not having to rummage through the massive `os` or `shutil` module can make path manipulation a lot less painful.
+The ability to manipulate paths in an OO way and not having to rummage through the
+massive `os` or `shutil` module can make path manipulation a lot less painful.
 
 
 ## References

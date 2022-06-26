@@ -4,17 +4,39 @@ date: 2022-04-13
 tags: Python, API, Django
 ---
 
-At my workplace, we have a large Django monolith that powers the main website and works as the primary REST API server at the same time. We use Django Rest Framework (DRF) to build and serve the API endpoints. This means, whenever there's an error, based on the incoming request header—we've to return different formats of error responses to the website and API users.
+At my workplace, we have a large Django monolith that powers the main website and works
+as the primary REST API server at the same time. We use Django Rest Framework (DRF) to
+build and serve the API endpoints. This means, whenever there's an error, based on the
+incoming request header—we've to return different formats of error responses to the
+website and API users.
 
-The default DRF configuration returns a JSON response when the system experiences an HTTP 400 (bad request) error. However, the server returns an HTML error page to the API users whenever HTTP 403 (forbidden), HTTP 404 (not found), or HTTP 500 (internal server error) occurs. This is suboptimal; JSON APIs should never return HTML text whenever something goes wrong. On the other hand, the website needs those error text to appear accordingly.
+The default DRF configuration returns a JSON response when the system experiences an
+HTTP 400 (bad request) error. However, the server returns an HTML error page to the API
+users whenever HTTP 403 (forbidden), HTTP 404 (not found), or HTTP 500 (internal server
+error) occurs. This is suboptimal; JSON APIs should never return HTML text whenever
+something goes wrong. On the other hand, the website needs those error text to appear
+accordingly.
 
-This happens because 403, 404, and 500 are handled by Django's default handlers for those errors and not by DRF's exception handlers. As the DRF doc [suggests](https://www.django-rest-framework.org/api-guide/exceptions/#generic-error-views), overriding the error handlers is one way of solving it. But this will only work if the application is an API-only backend or if you haven't already overridden the error handlers for custom error pages.
+This happens because 403, 404, and 500 are handled by Django's default handlers for
+those errors and not by DRF's exception handlers. As the DRF doc [suggests](https://www.django-rest-framework.org/api-guide/exceptions/#generic-error-views), overriding the
+error handlers is one way of solving it. But this will only work if the application is
+an API-only backend or if you haven't already overridden the error handlers for custom
+error pages.
 
-In our case, we already had to override the default error handlers to display custom error pages on the website. These custom pages would bleed into the API endpoints occasionally when errors occur. So, I thought, if I could handle this in the middleware layer, that'd be cleaner than most of the solutions that I'd seen at that point.
+In our case, we already had to override the default error handlers to display custom
+error pages on the website. These custom pages would bleed into the API endpoints
+occasionally when errors occur. So, I thought, if I could handle this in the middleware
+layer, that'd be cleaner than most of the solutions that I'd seen at that point.
+
 
 ## The solution
 
-To fix the dilemma, I wrote a middleware called `JSONErrorMiddleware` that returns the expected response based on the content type in the request header. If the header has `Content-Type: html/text` and it experiences an error, the server returns an appropriate HTML page. On the contrary, if the incoming request header has `Content-Type: application/json` and the server sees an error, it responds with a JSON error payload instead. Here's how the middleware looks:
+To fix the dilemma, I wrote a middleware called `JSONErrorMiddleware` that returns the
+expected response based on the content type in the request header. If the header has
+`Content-Type: html/text` and it experiences an error, the server returns an appropriate
+HTML page. On the contrary, if the incoming request header has `Content-Type:
+application/json` and the server sees an error, it responds with a JSON error payload
+instead. Here's how the middleware looks:
 
 ```python
 # <app>/middleware.py
@@ -70,6 +92,7 @@ MIDDLEWARE = [..., "<app>.middleware.JSONErrorMiddleware"]
 ```
 
 And voila, now the API and non-API errors will be handled differently as expected!
+
 
 ## Test
 
