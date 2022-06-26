@@ -60,9 +60,12 @@ a single method called `open_method` which denotes the action of *opening* on th
 object. This method gets extended in the `SecuredDoor` class and in this case, I've just
 added a print statement to the method of the latter class.
 
-Notice how the class `Door` was called from `SecuredDoor` via [composition](https://realpython.com/inheritance-composition-python/#composition-in-python). In the case of
-proxy pattern, you can substitute primary object with the proxy object without any
-additional changes in the code. This conforms to the [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle). It states that:
+Notice how the class `Door` was called from `SecuredDoor` via 
+[composition](https://realpython.com/inheritance-composition-python/#composition-in-python). 
+In the case of proxy pattern, you can substitute primary object with the proxy object 
+without any additional changes in the code. This conforms to 
+the [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle). 
+It states that:
 
 > Objects of a superclass shall be replaceable with objects of its subclasses without
 > breaking the application. That requires the objects of your subclasses to behave in
