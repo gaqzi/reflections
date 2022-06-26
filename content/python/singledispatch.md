@@ -184,7 +184,8 @@ Running this snippet will print out:
 >>> Dog data has been processed successfully!
 ```
 
-To refactor this with `singledispatch`, you can create two data types `Cat` and `Dog`.When you make `Cat` and `Dog` objects from the classes and pass them through the
+To refactor this with `singledispatch`, you can create two data types `Cat` and `Dog`. 
+When you make `Cat` and `Dog` objects from the classes and pass them through the 
 `process` function, singledispatch will take care of dispatching the appropriate
 implementation of that function.
 
