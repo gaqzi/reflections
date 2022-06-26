@@ -50,7 +50,8 @@ func main() {
 }
 ```
 
-You can play around with the example [here](https://go.dev/play/p/RG82v5Ubdlc). Running the example will print:
+You can play around with the example [here](https://go.dev/play/p/RG82v5Ubdlc).
+Running the example will print:
 
 ```
 &{3 4}
@@ -152,11 +153,12 @@ This will make mypy happy. However, it's still not bulletproof. If you try to pa
 can get a bit tedious in this kind of situation, as you'd have to explicitly tell the
 type checker about every type that a variable can expect. There's a better way!
 
-Enter [structural subtyping](https://www.python.org/dev/peps/pep-0544/#nominal-vs-structural-subtyping). We know that the value of `haystack` can be anything
-that has the `__contains__` method. So, instead of explicitly defining the name of all
-the allowed types—we can create a class, add the `__contains__` method to it, and signal
-mypy the fact that `haystack` can be anything that has the `__contains__` method.
-Python's `typing.Protocol` class allows us to do that. Let's use that:
+Enter [structural subtyping](https://www.python.org/dev/peps/pep-0544/#nominal-vs-structural-subtyping). 
+We know that the value of `haystack` can be anything that has the `__contains__` method.
+So, instead of explicitly defining the name of all the allowed types—we can create a
+class, add the `__contains__` method to it, and signal mypy the fact that `haystack` can
+be anything that has the `__contains__` method. Python's `typing.Protocol` class allows 
+us to do that. Let's use that:
 
 
 ```python
