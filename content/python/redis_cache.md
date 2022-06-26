@@ -6,7 +6,9 @@ tags: Python, API
 
 ***Updated on 2020-07-13***: *Removed duplicate keys in docker-compose.yml*
 
-Recently, I was working with [MapBox](https://www.mapbox.com/)'s [Route Optimization API](https://docs.mapbox.com/api/navigation/#optimization). Basically, it tries to solve the
+Recently, I was working with [MapBox](https://www.mapbox.com/)'s 
+[Route Optimization API](https://docs.mapbox.com/api/navigation/#optimization). 
+Basically, it tries to solve the 
 [traveling salesman problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem)
 where you provide the API with coordinates of multiple places and it returns a
 duration-optimized route between those locations. This is a perfect usecase where
@@ -34,7 +36,8 @@ To proceed with the above workflow, you'll need to install and setup Redis datab
 your system. For monitoring the database, I'll be using
 [RedisInsight](https://redislabs.com/redisinsight/). The easiest way to setup Redis and
 RedisInsight is through [docker](https://www.docker.com/) and
-[docker-compose](https://docs.docker.com/compose/). Here's a docker-compose that you can use to setup everything with a single command.
+[docker-compose](https://docs.docker.com/compose/). Here's a docker-compose that you can
+use to setup everything with a single command.
 
 ```yml
 # docker-compose.yml
@@ -174,7 +177,8 @@ the get request. Httpx is almost a drop-in replacement for the ubiquitous
 [Requests](https://github.com/psf/requests) library but way faster and has async
 support. Here, I've used context manager `httpx.Client()` for better resource management
 while making the `get` request. You can read more about context managers and how to use
-them for hassle free resource management [here](https://rednafi.github.io/digressions/python/2020/03/26/python-contextmanager.html).
+them for hassle free resource management
+[here](https://rednafi.github.io/digressions/python/2020/03/26/python-contextmanager.html).
 
 The `base_url` is the base url of the route optimization API and the you'll need to
 provide your own access token in the `access_token` field. Notice, how the `url`
