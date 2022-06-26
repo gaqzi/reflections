@@ -13,7 +13,7 @@ prefer not to clutter the server's disk with random CSV files. Loading the s3 fi
 directly into memory and reading its contents isn't difficult but the process has some subtleties. I do this often enough to justify documenting the workflow here.
 
 Along with boto3, we can leverage Python's [`tempfile.NamedTemporaryFile`][3] to
-directly download the contents of the file in a temporary in-memory file. Afterward, we
+directly download the contents of the file to a temporary in-memory file. Afterward, we
 can do the processing, create the objects in the DB, and delete the file once we're
 done. The `NamedTemporaryFile` class can be used as a context manager and it'll delete
 the file automatically when the `with` block ends.
