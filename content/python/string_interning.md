@@ -4,7 +4,9 @@ date: 2022-01-05
 tags: Python
 ---
 
-I was reading the source [code](https://github.com/taleinat/python-stdlib-sentinels/blob/main/sentinels/sentinels.py) of the reference implementation of
+I was reading the source 
+[code](https://github.com/taleinat/python-stdlib-sentinels/blob/main/sentinels/sentinels.py)
+of the reference implementation of 
 [PEP-661: Sentinel Values](https://www.python.org/dev/peps/pep-0661/) and discovered an
 optimization technique known as **String interning**. Modern programming languages like
 Java, Python, PHP, Ruby, Julia, etc, performs *string interning* to make their string
@@ -74,10 +76,10 @@ Here, the strings are interned and running the snippet will print `True` on the 
 ## What strings are interned?
 
 CPython performs string interning on constants such as Function Names, Variable Names,
-String Literals, etc. This [snippet](https://github.com/python/cpython/blob/7d7817cf0f826e566d8370a0e974bbfed6611d91/Objects/codeobject.c#L537) from the CPython
-codebase suggests that when a new Python object is created, the interpreter is interning
-all the compile-time constants, names, and literals. Also, Dictionary Keys and Object
-Attributes are interned. Notice this:
+String Literals, etc. This [snippet](https://github.com/python/cpython/blob/7d7817cf0f826e566d8370a0e974bbfed6611d91/Objects/codeobject.c#L537)
+from the CPython codebase suggests that when a new Python object is created, the 
+interpreter is interning all the compile-time constants, names, and literals. Also, 
+Dictionary Keys and Object Attributes are interned. Notice this:
 
 ```python
 # src.py
