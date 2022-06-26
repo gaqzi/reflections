@@ -61,7 +61,7 @@ source venv/bin/activate
 pip install pydantic python-dotenv
 ```
 
-Make sure you have fairly a recent version of `Python 3` installed, preferably `Python 3.10`. 
+Make sure you have fairly a recent version of `Python 3` installed, preferably `Python 3.10`.
 You might need to install `python3.10 venv`.
 
 ### Introduction to Pydantic
@@ -264,9 +264,9 @@ This should printout:
 
 ```
 >>> DevConfig(
-...     ENV_STATE='dev', 
-...     APP_CONFIG=AppConfig(VAR_A=33, VAR_B=22.0), 
-...     REDIS_PASS='ubuntu', 
+...     ENV_STATE='dev',
+...     APP_CONFIG=AppConfig(VAR_A=33, VAR_B=22.0),
+...     REDIS_PASS='ubuntu',
 ...     REDIS_HOST='127.0.0.1', REDIS_PORT=4000)
 ```
 
@@ -322,9 +322,9 @@ This time the config instance should change and print the following:
 
 ```
 >>> ProdConfig(
-...     ENV_STATE='prod', 
-...     APP_CONFIG=AppConfig(VAR_A=33, VAR_B=22.0), 
-...     REDIS_PASS='ubuntu', REDIS_HOST='127.0.0.2', 
+...     ENV_STATE='prod',
+...     APP_CONFIG=AppConfig(VAR_A=33, VAR_B=22.0),
+...     REDIS_PASS='ubuntu', REDIS_HOST='127.0.0.2',
 ...     REDIS_PORT=5000)
 ```
 
@@ -357,10 +357,10 @@ This should print out:
 
 ```
 >>> ProdConfig(
-...     ENV_STATE='prod', 
-...     APP_CONFIG=AppConfig(VAR_A=33, VAR_B=22.0), 
-...     REDIS_PASS='ubuntu', 
-...     REDIS_HOST='127.0.0.2', 
+...     ENV_STATE='prod',
+...     APP_CONFIG=AppConfig(VAR_A=33, VAR_B=22.0),
+...     REDIS_PASS='ubuntu',
+...     REDIS_HOST='127.0.0.2',
 ...     REDIS_PORT=5000)
 
 VAR_A=33 VAR_B=22.0
@@ -372,8 +372,8 @@ VAR_A=33 VAR_B=22.0
 
 ## Extending the pipeline
 
-The modular design demonstrated above is easy to maintain and extend in my opinion. Previously, 
-for simplicity, I've defined only two environment scopes; development and production. Let's say 
+The modular design demonstrated above is easy to maintain and extend in my opinion. Previously,
+for simplicity, I've defined only two environment scopes; development and production. Let's say
 you want to add the configs for your *staging environment*.
 
 * First you'll need to add those *staging* variables to the `.env` file.
