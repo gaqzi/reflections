@@ -64,7 +64,8 @@ decorator while the latter is needed to type annotate decorators that change wra
 functions' signatures.
 
 !!! Note
-    If you're not on Python 3.10, you can import `ParamSpec` and `Concatenate` from the `typing_extensions` module. The package gets automatically installed with Mypy.
+    If you're not on Python 3.10, you can import `ParamSpec` and `Concatenate` from 
+    the `typing_extensions` module. The package gets automatically installed with Mypy.
 
 
 ## Use `ParamSpec` to type decorators
