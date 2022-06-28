@@ -50,7 +50,8 @@ jobs:
       - name: Build the site
         run: |
           pelican-themes --install theme/elegant/
-          ghp-import -m "Generate Pelican site" -b gh-pages $(pwd)/output -f
+          mkdir $(pwd)/output/
+          ghp-import -m "Generate Pelican site" -b gh-pages $(pwd)/output/ -f
 
       # Don't publish when the action is triggered in a pull request.
       - name: Publish the site
