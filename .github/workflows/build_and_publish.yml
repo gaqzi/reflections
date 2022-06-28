@@ -23,11 +23,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    include:
-    - os: ubuntu-latest
-      path: ~/.cache/pip # Cache location on Ubuntu
-
     steps:
       - uses: actions/checkout@v3
 
@@ -37,7 +32,7 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: ${{ matrix.path }}
+          path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/requirements-dev.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
@@ -57,6 +52,7 @@ jobs:
           pelican-themes --install theme/elegant/
           ghp-import -m "Generate Pelican site" -b gh-pages ./output -f
 
+      # Don't publish when the action is triggered in a pull request.
       - name: Publish the site
         if: ${{ github.event_name != 'pull_request' }}
         run: |
