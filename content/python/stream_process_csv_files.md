@@ -94,8 +94,8 @@ def stream_csv(url: str) -> Iterator[Mapping[str, str | int]]:
                 # Seek sends the file handle to the top of the file.
                 f.seek(0)
 
-                # We initiate a CSV reader to read and parse each line of
-                # the CSV file
+                # We initiate a CSV reader to read and parse each line
+                # of the CSV file
                 reader = csv.DictReader(f, fieldnames=("a", "b"))
 
                 # Since we know that there's only one row in the reader
@@ -147,7 +147,11 @@ def process_row(row: Mapping[str, str | int]) -> None:
 
 
 if __name__ == "__main__":
-    csv_url = "https://github.com/rednafi/reflections/files/9006167/foo.csv"
+    # fmt: off
+    csv_url = (
+        "https://github.com/rednafi/reflections/files" \
+        "/9006167/foo.csv",
+    )
 
     with mp.Pool(4) as pool:
         for res in pool.imap(process_row, stream_csv(csv_url)):
@@ -187,11 +191,11 @@ following output:
 Processed row 2:a=0.902210680227088, b=0.236522024407207
 Processed row 3:a=0.424413804319515, b=0.400788559643378
 Processed row 4:a=0.601611774624256, b=0.499238925693800
-Processed row 5:a=0.332269908707654, b=0.723280946521840 # Pause for 2 sec
+Processed row 5:a=0.332269908707654, b=0.723280946521840 # Sleep 2 sec
 Processed row 6:a=0.024648655864128, b=0.585924680177486
 Processed row 7:a=0.116178678991780, b=0.027524894156040
 Processed row 8:a=0.313182023389972, b=0.373896338507016
-Processed row 9:a=0.252893754537173, b=0.809821115129037 # Pause for 2 sec
+Processed row 9:a=0.252893754537173, b=0.809821115129037 # Sleep 2 sec
 Processed row 10:a=0.770407022765901, b=0.021249180774146
 ...
 ...
@@ -204,9 +208,5 @@ would wait for 2 seconds after printing every row. By increasing the number of p
 lightweight, you can open multiple threads to consume them.
 
 
-## References
-
 [1]: https://www.python-httpx.org/
 [2]: https://www.python-httpx.org/quickstart/#streaming-responses
-
-*
