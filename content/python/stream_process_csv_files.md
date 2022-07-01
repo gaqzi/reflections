@@ -8,7 +8,7 @@ A common bottleneck for processing large data files is—memory. Downloading the
 loading the entire content is surely the easiest way to go. However, it's likely that
 you'll quickly hit OOM errors. Often time, whenever I have to deal with large data files
 that need to be downloaded and processed, I prefer to stream the content line by line
-and use multiple processes to consume the lines concurrently.
+and use multiple processes to consume the them concurrently.
 
 For example, say, you have a CSV file containing millions of rows with the following
 structure:
@@ -29,10 +29,14 @@ tasks that depends on the data from the file. To avoid downloading the file to t
 process.
 
 At my workplace, I often have to create objects in a relational database using the
-information in a CSV file. The idea here is to consume the information in the CSV
-directly from the network and create the objects in the database. Since we're streaming
-the content from the network line by line, there should be zero disk usage and minimal
-memory footprint. Also, to speed up the consumption, we'll fork multiple OS processes. To put in concisely, we'll need to perform the following steps:
+information in a CSV file. The idea here is to consume the information in the CSV file
+directly from the network and create the objects in the database. This database object
+creation task can be offloaded to a separate process outside of the main process that's
+streaming the file contents.
+
+Since we're streaming the content from the network line by line, there should be zero
+disk usage and minimal memory footprint. Also, to speed up the consumption, we'll fork
+multiple OS processes. To put in concisely, we'll need to perform the following steps:
 
 * Stream a single row from the target CSV file.
 * Write the content of the row in an in-memory string buffer.
