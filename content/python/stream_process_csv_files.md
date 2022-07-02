@@ -166,7 +166,7 @@ The first function `stream_csv` accepts a URL that points to a CSV file. In this
 the URL used here points to a real CSV file hosted on GitHub. [HTTPx][1] allows you to make a [streaming][2] GET request and iterate through the contents of the file without
 fully downloading it to the disk.
 
-Inside the `client.stream` block, we created an in-memory file instance with
+Inside the `client.stream` block, we've created an in-memory file instance with
 `io.StringIO`. This allows us to write the streamed content of the source CSV file to
 the in-memory file. Then we pull one row from the source file, write it to the in-memory
 buffer, and pass the in-memory file buffer over to the `csv.DictReader` class.
