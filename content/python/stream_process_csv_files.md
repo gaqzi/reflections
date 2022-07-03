@@ -190,7 +190,7 @@ Finally, in the `__main__` block, we fire up four processes to apply the `proces
 function to the output of the `stream_csv` function. Running the script will print the
 following output:
 
-```
+```sh
 Processed row 2:a=0.902210680227088, b=0.236522024407207
 Processed row 3:a=0.424413804319515, b=0.400788559643378
 Processed row 4:a=0.601611774624256, b=0.499238925693800
