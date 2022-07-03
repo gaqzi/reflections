@@ -186,7 +186,7 @@ Next, the `process_row` function takes in the data of a single row as a dict lik
 above and does some processing on that. For demonstration, currently, it just prints the
 values of the rows and then sleeps for two seconds.
 
-Finally, in the `__main__` block we fire up four processes to apply the `process_row`
+Finally, in the `__main__` block, we fire up four processes to apply the `process_row`
 function to the output of the `stream_csv` function. Running the script will print the
 following output:
 
