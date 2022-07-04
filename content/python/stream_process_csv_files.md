@@ -1,5 +1,5 @@
 ---
-title: Stream process CSV files in Python
+title: Stream process a CSV file in Python
 date: 2022-07-01
 tags: Python
 ---
