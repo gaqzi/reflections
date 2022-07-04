@@ -56,7 +56,7 @@ devserver: ## Serve and regenerate together.
 devserver-global: ## regenerate and serve on '0.0.0.0'.
 	$(PELICAN) -lr $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS) -b 0.0.0.0
 
-publish: ## Generate using production settings.
+publish: clean ## Generate using production settings.
 	"$(PELICAN)" "$(INPUTDIR)" -o "$(OUTPUTDIR)" -s "$(PUBLISHCONF)" $(PELICANOPTS)
 
 github: publish ## Upload the web site via gh-pages.
