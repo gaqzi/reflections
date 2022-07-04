@@ -27,13 +27,13 @@ LINKS = (
 # Social widget
 SOCIAL = (
     ("Email", "redowan.nafi@gmail.com"),
-    ("Github", "https://github.com/rednafi/"),
+    ("Github", "https://github.com/rednafi"),
     ("Twitter", "https://twitter.com/rednafi"),
     (
         "Goodreads",
         "https://www.goodreads.com/user/show/53485837-redowan-delowar",
     ),
-    ("RSS", f"{SITEURL}/feeds/all.atom.xml"),
+    ("RSS", f"{SITEURL}/reflections/feeds/all.atom.xml"),
 )
 
 
