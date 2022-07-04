@@ -20,3 +20,9 @@ DELETE_OUTPUT_DIRECTORY = False
 
 # DISQUS_SITENAME = ""
 GOOGLE_ANALYTICS = "UA-217287505-1"
+
+
+# Feed Items
+FEED_MAX_ITEMS = 15
+FEED_ALL_ATOM = "feeds/all.atom.xml"
+CATEGORY_FEED_ATOM = "feeds/{slug}.atom.xml"

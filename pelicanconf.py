@@ -9,7 +9,7 @@ TIMEZONE = "Asia/Dhaka"
 
 DEFAULT_LANG = "en"
 
-# Feed generation is usually not desired when developing
+# Feed generation is usually not desired when developing.
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
@@ -26,9 +26,16 @@ LINKS = (
 
 # Social widget
 SOCIAL = (
-    ("https://twitter.com/rednafi", "#"),
-    ("Another social link", "#"),
+    ("Email", "redowan.nafi@gmail.com"),
+    ("Github", "https://github.com/rednafi/"),
+    ("Twitter", "https://twitter.com/rednafi"),
+    (
+        "Goodreads",
+        "https://www.goodreads.com/user/show/53485837-redowan-delowar",
+    ),
+    ("RSS", f"{SITEURL}/feeds/all.atom.xml"),
 )
+
 
 DEFAULT_PAGINATION = 1
 THEME = "elegant"
@@ -57,7 +64,7 @@ CUSTOM_CSS = "theme/css/custom.css"
 RECENT_ARTICLES_COUNT = 11
 SITE_DESCRIPTION = """
         Ruminations on software.
-        Python, Django, Microservices, PostgreSQL,
+        Python, TypeScript, Django, Microservices, PostgreSQL,
         Redis, AWS, Go, Open Source.
 """
 
