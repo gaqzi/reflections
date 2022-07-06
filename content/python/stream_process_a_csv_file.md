@@ -8,7 +8,7 @@ A common bottleneck for processing large data files is—memory. Downloading the
 loading the entire content is surely the easiest way to go. However, it's likely that
 you'll quickly hit OOM errors. Often time, whenever I have to deal with large data files
 that need to be downloaded and processed, I prefer to stream the content line by line
-and use multiple processes to consume the them concurrently.
+and use multiple processes to consume them concurrently.
 
 For example, say, you have a CSV file containing millions of rows with the following
 structure:
