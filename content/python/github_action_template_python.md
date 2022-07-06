@@ -1,7 +1,7 @@
 ---
 title: Github action template for Python based projects
 date: 2022-03-02
-tags: Python, General
+tags: Python, GitHub
 ---
 
 Five traits that almost all the GitHub Action workflows in my Python projects share are:
