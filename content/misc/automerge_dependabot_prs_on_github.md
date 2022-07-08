@@ -48,7 +48,8 @@ in the `.github/workflows` directory:
 ![image](https://user-images.githubusercontent.com/30027932/177647370-012d0162-d80b-4f12-9ac7-b7a6da024735.png)
 
 Once this is done, you can drop the following CI file in the `.github/workflows`
-directory of your repo. This is the same [file][9] that's currently living inside this site's CI folder.
+directory of your repo. It's the same [file][9] that's currently living inside this
+site's CI folder.
 
 ```yaml
 # .github/workflows/automerge.yml
