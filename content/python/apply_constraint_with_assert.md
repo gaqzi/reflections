@@ -6,7 +6,7 @@ tags: Python
 
 Whenever I need to apply some runtime constraints on a value while building an API, I
 usually compare the value to an expected range and raise a `ValueError` if it's not
-within the range. For example, lets define a function that throttles some fictitious
+within the range. For example, let's define a function that throttles some fictitious
 operation. The `throttle` function limits the number of times an operation can be
 performed by specifying the `throttle_after` parameter. This parameter defines the
 number of iterations after which the operation will be halted. The `current_iter`
