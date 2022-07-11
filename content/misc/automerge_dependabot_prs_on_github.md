@@ -29,10 +29,16 @@ PRs. The workflow that is documented here is the one I happen to like the most. 
 think that this process leads to the path of the least surprise. Instead of depending on
 a bunch of GitHub settings, we'll write a GitHub action [worflow][8] to automate the process.
 
+First, you'll need to turn on the auto-merge option from the repository settings. To do
+so, go to the repo's *settings* tab and turn on the *Allow auto-merge* option from the
+*Pull Requests* section:
+
+![image](https://user-images.githubusercontent.com/30027932/178368689-4766f2d3-86ed-4287-b058-6edfeecba66a.png)
+
+
 Now, you probably don't want to mindlessly merge every pull request Dependabot throws at
 you. You most likely want to make sure that a pull request triggers certain tests and it'll be merged only if all of those checks pass. To do so, you can turn on
-[branch protection][9]. Go to the repo's *settings* tab and select *Branches* from the
-left panel:
+[branch protection][9]. From the *settings* panel, select *Branches* on the left panel:
 
 ![image](https://user-images.githubusercontent.com/30027932/177646826-f07b6ad0-9df7-42cd-ab70-c74a1ec31059.png)
 
