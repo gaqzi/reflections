@@ -96,7 +96,7 @@ if __name__ == "__main__":
     throttle(current_iter=-2, throttle_after=1)
 ```
 
-So, instead of using the `if expression else raise ValueError` pattern, we can
+So, instead of using the `if not expression ... raise ValueError` pattern, we can
 leverage `assert expression, "Error message"` pattern. In the latter case, `assert` will
 raise `AssertionError` with the "Error message" if the expression evaluates to a falsy
 value. Otherwise, the statement will remain silent and allow the execution to move
