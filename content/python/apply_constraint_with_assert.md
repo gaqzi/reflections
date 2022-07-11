@@ -107,5 +107,24 @@ started using it earlier and [this][1] piece of code in the [Starlette][2] repos
 jolted my brain. Eh bien, better late than never, I guess.
 
 
+## Breadcrumbs
+
+After this blog was published, several people [mentioned][3] on Twitter that the second
+approach has a small caveat. Python has a flag that allows you to disable `assert`
+statements in a script. You can disable the assertions in the snippet above by running
+the script with the `-OO` flag:
+
+```
+python -00 src.py
+```
+
+Removing assert statements will disable the constraints needed for the second `throttle`
+function to work, which could lead to unexpected behavior or event subtle bugs. However,
+I see this being used [frequently][4] in frameworks like Starlette and FastAPI. Also,
+from my experience, using assertions is much more common than running production code
+with the optimization flag.
+
 [1]: https://github.com/encode/starlette/blob/14ef6bbbd6c5f03f0e1222a0a1b33ccc3a5f04cf/starlette/applications.py#L63
 [2]: https://github.com/encode/starlette
+[3]: https://twitter.com/rednafi/status/1546010546297659392
+[4]: https://github.com/tiangolo/fastapi/blob/bcabbf8b37db3fbc020560e94ad2f90e64d1510a/fastapi/applications.py#L108
