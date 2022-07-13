@@ -49,7 +49,7 @@ hint: or --ff-only on the command line to override the configured default per
 hint: invocation.
 fatal: Need to specify how to reconcile divergent branches.
 ```
-This means that the history of your local `main` branch and the remote `main` branch have diverged and not reconciliable.
+This means that the history of your local `main` branch and the remote `main` branch have diverged and they aren't reconciliable.
 
 
 ## Solution
