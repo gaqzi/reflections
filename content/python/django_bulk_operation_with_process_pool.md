@@ -120,7 +120,6 @@ This appoach will run the `pre_save` and `post_save` signals which allows me to 
 advantage of these hooks without losing the ability of being able to perform concurrent
 row operations.
 
-
 ## Breadcrumbs
 
 Example shown here performs a trivial task of creating 10k user objects. In cases like
@@ -129,7 +128,6 @@ rudimentary benchmark before adding concurrency to your workflow.
 
 Also, this approach primarily targets ad-hoc scripts and tasks. I don't recommend forking
 multiple processes in your views or forms since Python processes aren't cheap.
-
 
 ## References
 

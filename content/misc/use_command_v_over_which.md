@@ -22,7 +22,6 @@ Do this:
 command -v which python3.10
 ```
 
-
 ## References
 
 * [Debian's which hunt](https://lwn.net/Articles/874049/)

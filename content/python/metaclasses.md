@@ -38,13 +38,11 @@ Metaclasses aren't supported by every object oriented programming language. Thos
 programming language, which support metaclasses, considerably vary in way they implement
 them. Python provides you a way to get under the hood and define custom metaclasses.
 
-
 ## Understanding type and class
 
 In Python, everything is an object. Classes are objects as well. As a result, all
 classes must have corresponding types. You deal with built in types like `int`, `float`,
 `list` etc all the time. Consider this example:
-
 
 ```python
 a = 5
@@ -61,7 +59,6 @@ print(type(int))
 In the above example, variable `a` is an instance of the built in class `int`. Type of
 `a` is `int` and the type of `int` is `type`. User defined classes also show similar
 behavior. For example:
-
 
 ```python
 class Foo:
@@ -103,7 +100,6 @@ special class in Python that can reveal the type of itself and of any other clas
 object. In fact, `type` is a metaclass and all the classes in Python are instances of
 it. You can inspect that easily:
 
-
 ```python
 class Foo:
     pass
@@ -134,7 +130,6 @@ This enables you to write custom metaclasses that you can use to dictate and mut
 way classes are created and instantiated. From now on, I'll be referring to the instance
 class of a metaclass as *target class*. Let's create a custom metaclass that just prints
 the name of the target class while creating it:
-
 
 ```python
 class PrintMeta(type):
@@ -174,7 +169,6 @@ Despite the fact that we haven't called class `A` or created an instance of it, 
 target class. In the return statement of `__new__` method, `super()` was used to call
 the `__new__` method of the base class (`type`) of the metaclass `PrintMeta`.
 
-
 ## Special methods used by metaclasses
 
 Type `type`, as the default metaclass in Python, defines a few special methods that new
@@ -200,8 +194,6 @@ behaviors of these special methods and their execution order.
 > Python, which manages memory on its own. So if you do override `__new__`, it’d be just
 > like your `__init__` —except you’ll have to call into Python to actually create the
 > object, and then return that object afterward.
-
-
 
 ```python
 class ExampleMeta(type):
@@ -292,7 +284,6 @@ Pay attention to the execution order of the special methods of the custom metacl
 the target class `A` is called. This is important since it'll help you to decide how
 you'll mutate and change the behavior of your target class.
 
-
 ## Metaclass conflicts
 
 Note that the metaclass argument is singular – you can’t attach more than one metaclass
@@ -345,7 +336,6 @@ inherits from both of them. Since metaclasses trickle down to subclasses, class 
 is now effective attached to two metaclasses (`FirstMeta` and `SecondMeta`). This will
 raise `TypeError`. Attachment with only one metaclass is allowed here.
 
-
 ## Examples in the wild
 
 In this section, I'll go through a few real life examples where metaclasses can provide
@@ -353,7 +343,6 @@ viable solutions to several tricky problems that you might encounter during soft
 development. The solutions might appear over-engineered in some cases and almost all of
 them can be solved without using metaclasses. However, the purpose is to peek into the
 inner wirings of metaclasses and see how they can offer alternative solutions.
-
 
 ### Simple logging with metaclasses
 
@@ -408,7 +397,6 @@ information will be logged before the creation of the target class. In the targe
 `Point`, `LittleMeta` replaces the default `type` metaclass and produces the desired
 result by mutating the class.
 
-
 ### Returning class attributes in a custom list
 
 In this case, I want to dynamically attach a new attribute to the target class called
@@ -418,7 +406,6 @@ method inside the metaclass `AttrsListMeta` returns an `OrderDict` instead of a 
 `dict` - so all attributes gathered before the `__new__` method call will be ordered.
 Just like the previous example, here, the `__new__` method inside the metaclass
 implements the logic required to get the sorted list of the attribute names.
-
 
 ```python
 from collections import OrderedDict
@@ -454,7 +441,6 @@ print(a.__attrs_ordered__)
 You can access the `__attrs_ordered__` attribute from both class `A` and an instance of
 class `A`. Try removing the `sorted()` function inside the `__new__` method of the
 metaclass and see what happens!
-
 
 ### Creating a singleton class
 
@@ -496,14 +482,12 @@ instance of the class to a variable `a`. Thirdly, I've instantiated the class ag
 assigned variable a `b` to this seemingly new instance. Checking the identity of the
 two variables `a` and `b` reveals that both of them are actually the same object.
 
-
 ### Implementing a class that can't be subclassed
 
 Suppose you want to create a base class where the users of your class won't be able to
 create any subclasses from the base class. In that case, you can write a metaclass and
 attach that your base class. The base class will raise `RuntimeError` if someone tries
 to create a subclass from it.
-
 
 ```python
 class TerminateMeta(type):
@@ -995,7 +979,6 @@ dataclass decorator to all of the target classes implicitly. All you have to do 
 attach the metaclass to a base dataclass and inherit from it in the later dataclasses
 that need to be created.
 
-
 ```python
 from dataclasses import dataclass
 from datetime import datetime
@@ -1066,7 +1049,6 @@ problem“.* If the problem at hand can be solved in a simpler way, it probably 
 be. However, I still think that you should at least try to understand how metaclasses
 work to have a better grasp on how Python classes work in general and can recognize
 when a metaclass really is the appropriate tool to use.
-
 
 ## Remarks
 

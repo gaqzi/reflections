@@ -11,7 +11,6 @@ to denote the type of the `None` singleton. This usage is also
 
 Whenever a callable doesn't return anything, you usually annotate it as follows:
 
-
 ```python
 # src.py
 from __future__ import annotations
@@ -57,7 +56,6 @@ if __name__ == "__main__":
         "above, but Mypy doesn't warn us."
     )
 ```
-
 
 `NoReturn` type can be used in cases like this to warn us about potential dead code
 ahead. To utilize it, you'd type the above snippet like this:
@@ -144,7 +142,6 @@ def loop_forever() -> NoReturn:
         do_something()
 ```
 
-
 ### Callables that invoke 'sys.exit()', 'os._exit()', 'os.execvp()', etc
 
 Both `sys.exit()` and `os._exit()` do similar things. The former function raises the
@@ -154,7 +151,6 @@ letting the interpreter run any cleanup code. Prefer `sys.exit()` over `os._exit
 
 The `os.execvp()` function execute a new program, replacing the current process. It
 never returns. Here's how you'd type the callables that call these functions:
-
 
 ```python
 # src.py
@@ -176,7 +172,6 @@ def call_os_exit(code: int) -> NoReturn:
 def call_os_execvp() -> NoReturn:
     os.execvp("echo", ("echo", "hi"))
 ```
-
 
 ## Resources
 

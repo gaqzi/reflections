@@ -7,7 +7,6 @@ tags: Python
 Recently, my work needed me to create lots of custom data types and draw comparison
 among them. So, my code was littered with many classes that somewhat looked like this:
 
-
 ```python
 class CartesianPoint:
     def __init__(self, x, y, z):
@@ -37,7 +36,6 @@ introduced to python in version 3.7. Basically they can be regarded as code gene
 that reduce the amount of boilerplate you need to write while generating generic
 classes. Rewriting the above class using `dataclass` will look like this:
 
-
 ```python
 from dataclasses import dataclass
 
@@ -62,7 +60,6 @@ In the above code, the magic is done by the `dataclass` decorator. Data classes 
 you to use explicit [type annotation](https://docs.python.org/3/library/typing.html) and
 it automatically implements methods like `__init__`, `__repr__`, `__eq__` etc
 beforehand. You can inspect the methods that `dataclass` auto defines via python's help.
-
 
 ```python
 help(CartesianPoint)
@@ -123,7 +120,6 @@ class CartesianPoint:
 If you don't want to specify your field type during type hinting, you can use `Any` type
 from python's `typing` module.
 
-
 ```python
 from dataclasses import dataclass
 from typing import Any
@@ -139,7 +135,6 @@ class CartesianPoint:
 ## Instance ordering
 
 You can check if two instances are equal without making any modification to the class.
-
 
 ```python
 from dataclasses import dataclass
@@ -164,7 +159,6 @@ print(point_1 == point_2)
 
 However, if you want to compare multiple instances of dataclasses, aka add `__gt__` or
 `__lt__` methods to your instances, you have to turn on the `order` flag manually.
-
 
 ```python
 from dataclasses import dataclass
@@ -194,7 +188,6 @@ all the fields  `x`, `y`, `z`of `point_1` instance are compared with all the fie
 
 Suppose you want to acknowledge two instances as equal only when attribute `x` of both
 of them are equal. You can emulate this in the following way:
-
 
 ```python
 from dataclasses import dataclass, field
@@ -230,7 +223,6 @@ Methods can be added to dataclasses just like normal classes. Let's add another 
 called `dist` to our `CartesianPoint` class. This method calculates the distance of a
 point from origin.
 
-
 ```python
 from dataclasses import dataclass
 import math
@@ -261,7 +253,6 @@ print(norm)
 
 By default, instances of dataclasses are immutable. If you want to prevent mutating your
 instance attributes, you can set `frozen=True` while defining your dataclass.
-
 
 ```python
 from dataclasses import dataclass
@@ -298,7 +289,6 @@ FrozenInstanceError                       Traceback (most recent call last)
 FrozenInstanceError: cannot assign to field 'x'
 ```
 
-
 ## Making instances hashable
 
 You can turn on the `unsafe_hash` parameter of the `dataclass` decorator to make the
@@ -306,7 +296,6 @@ class instances hashable. This may come in handy when you want to use your insta
 dictionary keys or want to perform set operation on them. However, if you are using
 `unsafe_hash` make sure that your dataclasses do not contain any mutable data structure
 in it.
-
 
 ```python
 from dataclasses import dataclass
@@ -346,13 +335,11 @@ print(asdict(point))
 >>> {'x': 1, 'y': 5, 'z': 6}
 ```
 
-
 ## Post-init processing
 
 When dataclass generates the `__init__` method, internally it'll call `_post_init__`
 method. You can add additional processing in the `__post_init__` method. Here, I've
 added another attribute `tup` that returns the cartesian point as a tuple.
-
 
 ```python
 from dataclasses import dataclass
@@ -376,7 +363,6 @@ print(point.tup)
 ```
 >>> (4, 5, 6)
 ```
-
 
 ## Refactoring the CartesianPoint class
 
@@ -445,7 +431,6 @@ class CartesianPoint:
 
 Let's see the class in action:
 
-
 ```python
 # create multiple instances of the class
 a = CartesianPoint(1, 2, 3)
@@ -507,7 +492,6 @@ class CartesianPoint:
 ```
 
 Use this class like before.
-
 
 ```python
 # create multiple instances of the class

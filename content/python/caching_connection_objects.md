@@ -86,7 +86,6 @@ def get_redis_client(service_name: str = "redis") -> redis.Redis:
     return _cache[service_name]
 ```
 
-
 ## References
 
 * [Caching connections in Python — Twitter](https://twitter.com/rednafi/status/1503465791987273729?s=20&t=GlzWHBF_y0ZR-uKHVSP40Q)

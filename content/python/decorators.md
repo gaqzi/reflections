@@ -78,7 +78,6 @@ higher(lower)
 >>> <function __main__.lower()>
 ```
 
-
 Now you can assign the result of `higher` to another variable and execute the output
 function.
 
@@ -91,10 +90,8 @@ h()
 >>> "I'm hunting high and low"
 ```
 
-
 Let's look into another example where you can define a nested function within a
 function and return the nested function instead of its result.
-
 
 ```python
 def outer():
@@ -188,7 +185,6 @@ def ans():
 
 Treating the functions as first-class objects, you can use your decorator like this:
 
-
 ```python
 ans = deco(ans)
 ans()
@@ -211,7 +207,6 @@ function and modifies its behavior.
 
 Before moving onto the next section, let's see how we can get the return value of
 target function instead of just printing it.
-
 
 ```python
 def deco(func):
@@ -256,7 +251,6 @@ becomes harder to tell apart where the decorator is actually working. So Python 
 you to use decorator with the special syntax `@`. You can apply your decorators while
 defining your functions, like this:
 
-
 ```python
 @deco
 def func():
@@ -266,7 +260,6 @@ def func():
 # Now call your decorated function just like a normal one
 func()
 ```
-
 
 Sometimes the above syntax is called the **pie syntax** and it's just a syntactic sugar
 for `func = deco(func)`.
@@ -383,7 +376,6 @@ help(hello)
     wrapper(*args, **kwargs)
 ```
 
-
 Now what's going on there. The decorator `yell` has made the function `hello` confused
 about its own identity. Instead of reporting its own name, it takes the identity of the
 inner function `wrapper`. This can be confusing while doing debugging. You can fix this
@@ -418,7 +410,6 @@ hello("Galaxy")
 >>> 'HELLO GALAXY!'
 ```
 
-
 Introspecting the `hello` function decorated with modified decorator will give you the
 desired result.
 
@@ -447,7 +438,6 @@ Before moving on to the next section let's see a few real world examples of deco
 To define all the decorators, we'll be using the following template that we've
 perfected so far.
 
-
 ```python
 from functools import wraps
 
@@ -467,7 +457,6 @@ def decorator(func):
 
 Timer decorator will help you time your callables in a non-intrusive way. It can help
 you while debugging and profiling your functions.
-
 
 ```python
 from functools import wraps
@@ -507,14 +496,12 @@ dothings(100_000)
     24999500002500000000
 ```
 
-
 ### Exception logger
 
 Just like the `timer` decorator, we can define a logger decorator that will log the
 state of a callable. For this demonstration, I'll be defining a exception logger that
 will show additional information like timestamp, argument names when an exception
 occurs inside of the decorated callable.
-
 
 ```python
 from functools import wraps
@@ -549,7 +536,6 @@ def divint(a, b):
 
 Let's invoke ZeroDivisionError to see the logger in action.
 
-
 ```python
 divint(1, 0)
 ```
@@ -580,7 +566,6 @@ Imagine this: you have a set of functions, each returning a dictionary, which (a
 other fields) includes a field called “summary.” The value of this summary must not be
 more than 30 characters long; if violated, that’s an error. Here is a decorator that
 raises a ValueError if that happens:
-
 
 ```python
 from functools import wraps
@@ -681,7 +666,6 @@ resp.text
     you entered the URL manually please check your spelling and try again.</p>\n'
 ```
 
-
 ## Applying multiple decorators
 
 You can apply multiple decorators to a function by stacking them on top of each other.
@@ -726,7 +710,6 @@ getname("Nafi")
 >>> '🎉 Hello Nafi! 🎉'
 ```
 
-
 The decorators are called in a bottom up order. First, the decorator `greet` gets
 applied on the result of `getname` function and then the result of `greet` gets passed
 to the `flare` decorator. The decorator stack above can be written as
@@ -742,7 +725,6 @@ of nested functions to achieve that.
 
 Before doing that let's cook up a trivial example of how you can define decorators with
 parameters.
-
 
 ```python
 from functools import wraps
@@ -816,7 +798,6 @@ function object `outer_wrapper`.
 `delimiter` a closure is created where the value of `delimiter` is stored until it will
 be used later by `inner_wrapper()`
 
-
 ## Decorators with & without arguments
 
 You saw earlier that a decorator specifically designed to take parameters can't be used
@@ -865,7 +846,6 @@ def greet(name):
 print(hello("Nafi"))
 print(greet("Redowan"))
 ```
-
 
 ```
 >>> Hello,Nafi!
@@ -1097,8 +1077,6 @@ print(hello("Nafi"))
     Hello Nafi!
 ```
 
-
-
 ## A few more examples
 
 ### Caching return values
@@ -1278,7 +1256,6 @@ If you run the server and hit the `http://localhost:5000/` url, it'll greet you 
 http request on the terminal. Moreover, if you inspect the `logger_list`, you'll find
 the registered logger there. You'll find a lot more real life usage of decorators in
 the Flask framework.
-
 
 ## References
 

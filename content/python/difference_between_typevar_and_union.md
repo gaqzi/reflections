@@ -31,7 +31,6 @@ difference is:
 With a `Union` type used as function parameters, the arguments, as well as the return
 type, can all be different:
 
-
 ```python
 # src.py
 from typing import Union
@@ -49,7 +48,6 @@ foo("apple", "bazooka")  # This is valid.
 foo(1, "apple")  # Mypy won't complain here.
 foo("apple", 1)  # Mypy won't complain here as well.
 ```
-
 
 However, the above type definition will be too loose if you need to ensure that all of
 your function parameters must be of the same type in a single scope. Here's where
@@ -88,7 +86,6 @@ the input parameters will define the type of the output value. So, the types of 
 input parameters must match, otherwise, Mypy will complain and in this case, the snippet
 will also raise a `TypeError` in runtime. Mypy is statically catching a bug that'd
 otherwise appear in runtime, how convenient!
-
 
 ## References
 

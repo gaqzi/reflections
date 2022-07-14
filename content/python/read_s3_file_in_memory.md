@@ -106,7 +106,6 @@ text file object before passing it to the CSV reader. The `io.TextIOWrapper` cla
 exactly that. Once the file object is text compatible, we pass it to the CSV reader and
 do further processing.
 
-
 ## References
 
 [1]: https://aws.amazon.com/s3/

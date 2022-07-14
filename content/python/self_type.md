@@ -92,7 +92,6 @@ subjectively, this sticks out like a sore thumb.
 
 PEP-673 allows us to solve the issue elegantly:
 
-
 ```python
 # src.py
 from __future__ import annotations
@@ -120,7 +119,6 @@ class Animal:
 ```
 
 If you run Mypy against the second snippet, it won't complain.
-
 
 ## Typing instance methods that return `self`
 
@@ -154,7 +152,6 @@ class Counter:
 The `increment` and `decrement` method of the `Counter` class return the instance of the
 same class after performing the operations on the `start` value. This is a perfect case
 where the `Self` type can be useful.
-
 
 ## Typing `__new__` methods
 

@@ -13,7 +13,6 @@ I'm running the commands from a Python 3.10 virtual environment but it'll work o
 Python version. Let's print out the docstrings of the `functools.lru_cache` function.
 Run:
 
-
 ```
 python -m pydoc functools.lru_cache
 ```

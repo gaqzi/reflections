@@ -94,7 +94,6 @@ safety. Moreover, the Go code is self-documented to some extent and I'd love thi
 of `polymorphic | type-safe | self-documented` trio in Python. Let's try to use nominal
 type hinting to statically type the following example:
 
-
 ```python
 # src.py
 from __future__ import annotations
@@ -120,7 +119,6 @@ the function parameter. If you try to run this function, it'll happily print `Tr
 However, if you run [mypy](https://mypy.readthedocs.io/en/stable/) against this file,
 it'll complain as follows:
 
-
 ```
 src.py:17: error: Argument 1 to "find" has incompatible type "Set[int]"; expected
 "Dict[Any, Any]"
@@ -135,7 +133,6 @@ incompatible. During runtime, Python doesn't raise any error because the `set` t
 we're passing as the value of `haystack`, supports `in` operation. But we're not
 communicating that with the type checker properly and mypy isn't happy about that. To
 fix this mypy error, we can use Union type.
-
 
 ```python
 ...
@@ -153,13 +150,12 @@ This will make mypy happy. However, it's still not bulletproof. If you try to pa
 can get a bit tedious in this kind of situation, as you'd have to explicitly tell the
 type checker about every type that a variable can expect. There's a better way!
 
-Enter [structural subtyping](https://www.python.org/dev/peps/pep-0544/#nominal-vs-structural-subtyping). 
+Enter [structural subtyping](https://www.python.org/dev/peps/pep-0544/#nominal-vs-structural-subtyping).
 We know that the value of `haystack` can be anything that has the `__contains__` method.
 So, instead of explicitly defining the name of all the allowed types—we can create a
 class, add the `__contains__` method to it, and signal mypy the fact that `haystack` can
-be anything that has the `__contains__` method. Python's `typing.Protocol` class allows 
+be anything that has the `__contains__` method. Python's `typing.Protocol` class allows
 us to do that. Let's use that:
-
 
 ```python
 # src.py
@@ -278,7 +274,6 @@ the decorator, along with `isinstance` check can guarantee the conformity in run
 Let's replace the `abc.ABC` and the shenanigans with the decorators with
 `typing.Protocol`:
 
-
 ```python
 from __future__ import annotations
 
@@ -331,13 +326,11 @@ snippet, it'll statically check whether `Foo` conforms to the `ProtoFoo` interfa
 not. Voila, we avoided inheritance. The `isinstance` in the `run` function later checks
 whether `foo` is an instance of `ProtoFoo` or not.
 
-
 ## Complete example with tests
 
 This example employs static duck-typing to check the type of `WebhookPayload` where the
 class represents the structure of the payload that is going to be sent to an URL by the
 `send_webhook` function.
-
 
 ```python
 # Placeholder python file to test the snippets
@@ -401,7 +394,6 @@ if __name__ == "__main__":
 All the code snippets here are using Python 3.10's type annotation syntax. However, if
 you're using `from __future__ import annotations`, you'll be able to run all of them in
 earlier Python versions, going as far back as Python 3.7.
-
 
 ## References
 

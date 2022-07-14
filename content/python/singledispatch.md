@@ -52,7 +52,6 @@ When function overloading happens based on its argument types, the resulting fun
 known as **generic function**. Let's see how Python's `singledispatch` decorator can
 help to design generic functions and refactor the icky code above.
 
-
 ## Singledispatch
 
 Python fairly recently added partial support for function overloading in *Python 3.4*.
@@ -68,7 +67,6 @@ single dispatch generic function.
 
 As PEP-443 said, singledispatch only happens based on the first argument’s type. Let’s
 take a look at an example to see how this works!
-
 
 ### Example-1: Singledispatch with built-in argument type
 
@@ -184,8 +182,8 @@ Running this snippet will print out:
 >>> Dog data has been processed successfully!
 ```
 
-To refactor this with `singledispatch`, you can create two data types `Cat` and `Dog`. 
-When you make `Cat` and `Dog` objects from the classes and pass them through the 
+To refactor this with `singledispatch`, you can create two data types `Cat` and `Dog`.
+When you make `Cat` and `Dog` objects from the classes and pass them through the
 `process` function, singledispatch will take care of dispatching the appropriate
 implementation of that function.
 

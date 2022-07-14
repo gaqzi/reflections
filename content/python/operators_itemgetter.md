@@ -23,7 +23,6 @@ tuple inside the list and then the `sorted` function is using those values to so
 elements. Also, this is faster than using a lambda function and passing that to the
 `key` parameter to do the sorting:
 
-
 ```python
 In [6]: from operator import itemgetter
 

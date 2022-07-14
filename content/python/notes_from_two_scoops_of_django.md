@@ -74,7 +74,6 @@ Putting business logic of an app in dedicated modules is better than putting the
 To do so, place your business logic in
 `service.py` and `selectors.py`. Your strurcture should look as follows:
 
-
 ```
 foo_app/
 ├── migrations
@@ -115,13 +114,11 @@ Here, by business logic I mean, functions or classes to create, update and delet
     python manage.py runserver --settings=foo.settings_prod
     ```
 
-
 * Seperate configuration from code. Adopt [12 factor app](https://12factor.net/config) philosophies to achieve that.
 
 * Don't import Django components in your settings modules.
 
 * Don't hardcode paths in the settings modules. Consider using the `pathlib` module to avoid that.
-
 
 ### Requirements file
 
@@ -132,7 +129,6 @@ Here, by business logic I mean, functions or classes to create, update and delet
 ## Database
 
 * Don't use Sqlite database in development, unless you're using that in production as well. Adopting a database like PostgreSQL can give you access to better concurrency concurrency management and a stronger type system. Prefer to develop in the same DB that you'll be running in production.
-
 
 ## Models
 

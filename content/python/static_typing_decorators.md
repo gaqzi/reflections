@@ -64,9 +64,8 @@ decorator while the latter is needed to type annotate decorators that change wra
 functions' signatures.
 
 !!! Note
-    If you're not on Python 3.10, you can import `ParamSpec` and `Concatenate` from 
+    If you're not on Python 3.10, you can import `ParamSpec` and `Concatenate` from
     the `typing_extensions` module. The package gets automatically installed with Mypy.
-
 
 ## Use `ParamSpec` to type decorators
 
@@ -115,7 +114,6 @@ Notice the annotations of the `inner` function inside `register`. Here, `P.args`
 `P.kwargs` are transferring the type information from the wrapped `func` to the `inner`
 function. This makes sure that static type checkers like Mypy can now precisely scream
 at you whenever you call the decorated functions with the wrong type of parameters.
-
 
 ## Use `Concatenate` to type decorators that change the wrapped functions' signatures
 
@@ -211,7 +209,6 @@ Parameter 1: type "Logger" cannot be assigned to type "int"
 "Logger" is incompatible with "int" (reportGeneralTypeIssues)
 ./src.py:83:12 - error: Cannot access member "warning" for type "int"
 ```
-
 
 ## Resources
 

@@ -20,7 +20,6 @@ applications and [setuptools-setup.py](https://github.com/pypa/setuptools) combo
 managing dependencies in libraries. Here's an annotated version of the template action
 syntax:
 
-
 ```yaml
 # .github/workflows/ci.yml
 

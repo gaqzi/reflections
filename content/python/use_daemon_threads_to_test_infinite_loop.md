@@ -8,7 +8,6 @@ Python's daemon threads are cool. A Python script will stop when the main thread
 and only daemon threads are running. To test a simple `hello` function that runs
 indefinitely, you can do the following:
 
-
 ```python
 # test_hello.py
 from __future__ import annotations

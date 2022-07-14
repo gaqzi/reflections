@@ -27,7 +27,6 @@ tagging to select and deselect load-testing routines in the CLI. Also,
 
 Here's how you can do that:
 
-
 ```python
 # src.py
 from __future__ import annotations

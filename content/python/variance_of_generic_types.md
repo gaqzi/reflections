@@ -8,7 +8,6 @@ I've always had a hard time explaining **variance** of generic types while worki
 type annotations in Python. This is an attempt to distill the things I've picked up on
 type variance while going through PEP-483.
 
-
 ## A pinch of type theory
 
 > A generic type is a class or interface that is parameterized over types. Variance
@@ -50,9 +49,7 @@ nothing could be said about `inv`. Replacing `<` with `<:`, and **functions** wi
 **generic type constructors**, we get examples of **covariant**, **contravariant**, and
 **invariant** behavior.
 
-
 ## A few practical examples
-
 
 ### Immutable generic types are usually type covariant
 
@@ -65,7 +62,6 @@ if `T2 <: T1`, then `Union[T2] <: Union[T1]` for all such `T1` and `T2`.
 First, `int <: float`. Second, a set of values of `FrozenSet[int]` is clearly a subset
 of values of `FrozenSet[float]`. Therefore, `FrozenSet[int] <: FrozenSet[float]`.
 
-
 ### Mutable generic types are usually type invariant
 
 For example:
@@ -73,7 +69,6 @@ For example:
 * `list[T]` is invariant. Although a set of values of `list[int]` is a subset of values
 of `list[float]`, only an `int` could be appended to a `list[int]`. Therefore,
 `list[int]` is not a subtype of `list[float]`.
-
 
 ### The callable generic type is covariant in return type but contravariant in the arguments
 
@@ -92,7 +87,6 @@ argument types. Examples:
 I found this odd at first. However, this actually makes sense. If a function can
 calculate the salary for a `Manager`, it should also be able to calculate the salary of
 an `Employee`.
-
 
 ## Examples
 
@@ -143,7 +137,6 @@ if __name__ == "__main__":
 Mypy will complain about this snippet since now, `action` expects a sequence of `Dog`
 instance or a subtype of it. A sequence of `Animal` is not a subtype of a sequence of
 `Dog`. Hence, the error.
-
 
 ### Contravariance
 
@@ -208,7 +201,6 @@ Here, Mypy will complain in the case of `factory(foo)` as the factory function e
 `Callable[[float]], None]` or its subtype. However, in the above case,
 `Callable[[float]], None] <: Callable[[int], None]` but not the other way around. That
 causes the error.
-
 
 ### Invariance
 

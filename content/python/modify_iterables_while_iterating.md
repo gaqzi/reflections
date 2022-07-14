@@ -105,7 +105,7 @@ Out[6]: 4
 Notice how the element `4` is being visited twice after prepending a value to the list
 `l`.
 
-## The solution
+## Solution
 
 To solve this, you'll have to make sure the target elements don't get removed after the
 iterator has already visited them. You can iterate in the reverse order and remove
@@ -229,7 +229,6 @@ Running the snippet prints:
 ```
 
 Voila, the key-value pairs of the even numbers have been removed successfully!
-
 
 ## Resources
 

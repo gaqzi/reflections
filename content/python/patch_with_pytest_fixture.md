@@ -247,7 +247,6 @@ the `@pytest.fixture(scope=...)` decorator. Other allowed scopes are `module` an
 `session`. **Module** scope means, the fixture will be executed once per test module and
 **session** scope means, the fixture will run once per Pytest session.
 
-
 ## Another practical example
 
 The following snippet defines the `get` and `post` functions that make `GET` and `POST`
@@ -288,7 +287,6 @@ Running the snippet will print the functions' respective HTTP response codes. If
 look closely, you'll notice that I'm instantiating the `client` object in the global
 scope. This is because, both the `GET` and `POST` API calls share the same header. Let's
 see how you can test these two functions:
-
 
 ```python
 # test_src.py
@@ -348,7 +346,6 @@ test module. This makes the test session quicker. However, keep in mind that mak
 fixtures run in the module scope has also its demerits. Since the target functions get
 mocked and stay mocked through the entire module, it can subtly create coupling between
 your test functions if you aren't careful.
-
 
 ## References
 

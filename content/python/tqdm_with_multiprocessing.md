@@ -12,7 +12,6 @@ The following example attempts to make tqdm work with `multiprocessing.imap_unor
 However, this should also work with similar mapping methods like—`multiprocessing.map`,
 `multiprocessing.imap`, `multiprocessing.starmap`, etc.
 
-
 ```python
 """
 Run `pip install tqdm` before running the script.

@@ -12,7 +12,6 @@ that schema in the subclasses and raising appropriate runtime exceptions is nice
 Wrote a fancy Python 3.6+ `__init_subclasshook__` to validate the subclasses as below.
 This is neater than writing a metaclass.
 
-
 ```python
 # main.py
 from collections.abc import Mapping
@@ -87,7 +86,6 @@ Traceback (most recent call last):
     raise Exception(f"'config' map should have only '{', '.join(expected_keys)}' keys")
 Exception: 'config' map should have only 'foo, bar, bazz' keys
 ```
-
 
 ## Test
 

@@ -18,7 +18,6 @@ particular extension, opening multiple files in a directory etc. The `pathlib` m
 can do nearly everything that `os.path` offers and comes with some additional cherries
 on top.
 
-
 ## Problem with Python's path handling
 
 Traditionally, Python has represented file paths as regular text strings. So far, using
@@ -43,7 +42,6 @@ The above pattern can get complicated fairly quickly and you have to know or loo
 specific modules and methods in a large search space to perform your path manipulations.
 Let's have a look at a few more examples of performing the same tasks using `os.path`
 and `pathlib` modules.
-
 
 ## Joining & creating new paths
 
@@ -85,7 +83,6 @@ operating systems do not define paths in the same way. Windows uses `"\"` while 
 path separator on the corresponding operating system. Pathlib module uses `"/"` operator
 overloading and make this a little less painful.
 
-
 ```python
 from pathlib import Path
 
@@ -98,7 +95,6 @@ print("base_dir:", base_dir)
 print("file_another_path:", file_another_path)
 ```
 
-
 ```
 >>> file_path: /home/rednafi/code/demo/file.txt
 >>> base_dir: /home/rednafi/code/demo
@@ -109,14 +105,12 @@ The `resolve` method finds out the absolute path of the file. From there you can
 `parent` method to find out the base directory and add the `another_file.txt`
 accordingly.
 
-
 ## Making directories & renaming files
 
 Here’s a piece of code that:
 
 * Tries to make a `src/stuff/` directory when it already exists
 * Renames a file in the `src` directory called  `.config` to `.stuffconfig`:
-
 
 ```python
 import os
@@ -140,11 +134,9 @@ Path("src/.config").rename("src/.stuffconfig")
 >>> PosixPath('src/.stuffconfig')
 ```
 
-
 Notice the output where the renamed file path is printed. It's not a simple string,
 rather a `PosixPath` object that indicates the type of host system (Linux in this case).
 You can almost always use stringified path values and the Path objects interchangeably.
-
 
 ## Listing specific types of files in a directory
 
@@ -162,7 +154,6 @@ src/
 ```
 
 Usually, `glob` module is used to resolve this kind of situation:
-
 
 ```python
 from glob import glob
@@ -207,12 +198,10 @@ on them gives you the desired result. Notice how `rglob` method can discover the
 files without you having to mention the directory structure with wildcards explicitly.
 Pretty neat, huh?
 
-
 ## Opening multiple files & reading their contents
 
 Now let's open the `.py` files and read their contents that you recursively discovered
 in the previous example.
-
 
 ```python
 from glob import glob
@@ -294,11 +283,9 @@ Unless you are doing cross platform path manipulation, most of the time you'll b
 working with the concrete `Path` object. So I'll focus on the methods and properties of
 `Path` class only.
 
-
 ### Operators
 
 Instead of using `os.path.join` you can use `/` operator to create child paths.
-
 
 ```python
 from pathlib import Path
@@ -428,7 +415,6 @@ file_path.name
 `Path.suffixes` returns a list of extensions of the final component. `Path.suffix` only
 returns the last extension.
 
-
 ```python
 from pathlib import Path
 
@@ -439,7 +425,6 @@ file_path.suffixes
 ```
 >>> ['.tar', '.gz']
 ```
-
 
 ```python
 file_path.suffix
@@ -763,7 +748,6 @@ that arises while working with paths in different operating systems.
 
 The ability to manipulate paths in an OO way and not having to rummage through the
 massive `os` or `shutil` module can make path manipulation a lot less painful.
-
 
 ## References
 

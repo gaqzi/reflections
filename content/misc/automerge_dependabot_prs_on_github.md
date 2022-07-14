@@ -35,7 +35,6 @@ so, go to the repo's *settings* tab and turn on the *Allow auto-merge* option fr
 
 ![image](https://user-images.githubusercontent.com/30027932/178368689-4766f2d3-86ed-4287-b058-6edfeecba66a.png)
 
-
 Now, you probably don't want to mindlessly merge every pull request Dependabot throws at
 you. You most likely want to make sure that a pull request triggers certain tests and it'll be merged only if all of those checks pass. To do so, you can turn on
 [branch protection][9]. From the *settings* panel, select *Branches* on the left panel:
@@ -85,7 +84,6 @@ jobs:
 From now on, every time Dependabot sends a merge request, the checks will be triggered
 and if all the mandatory checks pass, the `automerge.yml` workflow will merge it into
 the target branch.
-
 
 [1]: https://github.com/rednafi/rubric
 [2]: https://github.com/rednafi/exert

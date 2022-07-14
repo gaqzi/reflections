@@ -4,7 +4,6 @@ date: 2020-07-13
 tags: Python
 ---
 
-
 Managing configurations in your Python applications isn't something you think about much
 often, until complexity starts to seep in and forces you to re-architect your initial
 approach. Ideally, your config management flow shouldn't change across different
@@ -443,7 +442,6 @@ python configs.py
 ```
 
 This will print out an instance of the class `StageConfig`.
-
 
 ## Remarks
 

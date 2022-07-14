@@ -16,7 +16,6 @@ then it all started to make sense.
 GitHub uses this [pattern](https://github.com/github/scripts-to-rule-them-all) successfully to normalize their scripts. According to the pattern, every project should
 have a folder named `scripts` with a subset or superset of the following files:
 
-
 * `script/bootstrap` – installs/updates all dependencies
 * `script/setup` – sets up a project to be used for the first time
 * `script/update` – updates a project to run at its current version
@@ -24,7 +23,6 @@ have a folder named `scripts` with a subset or superset of the following files:
 * `script/test` – runs tests
 * `script/cibuild` – invoked by continuous integration servers to run tests
 * `script/console` – opens a console
-
 
 ## References
 

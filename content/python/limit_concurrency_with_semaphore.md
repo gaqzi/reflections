@@ -15,7 +15,6 @@ amazing [HTTPx](https://www.python-httpx.org/) library by
 [Tom Christie](https://twitter.com/starletdreaming) to make the requests. This is the
 naive version that I wrote in the beginning; it quickly hits the HTTP 429 error:
 
-
 ```python
 # src.py
 from __future__ import annotations
@@ -117,7 +116,6 @@ control resource access. This means if you're using any of the—`multiprocessin
 > `acquire()` finds that it is zero, it blocks, waiting until some task calls
 > `release()`.
 
-
 You can use the semaphores in the above script as follows:
 
 ```python
@@ -160,7 +158,6 @@ Inside the `async with` block, the line starting with `if limit.locked()` makes 
 workers wait for a second whenever the concurrency limit is reached. If you execute the
 script, it'll produce the following output:
 
-
 ```
 Making request 0
 Making request 1
@@ -185,7 +182,6 @@ Making request 199
 The output makes it clear that no more than 3 async functions are making concurrent
 requests to the server at the same time. You can tune the number of concurrent workers
 by changing the limit in the `asyncio.Semaphore` object.
-
 
 ## Complete script
 

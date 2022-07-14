@@ -9,7 +9,6 @@ it's been wrapped by a decorator. Whenever a function is wrapped by a decorator,
 identity properties like—function name, docstring, annotations of it get replaced by
 those of the wrapper function. Consider this example:
 
-
 ```python
 from __future__ import annotations
 
@@ -68,7 +67,6 @@ the `wrapper` function replace the identity properties of the wrapped function `
 This can easily be avoided by decorating the `wrapper` function inside the `log`
 decorator with the `functools.wraps` decorator:
 
-
 ```python
 # src.py
 from functools import wraps
@@ -108,7 +106,6 @@ Add two numbers.
 
 add
 ```
-
 
 I wanted to take a peek into how the `functools.wraps` decorator works internally. Turns
 out that the implementation is quite straightforward. Here's the entire implementation

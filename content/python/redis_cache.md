@@ -6,9 +6,9 @@ tags: Python, API
 
 ***Updated on 2020-07-13***: *Removed duplicate keys in docker-compose.yml*
 
-Recently, I was working with [MapBox](https://www.mapbox.com/)'s 
-[Route Optimization API](https://docs.mapbox.com/api/navigation/#optimization). 
-Basically, it tries to solve the 
+Recently, I was working with [MapBox](https://www.mapbox.com/)'s
+[Route Optimization API](https://docs.mapbox.com/api/navigation/#optimization).
+Basically, it tries to solve the
 [traveling salesman problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem)
 where you provide the API with coordinates of multiple places and it returns a
 duration-optimized route between those locations. This is a perfect usecase where
@@ -28,7 +28,6 @@ value
 * Serving new requests from cache if the records exist
 * Only send a new request to MapBox API if the response is not cached and then add that
 response to cache
-
 
 ## Setting up Redis & RedisInsight
 
@@ -91,7 +90,6 @@ redisinsight panel:
 
 ![Screenshot from 2020-05-23 19-23-21](https://user-images.githubusercontent.com/30027932/82731781-f30b1b00-9d2a-11ea-8c72-62a4753bc5f9.png)
 
-
 ## Preparing Python environment
 
 For local development, you can set up your python environment and install the
@@ -112,7 +110,6 @@ pip install redis httpx
 
 Assuming the database server is running and you've installed the dependencies, the
 following snippet connects `redis-py` client to the database.
-
 
 ```python
 import redis
@@ -147,7 +144,6 @@ errors in case of failures. The above function handles `AuthenticationError` and
 out an error message if the error occurs. If everything goes well, running the
 `redis_connect()` function will return an instance of the `redis.client.Redis` class.
 This instance will be used later to set and retrieve data to and from the redis database.
-
 
 ### Getting route data from MapBox API
 
@@ -187,7 +183,6 @@ variable builds up the final request url. The `coordinates` are provided using t
 and converts the response into a native dictionary object using the `response.json()`
 method.
 
-
 ### Setting & retrieving data to & from Redis database
 
 The following two functions retrieves data from and sets data to redis database
@@ -219,7 +214,6 @@ Here, both the keys and the values are strings. In the second function,
 `set_routes_to_cache`, the `client.setex()` method sets a timeout of 1 hour on the key.
 After that the key and its associated value get deleted automatically.
 
-
 ### The central orchestration
 
 The `route_optima` function is the primary agent that orchestrates and executes the
@@ -227,8 +221,6 @@ caching and returning of responses against requests. It roughly follows the exec
 flow shown below.
 
 ![redis-cache](https://user-images.githubusercontent.com/30027932/82735908-1ba10e00-9d47-11ea-9e86-ac1fbc63628f.png)
-
-
 
 When a new request arrives, the function first checks if the return-value exists in the
 Redis cache. If the value exists, it shows the cached value, otherwise, it sends a new
@@ -260,7 +252,6 @@ def route_optima(coordinates: str) -> dict:
                 return json.loads(data)
         return data
 ```
-
 
 ### Exposing as an API
 
@@ -480,7 +471,6 @@ This should return a response with the coordinates of the optimized route.
 }
 ```
 
-
 If you've hit the above URL for the first time, the `cache` attribute of the json
 response should show `false`. This means that the response is being served from the
 original MapBox API. However, hitting the same URL with the same coordinates again will
@@ -498,7 +488,6 @@ http://localhost:8000/
 Select the `Browser` panel from the left menu and click on a key of your cached data. It
 should show something like this:
 
-
 ![Screenshot from 2020-05-25 02-06-24](https://user-images.githubusercontent.com/30027932/82763854-6a74a380-9e2c-11ea-998d-066d25461eca.png)
 
 Also you can play around with the API in the swagger UI. To do so, go to the following
@@ -513,18 +502,15 @@ interactive UI. Go ahead and inspect how the caching works for new coordinates.
 
 ![swagger](https://user-images.githubusercontent.com/30027932/82763965-2f26a480-9e2d-11ea-906b-63c1d25c08a8.png)
 
-
 ## Remarks
 
 You can find the complete source code of the app [here](https://github.com/rednafi/redis-request-caching).
-
 
 ## Disclaimer
 
 This app has been made for demonstration purpose only. So it might not reflect the best
 practices of production ready applications. Using APIs without authentication like this
 is not recommended.
-
 
 ## Resources
 

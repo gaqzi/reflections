@@ -11,7 +11,6 @@ the car has a classic 'has a' (inheritance usually refers to 'is a' relationship
 relationship with the engine. So, composition makes more sense than inheritance here.
 Consider this example:
 
-
 ```python
 # src.py
 from typing import Any
@@ -60,7 +59,6 @@ vroom
 However, I wanted free attribute access, just like we get in inheritance. We should be
 able to do `car.name`, not `car.engine.name`, and get the name of the engine instance.
 With a little bit of `__getattr__` magic, it's easy to do so:
-
 
 ```python
 # src.py

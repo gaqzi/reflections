@@ -12,7 +12,6 @@ each commit to impose strict conformity on your codebase.
 
 To keep my sanity, I only use three linters in all of my python projects:
 
-
 * **[Isort](https://github.com/timothycrosley/isort)**: `Isort` is a Python utility to
 sort *imports* alphabetically, and automatically separate them by sections and type.
 
@@ -41,7 +40,6 @@ look the same regardless of the project you're reading.
 Ned Batchelder's [McCabe script](https://github.com/PyCQA/mccabe). The combination of
 these three linters makes sure that your code is compliant with
 [PEP 8](https://www.python.org/dev/peps/pep-0008/) and free of some obvious code smells.
-
 
 ## Installing pre-commit
 

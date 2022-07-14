@@ -53,7 +53,6 @@ different behavior?
 One way the second point can be addressed is—by accepting the consumer function as a
 parameter and applying that to the produced value.
 
-
 ```python
 # src.py
 from __future__ import annotations
@@ -86,7 +85,6 @@ You can override the value of `consumer` with any callable and make the function
 flexible. However, applying multiple consumers will still be hairy. Doing this with
 generators is cleaner. Here's how you'd transform the above script to take advantage of
 generators:
-
 
 ```python
 # src.py
@@ -145,7 +143,6 @@ Apr  3 04:42:21 xps slack.desktop[4613]: [04/03/22, 04:42:21:859]
 If you look carefully, the above command has two parts. The `tail -f <filename>` returns
 the new lines appended to the file and `grep <pattern>` consumes the new lines to look
 for a particular pattern. This behavior can be mimicked via generators as follows:
-
 
 ```python
 # src.py

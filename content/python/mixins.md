@@ -17,7 +17,6 @@ build custom data structures based on them. Python provides several mixin classe
 the `collection.abc` module to design custom data structures that look and act like
 built-in structures with additional functionalities baked in.
 
-
 ## Concept edifice
 
 To understand how all these work, you'll need a fair bit of knowledge about Interfaces,
@@ -26,7 +25,6 @@ To understand how all these work, you'll need a fair bit of knowledge about Inte
 `abc.ABC` class. Then you'll learn how abstract base classes differ from interfaces.
 After that I'll introduce mixins and explain how all these concepts can be knitted
 together to architect custom data structures with amazing capabilities. Let's dive in.
-
 
 ## Interfaces
 
@@ -39,7 +37,6 @@ However, in larger applications, interfaces can make you avoid writing code that
 poorly encapsulated or build classes that look awfully similar but provide completely
 unrelated functionalities. Moreover, interfaces implicitly spawn other powerful
 techniques like mixin classes which can help you achieve DRY nirvana.
-
 
 ### Overview
 
@@ -57,7 +54,6 @@ categories.
 
 * Informal Interfaces
 * Formal Interfaces
-
 
 ## Informal interfaces
 
@@ -253,7 +249,6 @@ to instantiate the `FakeCalc` concrete class. However, when I tried to apply a m
 all the methods of the subclass `FakeCalc` are usable. It can cause subtle bugs can be
 difficult to detect. Formal interfaces try to overcome these issues.
 
-
 ## Formal interfaces
 
 Formal interfaces do not suffer from the problems that plague informal interfaces. So
@@ -262,7 +257,6 @@ that forces them to implement all the methods in the concrete sub classes, forma
 interface is the way to go. In Python, the idiomatic way to define formal interfaces is
 via the `abc` module. Let's transform the previously mentioned `ICalc` interface into a
 formal one:
-
 
 ```python
 from abc import ABC, abstractmethod
@@ -299,7 +293,6 @@ hood, a [metaclass]() `ABCMeta` gets attached to the interface which essentially
 sure that you can't instantiate this class independently. Let's try to do so and see
 what happens:
 
-
 ```python
 i = ICalc()
 ```
@@ -318,7 +311,6 @@ The error message clearly states that you can't instantiate the class `ICalc` di
 at all. You've make a subclass of `ICalc` and implement all the abstract methods and
 only then you'll be able to make an instance of the subclass. The subclassing and
 implementation part is same as before.
-
 
 ```python
 class Calc(ICalc):
@@ -350,7 +342,6 @@ subclass will raise `TypeError`. So you can never write something the like the
 `FakeCalc` with a formal interface. This approach is more explicit and if there is an
 issue, it fails early.
 
-
 ### Interfaces vs abstract base classes
 
 You've probably seen the term *Interface* and *Abstract Base Class* being used
@@ -368,7 +359,6 @@ Both interfaces and abstract base classes are similar in the sense that they can
 stand on their own, that means these classes aren't meant to be instantiated
 independently. Pay attention to the following snippet to understand how interfaces and
 abstract base classes differ.
-
 
 **Interface**
 
@@ -415,7 +405,6 @@ The two examples above establish the fact that
 > All interfaces are abstract base classes but not all abstract base classes are
 > interfaces.
 
-
 ### A complete example
 
 Before moving on to the next section, let's see another contrived example to get the
@@ -424,10 +413,7 @@ idea about the cases where interfaces can come handy. I'll define an interface c
 The interface defines three abstract methods `start`, `accelerate` and `stop` that the
 concrete classes will need to implement later.
 
-
 ![python-interface](https://user-images.githubusercontent.com/30027932/86243108-96bbd680-bbc7-11ea-9ddb-9fe46b4a17a1.png)
-
-
 
 ```python
 from abc import ABC, abstractmethod
@@ -522,7 +508,6 @@ classes. So, before understanding mixin classes and how they can be used to inje
 additional plugins to your classes, it's important that you understand interfaces and
 abstract base classes properly.
 
-
 ## Mixins
 
 Imagine you're baking chocolate brownies. Now, you can have them without any extra
@@ -539,7 +524,6 @@ a lot of sense to reuse them. One way to achieve modularity and reusability in
 object-oriented programming is through a concept called a mixin. Different languages
 implement the concept of mixin in different ways. In Python, mixins are supported via
 multiple inheritance.
-
 
 ### Overview
 
@@ -562,7 +546,6 @@ Let's see a contrived example. Consider
 system. Werkzeug is the low-level framework that
 [Flask](https://flask.palletsprojects.com/en/1.1.x/) micro-framework is built upon. I
 can make a plain old request object by saying:
-
 
 ```python
 from werkzeug import BaseRequest
@@ -637,13 +620,11 @@ In Python, these are just conventions because all of the above are defined as cl
 However, one trait that is common among *interfaces*, *abstract classes* and *mixins*
 is that they shouldn't exist on their own, i.e. shouldn't be instantiated independently.
 
-
 ### A complete example
 
 Before diving into the real-life examples and how mixins can be used to construct
 custom data structures, let's have a look at a self-contained example of a mixin class
 at work:
-
 
 ```python
 import inspect
@@ -1284,7 +1265,6 @@ of the post.
 * SQLAlchemyDict: Mutable dict-like data structure that can store key-value pairs in
 any SQLAlchemy supported relational database.
 
-
 ### BitSet
 
 This mutable set-like data structure doesn't perform hashing to store data. It can
@@ -1619,7 +1599,6 @@ Running the above code snippet will create a SQLite database named `foo.db` in y
 current working directory. You can inspect the database with any database viewer and
 find your key-value pairs there. Everything else is the same as a built-in dictionary
 object.
-
 
 ## References
 

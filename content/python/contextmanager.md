@@ -8,8 +8,6 @@ Python's context managers are great for resource management and stopping the pro
 of leaked abstractions. You've probably used it while opening a file or a database
 connection. Usually it starts with a `with` statement like this:
 
-
-
 ```python
 with open("file.txt", "wt") as f:
     f.write("contents go here")
@@ -17,7 +15,6 @@ with open("file.txt", "wt") as f:
 
 In the above case, `file.txt` gets automatically closed when the execution flow goes out
 of the scope. This is equivalent to writing:
-
 
 ```python
 try:
@@ -32,7 +29,6 @@ finally:
 To write a custom context manager, you need to create a class that includes the
 `__enter__` and `__exit__` methods. Let's recreate a custom context manager that will
 execute the same workflow as above.
-
 
 ```python
 class CustomFileOpen:
@@ -52,7 +48,6 @@ class CustomFileOpen:
 
 You can use the above class just like a regular context manager.
 
-
 ```python
 with CustomFileOpen("file.txt", "wt") as f:
     f.write("contents go here")
@@ -65,7 +60,6 @@ not difficult. However, you can achieve better brevity by defining them using
 `contextlib.contextmanager` decorator. This decorator converts a generator function into
 a context manager. The blueprint for creating context manager decorators goes something
 like this:
-
 
 ```python
 @contextmanager
@@ -106,7 +100,6 @@ you run your cleanup code.
 Let's implement the same `CustomFileOpen` context manager with `contextmanager`
 decorator.
 
-
 ```python
 from contextlib import contextmanager
 
@@ -125,8 +118,6 @@ def CustomFileOpen(filename, method):
 
 Now use it just like before:
 
-
-
 ```python
 with CustomFileOpen("file.txt", "wt") as f:
     f.write("contents go here")
@@ -140,8 +131,6 @@ decorator that will be applied on a file-opening function. The decorator will:
 
 * Print a user provided description of the function
 * Print the time it takes to run the function
-
-
 
 ```python
 from contextlib import ContextDecorator
@@ -166,7 +155,6 @@ class RunTime(ContextDecorator):
 
 You can use the decorator like this:
 
-
 ```python
 @RunTime("This function opens a file")
 def custom_file_write(filename, mode, content):
@@ -189,7 +177,6 @@ None
 
 You can also create the same decorator via `contextlib.contextmanager` decorator.
 
-
 ```python
 from contextlib import contextmanager
 
@@ -211,7 +198,6 @@ def runtime(description):
 
 You can nest multiple context managers to manage resources simultaneously. Consider the
 following dummy manager:
-
 
 ```python
 from contextlib import contextmanager
@@ -301,7 +287,6 @@ gracefully, `contextlib.ExitStack` is here to help. Let's rewrite context manage
 using `ExitStack`. This function takes the individual context managers and their
 arguments as tuples and returns the combined manager.
 
-
 ```python
 from contextlib import contextmanager, ExitStack
 
@@ -352,7 +337,6 @@ turns any query into a transaction and make it atomic. Context managers can help
 write a transaction session in a very elegant way. A basic querying workflow in
 SQLAlchemy may look like this:
 
-
 ```python
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -384,7 +368,6 @@ function with context manager. The session_scope function takes care of committi
 rolling back in case of exception automatically. The `session_scope` function can be
 used to run queries in the following way:
 
-
 ```python
 with session_scope() as session:
     myobject = MyObject("foo", "bar")
@@ -399,7 +382,6 @@ with sophisticated logging can often obfuscate the core logic of your function. 
 write a decorator type context manager that will handle the exceptions for you and
 decouple these additional code from your main logic. Let's write a decorator that will
 handle `ZeroDivisionError` and `TypeError` simultaneously.
-
 
 ```python
 from contextlib import contextmanager
@@ -418,7 +400,6 @@ def errhandler():
 ```
 
 Now use this in a function where these exceptions occur.
-
 
 ```python
 @errhandler()
@@ -463,7 +444,6 @@ neat, huh?
 The following one is a more sophisticated example of using context manager to decouple
 your error handling monstrosity from the main logic. It also hides the elaborate logging
 logics from the main method.
-
 
 ```python
 import logging
@@ -551,7 +531,6 @@ This should show:
   }
 }
 ```
-
 
 ## Remarks
 

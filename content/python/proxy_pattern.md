@@ -27,8 +27,7 @@ Have you ever used an access card to go through a door? There are multiple optio
 open that door i.e. it can be opened either using access card or by pressing a button
 that bypasses the security. The door's main functionality is to open but there is a
 proxy added on top of it to add some functionality. Let me better explain it using the
-code example below.
-
+code example below:
 
 ```python
 # src.py
@@ -60,11 +59,11 @@ a single method called `open_method` which denotes the action of *opening* on th
 object. This method gets extended in the `SecuredDoor` class and in this case, I've just
 added a print statement to the method of the latter class.
 
-Notice how the class `Door` was called from `SecuredDoor` via 
-[composition](https://realpython.com/inheritance-composition-python/#composition-in-python). 
-In the case of proxy pattern, you can substitute primary object with the proxy object 
-without any additional changes in the code. This conforms to 
-the [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle). 
+Notice how the class `Door` was called from `SecuredDoor` via
+[composition](https://realpython.com/inheritance-composition-python/#composition-in-python).
+In the case of proxy pattern, you can substitute primary object with the proxy object
+without any additional changes in the code. This conforms to
+the [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle).
 It states that:
 
 > Objects of a superclass shall be replaceable with objects of its subclasses without
@@ -92,9 +91,7 @@ Wikipedia says,
 Pedagogically, the proxy pattern belongs to a family of patterns called the
 [structural pattern](https://en.wikipedia.org/wiki/Structural_pattern).
 
-
 ## Why use it?
-
 
 ### Loose coupling
 
@@ -105,7 +102,6 @@ and extending the functionalities of your primary logic a lot quicker and easier
 Suppose, you're defining a `division` function that takes takes two integer as arguments
 and returns the result of the division between them. It also handles edge cases like
 `ZeroDivisionError` or `TypeError` and logs them properly.
-
 
 ```python
 # src.py
@@ -213,7 +209,6 @@ functionalities. Usually, this decoupling of core logic from the cruft and the
 encapsulation of additional functionalities result in more reliable and rigorous unit
 tests.
 
-
 ## Proxy pattern with interface
 
 In the real world, your class won't look like the simple `Division` class having only a
@@ -314,7 +309,6 @@ The third class `Proxy` extends the functionalities of the base concrete class
 `Concrete`. It calls the `Concrete` class using the composition pattern and implements
 all the methods. However, in this case, I used the results from the concrete methods and
 extended their functionalities without code duplication.
-
 
 ## Another practical example
 
@@ -534,7 +528,6 @@ inspect the later outputs, you'll see when the query arguments get repeated
 ([1, 2, 3, 1, 2, 3]), `Cache Info:` will show higher hit counts. This means that the
 data is being served from the cache.
 
-
 ## Should you use it?
 
 Well, yes obviously. But not always. You see, you need a little bit of planning before
@@ -544,7 +537,6 @@ Also, this OOP-cursed additional layers of abstraction can make your code subjec
 unreadable. So use the pattern wisely. On the flip side, proxy pattern can come
 extremely handy when you need to extend the functionality of some class arbitrarily as
 it can work a gateway to the El Dorado of loose coupling.
-
 
 ## References
 

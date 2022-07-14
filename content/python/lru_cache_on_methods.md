@@ -11,9 +11,7 @@ it.
 > instances of the class encapsulating that method never get garbage collected within
 > the lifetime of the process holding them.
 
-
 Let's consider this example:
-
 
 ```python
 # src.py

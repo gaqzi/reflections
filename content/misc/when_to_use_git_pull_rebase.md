@@ -12,7 +12,6 @@ the remote branch and merge it into the local branch. This can happen when, for 
 * After that, if you try to pull the `main` branch from remote again and the content of
 the `main` branch changes by this time, you'll encounter a merge error.
 
-
 ## Reproduce the issue
 
 Create a new branch named `alice` from `main`. Run:
@@ -54,7 +53,6 @@ fatal: Need to specify how to reconcile divergent branches.
 ```
 This means that the history of your local `main` branch and the remote `main` branch have diverged and they aren't reconciliable.
 
-
 ## Solution
 
 From the `main` branch, you can run:
@@ -65,7 +63,6 @@ git pull --rebase
 
 This will rebase your local `main` by adding your local commits on top of the remote
 commits.
-
 
 ## References
 

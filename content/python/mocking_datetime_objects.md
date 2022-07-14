@@ -72,7 +72,6 @@ src.py .                                              [100%]
 ====== 1 passed in 0.01s ======
 ```
 
-
 ## References
 
 * [Python test using mock with datetime.utcnow — Stackoverflow](https://stackoverflow.com/questions/57671585/python-test-using-mock-with-datetime-utcnow)

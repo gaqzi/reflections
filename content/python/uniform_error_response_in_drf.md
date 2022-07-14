@@ -15,7 +15,6 @@ I'll use a modified version of the quickstart
 achieve that. Also, we'll need a POST API to demonstrate the changes better. Here's the
 same example with the added POST API. Place this code in the project's `urls.py` file.
 
-
 ```python
 # urls.py
 

@@ -210,6 +210,5 @@ roughly for 2 seconds before moving on. If we were using a single process, the s
 would wait for 2 seconds after printing every row. By increasing the number of processes, you can speed up the consumption rate. Also, if the consumer tasks are
 lightweight, you can open multiple threads to consume them.
 
-
 [1]: https://www.python-httpx.org/
 [2]: https://www.python-httpx.org/quickstart/#streaming-responses

@@ -13,7 +13,6 @@ while writing tests in Django.
 
 Consider this example:
 
-
 ```python
 # src.py
 import unittest

@@ -9,7 +9,6 @@ containing a PDF file and the system would then download the file and save it to
 bucket. While this sounds quite straightforward, there's one big issue. Before I started
 working on it, the core logic looked like this:
 
-
 ```python
 # src.py
 from __future__ import annoatations
@@ -94,7 +93,6 @@ downloaded. The `max_size` parameter defines the maximum file size that'll be al
 In this example, we're keeping track of the size of the already downloaded bytes in the
 `downloaded_content_length` variable and raising an error if the size exceeds 10MB.
 Sweet!
-
 
 ## Reference
 

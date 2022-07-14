@@ -38,7 +38,6 @@ To make things simpler, I want to serialize the `request_payload`, `response_pay
 and `status_code` fields to JSON string before saving them to the DB. Usually, I'd do it
 in the `to_dynamodb_item` like this:
 
-
 ```python
 # src.py
 from __future__ import annotations

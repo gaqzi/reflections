@@ -13,7 +13,6 @@ While sifting through Django 3.2's codebase, I found this neat trick to make a
 `classmethod` that acts like a `property` method and can be accessed directly from the
 class without initializing it.
 
-
 ```python
 # src.py
 # This requires Python 3.4+.
@@ -68,9 +67,7 @@ The only thing that matters here is the order of the `property` and `classmethod
 decorator. Python applies them from bottom to top. Changing the order will make it
 behave unexpectedly.
 
-
 ## Complete example with tests
-
 
 ```python
 # src.py

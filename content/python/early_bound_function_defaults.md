@@ -72,7 +72,6 @@ time.
 This is easy to fix. Remove the default value of the timestamp and explicitly pass the
 parameter value while calling the function:
 
-
 ```python
 # src.py
 from __future__ import annotations
@@ -146,7 +145,6 @@ if __name__ == "__main__":
 The function `append_to` takes any object and appends that to the `target` mutable
 sequence. Here, the parameter `target` has a default value; an empty list. However,
 running the function reveals something unexpected:
-
 
 ```
 [0]

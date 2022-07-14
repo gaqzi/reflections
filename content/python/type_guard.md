@@ -125,7 +125,6 @@ def check_sequence_str(
 Notice that the return type now has the expected type defined inside the `TypeGuard`
 generic. Now, Mypy will be satisfied if you run it against the modified snippet.
 
-
 ## Properties of type guard functions
 
 You've already seen how `check_sequence_str` narrows down the type of an object in
@@ -199,7 +198,6 @@ container `Sequence[T]`. The first parameter is the input type that the type che
 will focus on, and the second parameter denotes the default types that are allowed
 inside the output list. Running the snippet will print `jupiter` and `mars` in the
 console and Mypy will also be happy with the types.
-
 
 ## References
 

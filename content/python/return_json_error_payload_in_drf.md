@@ -18,10 +18,10 @@ something goes wrong. On the other hand, the website needs those error text to a
 accordingly.
 
 This happens because 403, 404, and 500 are handled by Django's default handlers for
-those errors and not by DRF's exception handlers. As the DRF doc 
+those errors and not by DRF's exception handlers. As the DRF doc
 [suggests](https://www.django-rest-framework.org/api-guide/exceptions/#generic-error-views),
 overriding the error handlers is one way of solving it. But this will only work if
-the application is an API-only backend or if you haven't already overridden the 
+the application is an API-only backend or if you haven't already overridden the
 error handlers for custom error pages.
 
 In our case, we already had to override the default error handlers to display custom
@@ -29,8 +29,7 @@ error pages on the website. These custom pages would bleed into the API endpoint
 occasionally when errors occur. So, I thought, if I could handle this in the middleware
 layer, that'd be cleaner than most of the solutions that I'd seen at that point.
 
-
-## The solution
+## Solution
 
 To fix the dilemma, I wrote a middleware called `JSONErrorMiddleware` that returns the
 expected response based on the content type in the request header. If the header has
@@ -93,7 +92,6 @@ MIDDLEWARE = [..., "<app>.middleware.JSONErrorMiddleware"]
 ```
 
 And voila, now the API and non-API errors will be handled differently as expected!
-
 
 ## Test
 

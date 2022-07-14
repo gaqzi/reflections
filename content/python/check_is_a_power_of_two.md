@@ -20,7 +20,6 @@ Today, I came across this
 [Raymond Hettinger](https://twitter.com/raymondh) where he proposed an elegant solution
 to the problem. Here's how it goes:
 
-
 ```python
 def is_power_of_two(x: int) -> bool:
     return x > 0 and x.bit_count() == 1
@@ -49,7 +48,6 @@ For example:
 
 The `.bit_count()` function checks how many on-bits (`1`) are there in the binary
 representation of an integer.
-
 
 ## Complete example with tests
 

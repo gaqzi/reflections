@@ -8,7 +8,6 @@ While working with microservices in Python, a common pattern that I see is—the
 dynamically filled dictionaries as payloads of REST APIs or message queues. To
 understand what I mean by this, consider the following example:
 
-
 ```python
 # src.py
 from __future__ import annotations

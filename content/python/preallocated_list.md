@@ -171,7 +171,6 @@ first. However, list pre-allocation can still come in handy in more complex case
 you already know the size of the final list, and shaving off a few micro-seconds makes a
 considerable difference.
 
-
 ## References
 
 * [Create a list with initial capacity in Python](https://stackoverflow.com/questions/311775/create-a-list-with-initial-capacity-in-python)

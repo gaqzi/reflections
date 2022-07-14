@@ -14,7 +14,6 @@ However, Rust has
 recoverable error handling workflow that leverages generic Enums. I wanted to explore
 how Black emulates that in Python. This is how it works:
 
-
 ```python
 # src.py
 from __future__ import annotations
@@ -77,7 +76,6 @@ Zero division error occurred!
 If you run Mypy on the snippet, it'll succeed as well.
 
 You can also apply constraints on the return or exception types as follows:
-
 
 ```python
 # src.py

@@ -64,7 +64,6 @@ compare `current_iter` with `throttle_after`. If the value of `current_iter` exc
 While this works fine, recently, I've started to use `assert` to replace the
 *conditionals with `ValueError`* pattern. It works as follows:
 
-
 ```python
 # src.py
 def throttle(current_iter: int, throttle_after: int = -1) -> None:
@@ -105,7 +104,6 @@ forward.
 This is more succinct and makes the code flatter. I've no idea why I haven't
 started using it earlier and [this][1] piece of code in the [Starlette][2] repository
 jolted my brain. Eh bien, better late than never, I guess.
-
 
 ## Breadcrumbs
 
