@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Redowan's Reflections - misc</title><link href="https://rednafi.github.io/reflections/" rel="alternate"></link><link href="https://rednafi.github.io/reflections/feeds/misc.atom.xml" rel="self"></link><id>https://rednafi.github.io/reflections/</id><updated>2022-07-14T00:00:00+06:00</updated><entry><title>When to use 'git pull --rebase'</title><link href="https://rednafi.github.io/reflections/when-to-use-git-pull-rebase.html" rel="alternate"></link><published>2022-07-14T00:00:00+06:00</published><updated>2022-07-14T00:00:00+06:00</updated><author><name>Redowan Delowar</name></author><id>tag:rednafi.github.io,2022-07-14:/reflections/when-to-use-git-pull-rebase.html</id><summary type="html">&lt;p&gt;Whenever your local branch diverges from the remote branch, you can't directly pull from
+the remote branch and merge it into the local branch. This can happen when, for example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You checkout from the &lt;code&gt;main&lt;/code&gt; branch to work on a feature in a branch named &lt;code&gt;alice&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;When you're done, you …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;Whenever your local branch diverges from the remote branch, you can't directly pull from
+the remote branch and merge it into the local branch. This can happen when, for example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You checkout from the &lt;code&gt;main&lt;/code&gt; branch to work on a feature in a branch named &lt;code&gt;alice&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;When you're done, you merge &lt;code&gt;alice&lt;/code&gt; into &lt;code&gt;main&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;After that, if you try to pull the &lt;code&gt;main&lt;/code&gt; branch from remote again and the content of
+the &lt;code&gt;main&lt;/code&gt; branch changes by this time, you'll encounter a merge error.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Reproduce the issue&lt;/h2&gt;
+&lt;p&gt;Create a new branch named &lt;code&gt;alice&lt;/code&gt; from &lt;code&gt;main&lt;/code&gt;. Run:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git checkout -b alice
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;From &lt;code&gt;alice&lt;/code&gt; branch, add a line to a newly created file &lt;code&gt;foo.txt&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;from branch alice&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; foo.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Add, commit, and push the branch:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git commit -am &lt;span class="s2"&gt;&amp;quot;From branch alice&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; git push
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;From the GitHub UI, send a pull request against the &lt;code&gt;main&lt;/code&gt; branch and merge it:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="image" src="https://user-images.githubusercontent.com/30027932/178817072-12e6bb10-6ab7-4b30-8b05-74ca0791da55.png" /&gt;&lt;/p&gt;
+&lt;p&gt;In your local machine, switch to &lt;code&gt;main&lt;/code&gt; and try to pull the latest content merged from
+the &lt;code&gt;alice&lt;/code&gt; branch. You'll encounter the following error:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;You&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;have&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;divergent&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;branches&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;and&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;need&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;specify&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;how&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;reconcile&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;them&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;You&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;can&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;so&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;by&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;running&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;one&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;following&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;commands&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;sometime&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;before&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;your&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;next&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;pull&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="n"&gt;git&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;pull&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;rebase&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;merge&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;default&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;strategy&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="n"&gt;git&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;pull&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;rebase&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;rebase&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt;   &lt;/span&gt;&lt;span class="n"&gt;git&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;pull&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;ff&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;only&lt;/span&gt;&lt;span class="w"&gt;       &lt;/span&gt;&lt;span class="err"&gt;#&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;fast&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;forward&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;only&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;You&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;can&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;replace&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;git config&amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;with&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;git config --global&amp;quot;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;set&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;default&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;preference&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;repositories&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;You&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;can&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;also&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;pass&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;rebase&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;no&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;rebase&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;or&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;ff&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;only&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;on&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;command&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kd"&gt;override&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;configured&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;default&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;per&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;hint&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;invocation&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;fatal&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Need&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;specify&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;how&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;reconcile&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;divergent&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;branches&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This means that the history of your local &lt;code&gt;main&lt;/code&gt; branch and the remote &lt;code&gt;main&lt;/code&gt; branch have diverged and they aren't reconciliable.&lt;/p&gt;
+&lt;h2&gt;Solution&lt;/h2&gt;
+&lt;p&gt;From the &lt;code&gt;main&lt;/code&gt; branch, you can run:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git pull --rebase
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This will rebase your local &lt;code&gt;main&lt;/code&gt; by adding your local commits on top of the remote
+commits.&lt;/p&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://stackoverflow.com/questions/2472254/when-should-i-use-git-pull-rebase"&gt;When should I use git pull --rebase?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/rednafi/_pull-rebase"&gt;An example repo that reproduces the issue&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="misc"></category><category term="Git"></category></entry><entry><title>Automerge Dependabot PRs on GitHub</title><link href="https://rednafi.github.io/reflections/automerge-dependabot-prs-on-github.html" rel="alternate"></link><published>2022-07-07T00:00:00+06:00</published><updated>2022-07-07T00:00:00+06:00</updated><author><name>Redowan Delowar</name></author><id>tag:rednafi.github.io,2022-07-07:/reflections/automerge-dependabot-prs-on-github.html</id><summary type="html">&lt;p&gt;Whether I'm trying out a new tool or just prototyping with a familiar stack, I usually
+create a new project on GitHub and run all the experiments there. Some examples of these
+are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/rednafi/rubric"&gt;rubric&lt;/a&gt;: linter config initializer for Python&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/rednafi/exert"&gt;exert&lt;/a&gt;: declaratively apply converter functions to class attributes&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/rednafi/hook-slinger"&gt;hook-slinger&lt;/a&gt;: generic service …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;Whether I'm trying out a new tool or just prototyping with a familiar stack, I usually
+create a new project on GitHub and run all the experiments there. Some examples of these
+are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/rednafi/rubric"&gt;rubric&lt;/a&gt;: linter config initializer for Python&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/rednafi/exert"&gt;exert&lt;/a&gt;: declaratively apply converter functions to class attributes&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/rednafi/hook-slinger"&gt;hook-slinger&lt;/a&gt;: generic service to send, retry, and manage webhooks&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/rednafi/think-async"&gt;think-async&lt;/a&gt;: exploring cooperative concurrency primitives in Python&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/rednafi/epilog"&gt;epilog&lt;/a&gt;: container log aggregation with Elasticsearch, Kibana &amp;amp; Filebeat&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;While many of these prototypes become full-fledged projects, most end up being just
+one-time journies. One common theme among all of these endeavors is that I always
+include instructions in the &lt;code&gt;readme.md&lt;/code&gt; on how to get the project up and running—no matter how small it is. Also, I tend to configure a rudimentary CI pipeline that runs
+the linters and tests. GitHub actions and &lt;a href="https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates"&gt;Dependabot&lt;/a&gt; make it simple to configure a
+basic CI workflow. Dependabot keeps the dependencies fresh and makes pull requests
+automatically when there's a new version of a dependency used in a project.&lt;/p&gt;
+&lt;p&gt;Things can get quickly out of hand if you've got a large collection of repos where
+the automated CI runs periodically. Every now and then, I get a sizable volume of PRs in
+these fairly stale repos that I still want to keep updated. Merging these manually is
+a chore. Luckily, there are multiple &lt;a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/automatically-merging-a-pull-request"&gt;ways&lt;/a&gt; that GitHub offers to automatically merge
+PRs. The workflow that is documented here is the one I happen to like the most. I also
+think that this process leads to the path of the least surprise. Instead of depending on
+a bunch of GitHub settings, we'll write a GitHub action &lt;a href="https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions#enable-auto-merge-on-a-pull-request"&gt;worflow&lt;/a&gt; to automate the process.&lt;/p&gt;
+&lt;p&gt;First, you'll need to turn on the auto-merge option from the repository settings. To do
+so, go to the repo's &lt;em&gt;settings&lt;/em&gt; tab and turn on the &lt;em&gt;Allow auto-merge&lt;/em&gt; option from the
+&lt;em&gt;Pull Requests&lt;/em&gt; section:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="image" src="https://user-images.githubusercontent.com/30027932/178368689-4766f2d3-86ed-4287-b058-6edfeecba66a.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Now, you probably don't want to mindlessly merge every pull request Dependabot throws at
+you. You most likely want to make sure that a pull request triggers certain tests and it'll be merged only if all of those checks pass. To do so, you can turn on
+&lt;a href="https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches"&gt;branch protection&lt;/a&gt;. From the &lt;em&gt;settings&lt;/em&gt; panel, select &lt;em&gt;Branches&lt;/em&gt; on the left panel:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="image" src="https://user-images.githubusercontent.com/30027932/177646826-f07b6ad0-9df7-42cd-ab70-c74a1ec31059.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Once you've selected the tab, add a branch protection rule to the target branch against
+which Dependabot will send the pull requests:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="image" src="https://user-images.githubusercontent.com/30027932/177646967-36ba6b6d-861f-44d6-9a91-b5f5f3a3ce45.png" /&gt;&lt;/p&gt;
+&lt;p&gt;In this case, I'm adding the protection layer to the &lt;code&gt;main&lt;/code&gt; branch. I've turned on the
+&lt;em&gt;Require status checks to pass before merging&lt;/em&gt; toggle and added the &lt;code&gt;build&lt;/code&gt; step to the
+list of status checks that are required. Here, you can select any job from your CI files
+in the &lt;code&gt;.github/workflows&lt;/code&gt; directory:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="image" src="https://user-images.githubusercontent.com/30027932/177647370-012d0162-d80b-4f12-9ac7-b7a6da024735.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Once this is done, you can drop the following CI file in the &lt;code&gt;.github/workflows&lt;/code&gt;
+directory of your repo. It's the same &lt;a href="https://github.com/rednafi/reflections/blob/master/.github/workflows/automerge.yml"&gt;file&lt;/a&gt; that's currently living inside this
+site's CI folder.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# .github/workflows/automerge.yml&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;Dependabot auto-merge&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="nt"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;pull_request&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="nt"&gt;permissions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="nt"&gt;contents&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;write&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="nt"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="nt"&gt;dependabot&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nt"&gt;runs-on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;ubuntu-latest&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nt"&gt;if&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;${{ github.actor == &amp;#39;dependabot[bot]&amp;#39; }}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nt"&gt;steps&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;      &lt;/span&gt;&lt;span class="p p-Indicator"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;Enable auto-merge for Dependabot PRs&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="nt"&gt;run&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;gh pr merge --auto --merge &amp;quot;$PR_URL&amp;quot;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="nt"&gt;env&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;          &lt;/span&gt;&lt;span class="nt"&gt;PR_URL&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;${{github.event.pull_request.html_url}}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;          &lt;/span&gt;&lt;span class="c1"&gt;# GitHub provides this variable in the CI env. You don&amp;#39;t&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;          &lt;/span&gt;&lt;span class="c1"&gt;# need to add anything to the secrets vault.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;          &lt;/span&gt;&lt;span class="nt"&gt;GITHUB_TOKEN&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;${{ secrets.GITHUB_TOKEN }}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;From now on, every time Dependabot sends a merge request, the checks will be triggered
+and if all the mandatory checks pass, the &lt;code&gt;automerge.yml&lt;/code&gt; workflow will merge it into
+the target branch.&lt;/p&gt;</content><category term="misc"></category><category term="GitHub"></category></entry><entry><title>Distil git logs attached to a single file</title><link href="https://rednafi.github.io/reflections/distil-git-logs-attached-to-a-single-file.html" rel="alternate"></link><published>2022-06-21T00:00:00+06:00</published><updated>2022-06-21T00:00:00+06:00</updated><author><name>Redowan Delowar</name></author><id>tag:rednafi.github.io,2022-06-21:/reflections/distil-git-logs-attached-to-a-single-file.html</id><summary type="html">&lt;p&gt;I run &lt;code&gt;git log --oneline&lt;/code&gt; to list out the commit logs all the time. It prints out a
+compact view of the git history. Running the command in this repo gives me this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;d9fad76 Publish blog on safer operator.itemgetter, closes #130
+0570997 Merge pull request #129 from rednafi/dependabot …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;I run &lt;code&gt;git log --oneline&lt;/code&gt; to list out the commit logs all the time. It prints out a
+compact view of the git history. Running the command in this repo gives me this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;d9fad76 Publish blog on safer operator.itemgetter, closes #130
+0570997 Merge pull request #129 from rednafi/dependabot/...
+6967f73 Bump actions/setup-python from 3 to 4
+48c8634 Merge pull request #128 from rednafi/dependabot/pip/mypy-0.961
+5b7a7b0 Bump mypy from 0.960 to 0.961
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;However, there are times when I need to list out the commit logs that only represent
+the changes made to a particular file. Here's the command that does exactly that.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git logs --oneline --follow &amp;lt;file_path&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Running the command on the markdown file that you're currently reading prints out the
+following:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;git log --oneline &lt;span class="se"&gt;\&lt;/span&gt;
+    --follow content/shell/distil_git_logs_attached_to_a_file.md
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;7a21b3d &lt;span class="o"&gt;(&lt;/span&gt;HEAD -&amp;gt; master, origin/master, origin/HEAD&lt;span class="o"&gt;)&lt;/span&gt; Nit, refs &lt;span class="c1"&gt;#132&lt;/span&gt;
+6c08934 Publish distil git logs blog, refs &lt;span class="c1"&gt;#132&lt;/span&gt;
+f5d2d4a Git log follow post, closes &lt;span class="c1"&gt;#132&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Unfortunately, this command doesn't support flag chaining. So, you can't use the
+&lt;code&gt;--follow&lt;/code&gt; flag multiple times to concatenate the logs for multiple files. But there's
+a way to do it via shell command. Here's how:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;lt;file_path_1&amp;gt; &amp;lt;file_path_2&amp;gt;&amp;quot;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="p"&gt;|&lt;/span&gt; xargs -n1 &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="p"&gt;|&lt;/span&gt; xargs -I&lt;span class="o"&gt;{}&lt;/span&gt; sh -c &lt;span class="s2"&gt;&amp;quot;git log --oneline --follow {}; echo ====&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Running the command on two random files in this repo yields the following output:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;pelicanconf.py src.py&amp;quot;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="p"&gt;|&lt;/span&gt; xargs -n1 &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="p"&gt;|&lt;/span&gt; xargs -I&lt;span class="o"&gt;{}&lt;/span&gt; sh -c &lt;span class="s2"&gt;&amp;quot;git log --oneline --follow {}; echo ====&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;96c0e8c Aesthetics, refs &lt;span class="c1"&gt;#131&lt;/span&gt;
+e6d5409 Add default link-sharing image, closes &lt;span class="c1"&gt;#83&lt;/span&gt;
+9ed958c SEO
+fba05d8 Add footer
+8dec778 Transformation
+4a402b3 Basic customizations
+1c93c23 Add pelican &lt;span class="nv"&gt;conf&lt;/span&gt;
+&lt;span class="o"&gt;====&lt;/span&gt;
+b89791f Fix bug &lt;span class="k"&gt;in&lt;/span&gt; operator itemgetter implementation
+c75e2ab Push draft of post on typeguard, refs &lt;span class="c1"&gt;#87&lt;/span&gt;
+0c6fc7b Add blacken docs to tool stack
+20ac41d Publish amphibian decorators blog, closes &lt;span class="c1"&gt;#54&lt;/span&gt;
+&lt;span class="o"&gt;====&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here, the first &lt;code&gt;xargs&lt;/code&gt; is used to split the line and extract the two filenames. The
+second &lt;code&gt;xargs&lt;/code&gt; applies the &lt;code&gt;git log --oneline --follow&lt;/code&gt; command to the two files and
+concatenates the output with a &lt;code&gt;====&lt;/code&gt; separator. The separator helps you figure out
+which output came from which file.&lt;/p&gt;</content><category term="misc"></category><category term="Shell"></category><category term="Git"></category></entry><entry><title>Health check a server with 'nohup $(cmd) &amp;'</title><link href="https://rednafi.github.io/reflections/health-check-a-server-with-nohup-cmd.html" rel="alternate"></link><published>2022-04-18T00:00:00+06:00</published><updated>2022-04-18T00:00:00+06:00</updated><author><name>Redowan Delowar</name></author><id>tag:rednafi.github.io,2022-04-18:/reflections/health-check-a-server-with-nohup-cmd.html</id><summary type="html">&lt;p&gt;While working on a project with &lt;a href="https://www.edgedb.com/"&gt;EdgeDB&lt;/a&gt; and
+&lt;a href="https://fastapi.tiangolo.com/"&gt;FastAPI&lt;/a&gt;, I wanted to perform health checks against the
+FastAPI server in the GitHub CI. This would notify me about the working state of the
+application. The idea is to—&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Run the server in the background.&lt;/li&gt;
+&lt;li&gt;Run the commands against the server …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;While working on a project with &lt;a href="https://www.edgedb.com/"&gt;EdgeDB&lt;/a&gt; and
+&lt;a href="https://fastapi.tiangolo.com/"&gt;FastAPI&lt;/a&gt;, I wanted to perform health checks against the
+FastAPI server in the GitHub CI. This would notify me about the working state of the
+application. The idea is to—&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Run the server in the background.&lt;/li&gt;
+&lt;li&gt;Run the commands against the server that'll denote that the app is in a working state.&lt;/li&gt;
+&lt;li&gt;Perform cleanup.&lt;/li&gt;
+&lt;li&gt;Exit with code 0 if the check is successful, else exit with code 1.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The following shell script demonstrates a similar workflow with a Python HTTP server. This script—&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Runs a Python web server in the background.&lt;/li&gt;
+&lt;li&gt;Makes an HTTP request against the server and checks if it returns HTTP 200 (OK).
+  If the request fails or the server isn't ready then waits for a second and makes the
+  request again, and keeps retrying for the next 20 times before giving up.&lt;/li&gt;
+&lt;li&gt;Performs cleanups and kills the Python processes.&lt;/li&gt;
+&lt;li&gt;Exit with code 0 if the request is successful, else exit with code 1.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="ch"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nb"&gt;set&lt;/span&gt; -euo pipefail
+
+&lt;span class="c1"&gt;# Run the Python server in the background.&lt;/span&gt;
+nohup python3 -m http.server &lt;span class="m"&gt;5000&lt;/span&gt; &amp;gt;&amp;gt; /dev/null &lt;span class="p"&gt;&amp;amp;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Give the server enough time to be ready before accepting requests.&lt;/span&gt;
+&lt;span class="nv"&gt;c&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;20&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="o"&gt;[[&lt;/span&gt; &lt;span class="nv"&gt;$c&lt;/span&gt; !&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt;
+&lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="c1"&gt;# Run the healthcheck.&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[[&lt;/span&gt; &lt;span class="k"&gt;$(&lt;/span&gt;curl -I http://localhost:5000/ &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&lt;span class="p"&gt;&amp;amp;&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;~ &lt;span class="s2"&gt;&amp;quot;200 OK&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+        &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Health check passed!&amp;quot;&lt;/span&gt;
+
+        &lt;span class="c1"&gt;# ...do additional cleanups if required.&lt;/span&gt;
+        pkill -9 -i python
+        &lt;span class="nb"&gt;exit&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;
+    &lt;span class="k"&gt;fi&lt;/span&gt;
+    &lt;span class="o"&gt;((&lt;/span&gt;c--&lt;span class="o"&gt;))&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Server isn&amp;#39;t ready. Retrying...&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;$c&lt;/span&gt;
+    sleep &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="k"&gt;done&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Health check failed!&amp;quot;&lt;/span&gt;
+&lt;span class="c1"&gt;# ...do additional cleanups if required.&lt;/span&gt;
+pkill -9 -i python
+&lt;span class="nb"&gt;exit&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code&gt;nohup&lt;/code&gt; before the &lt;code&gt;python3 -m http.server 5000&lt;/code&gt; makes sure that the &lt;code&gt;SIGHUP&lt;/code&gt; signal
+can't reach the server and shut down the process. The ampersand &lt;code&gt;&amp;amp;&lt;/code&gt; after the command
+runs the process in the background. Afterward, the script starts making requests to the
+&lt;code&gt;http://localhost:5000/&lt;/code&gt; URL in a loop. If the server returns HTTP 200, the health check
+is considered successful. This will break the loop and the script will be terminated with
+&lt;code&gt;exit 0&lt;/code&gt; status. If the server doesn't return HTTP 200 or isn't ready yet, the script
+will keep retrying 20 times with a 1 second interval between each subsequent request
+before giving up. A failed health check will cause the script to terminate with &lt;code&gt;exit 1&lt;/code&gt;
+status.&lt;/p&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://stackoverflow.com/questions/15595374/whats-the-difference-between-nohup-and-ampersand"&gt;What's the difference between nohup and ampersand&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="misc"></category><category term="Shell"></category></entry><entry><title>Don't add extensions to shell executables</title><link href="https://rednafi.github.io/reflections/dont-add-extensions-to-shell-executables.html" rel="alternate"></link><published>2021-11-23T00:00:00+06:00</published><updated>2021-11-23T00:00:00+06:00</updated><author><name>Redowan Delowar</name></author><id>tag:rednafi.github.io,2021-11-23:/reflections/dont-add-extensions-to-shell-executables.html</id><summary type="html">&lt;p&gt;I was browsing through the source code of
+&lt;a href="https://github.com/tomchristie"&gt;Tom Christie's&lt;/a&gt; &lt;code&gt;typesystem&lt;/code&gt; library and discovered
+that the shell &lt;a href="https://github.com/encode/typesystem/tree/master/scripts"&gt;scripts&lt;/a&gt; of
+the project don't have any extensions attached to them. At first, I found it odd, and
+then it all started to make sense.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Executable scripts can be written in any language …&lt;/p&gt;&lt;/blockquote&gt;</summary><content type="html">&lt;p&gt;I was browsing through the source code of
+&lt;a href="https://github.com/tomchristie"&gt;Tom Christie's&lt;/a&gt; &lt;code&gt;typesystem&lt;/code&gt; library and discovered
+that the shell &lt;a href="https://github.com/encode/typesystem/tree/master/scripts"&gt;scripts&lt;/a&gt; of
+the project don't have any extensions attached to them. At first, I found it odd, and
+then it all started to make sense.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Executable scripts can be written in any language and the users don't need to care
+about that. Also, not gonna lie, it looks cleaner this way.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;GitHub uses this &lt;a href="https://github.com/github/scripts-to-rule-them-all"&gt;pattern&lt;/a&gt; successfully to normalize their scripts. According to the pattern, every project should
+have a folder named &lt;code&gt;scripts&lt;/code&gt; with a subset or superset of the following files:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;script/bootstrap&lt;/code&gt; – installs/updates all dependencies&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;script/setup&lt;/code&gt; – sets up a project to be used for the first time&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;script/update&lt;/code&gt; – updates a project to run at its current version&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;script/server&lt;/code&gt; – starts app&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;script/test&lt;/code&gt; – runs tests&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;script/cibuild&lt;/code&gt; – invoked by continuous integration servers to run tests&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;script/console&lt;/code&gt; – opens a console&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/encode/typesystem"&gt;Typesystem&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/github/scripts-to-rule-them-all"&gt;Scripts to rule them all - GitHub Repo&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.blog/2015-06-30-scripts-to-rule-them-all/"&gt;Scripts to rule them all - GitHub Blog&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="misc"></category><category term="Shell"></category></entry><entry><title>Use 'command -v' over 'which' to find a program's executable</title><link href="https://rednafi.github.io/reflections/use-command-v-over-which-to-find-a-programs-executable.html" rel="alternate"></link><published>2021-11-16T00:00:00+06:00</published><updated>2021-11-16T00:00:00+06:00</updated><author><name>Redowan Delowar</name></author><id>tag:rednafi.github.io,2021-11-16:/reflections/use-command-v-over-which-to-find-a-programs-executable.html</id><summary type="html">&lt;p&gt;One thing that came to me as news is that the command &lt;code&gt;which&lt;/code&gt;—which is the de-facto tool
+to find the path of an executable—is not POSIX compliant. The recent Debian [debacle]
+(https://lwn.net/Articles/874049/) around &lt;code&gt;which&lt;/code&gt; brought it to my attention. The
+POSIX-compliant way of finding …&lt;/p&gt;</summary><content type="html">&lt;p&gt;One thing that came to me as news is that the command &lt;code&gt;which&lt;/code&gt;—which is the de-facto tool
+to find the path of an executable—is not POSIX compliant. The recent Debian [debacle]
+(https://lwn.net/Articles/874049/) around &lt;code&gt;which&lt;/code&gt; brought it to my attention. The
+POSIX-compliant way of finding an executable program is &lt;code&gt;command -v&lt;/code&gt;, which is usually
+built into most of the shells.&lt;/p&gt;
+&lt;p&gt;So, instead of doing this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;which python3.10
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Do this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;command -v which python3.10
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://lwn.net/Articles/874049/"&gt;Debian's which hunt&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://hynek.me/til/which-not-posix/"&gt;TIL: which is not POSIX&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="misc"></category><category term="Shell"></category></entry><entry><title>Write git commit messages properly</title><link href="https://rednafi.github.io/reflections/write-git-commit-messages-properly.html" rel="alternate"></link><published>2021-11-11T00:00:00+06:00</published><updated>2021-11-11T00:00:00+06:00</updated><author><name>Redowan Delowar</name></author><id>tag:rednafi.github.io,2021-11-11:/reflections/write-git-commit-messages-properly.html</id><summary type="html">&lt;p&gt;Writing consistent commit messages helps you to weave a coherent story with your git
+history. Recently, I've started paying attention to my commit messages. Before this, my commit messages in this repository used to look like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ git log --oneline -5
+
+d058a23 &lt;span class="o"&gt;(&lt;/span&gt;HEAD -&amp;gt; master&lt;span class="o"&gt;)&lt;/span&gt; bash strict mode
+a62e59b Updating functool …&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;Writing consistent commit messages helps you to weave a coherent story with your git
+history. Recently, I've started paying attention to my commit messages. Before this, my commit messages in this repository used to look like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ git log --oneline -5
+
+d058a23 &lt;span class="o"&gt;(&lt;/span&gt;HEAD -&amp;gt; master&lt;span class="o"&gt;)&lt;/span&gt; bash strict mode
+a62e59b Updating functool partials til.
+532b21a Added functool partials til
+ec9191c added unfinished indexing script
+18e41c8 Bash tils
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;With all the misuse of letter casings and punctuations, clearly, the message formatting
+is all over the place. To tame this mayhem, I've adopted these 7 rules of writing great commit messages:&lt;/p&gt;
+&lt;h2&gt;The seven rules of writing consistent git commit messages&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Separate subject from body with a blank line&lt;/li&gt;
+&lt;li&gt;Limit the subject line to 50 characters (I often break this when there's no message
+body)&lt;/li&gt;
+&lt;li&gt;Capitalize the subject line&lt;/li&gt;
+&lt;li&gt;Do not end the subject line with a period&lt;/li&gt;
+&lt;li&gt;Use the imperative mood in the subject line&lt;/li&gt;
+&lt;li&gt;Wrap the body at 72 characters&lt;/li&gt;
+&lt;li&gt;Use the body to explain what and why vs. how&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Now, after rebasing, currently, the commit messages in this repo look like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ git log --oneline -5
+
+d058a23 &lt;span class="o"&gt;(&lt;/span&gt;HEAD -&amp;gt; master&lt;span class="o"&gt;)&lt;/span&gt; Employ bash strict mode
+a62e59b Update functool partials til
+532b21a Add functool partials til
+ec9191c Add unfinished indexing script
+18e41c8 Update bash tils
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://chris.beams.io/posts/git-commit/"&gt;How to write a git commit message&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="misc"></category><category term="Git"></category></entry><entry><title>Use curly braces while pasting shell commands</title><link href="https://rednafi.github.io/reflections/use-curly-braces-while-pasting-shell-commands.html" rel="alternate"></link><published>2021-11-08T00:00:00+06:00</published><updated>2021-11-08T00:00:00+06:00</updated><author><name>Redowan Delowar</name></author><id>tag:rednafi.github.io,2021-11-08:/reflections/use-curly-braces-while-pasting-shell-commands.html</id><summary type="html">&lt;p&gt;Pasting shell commands can be a pain when they include hidden return &lt;code&gt;\n&lt;/code&gt; characters. In
+such a case, your shell will try to execute the command immediately. To prevent that,
+use curly braces &lt;code&gt;{ &amp;lt;cmd&amp;gt; }&lt;/code&gt; while pasting the command. Your command should look like
+the following:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;{&lt;/span&gt; dig +short google.com &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Pasting shell commands can be a pain when they include hidden return &lt;code&gt;\n&lt;/code&gt; characters. In
+such a case, your shell will try to execute the command immediately. To prevent that,
+use curly braces &lt;code&gt;{ &amp;lt;cmd&amp;gt; }&lt;/code&gt; while pasting the command. Your command should look like
+the following:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;{&lt;/span&gt; dig +short google.com &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here the spaces after the braces are significant.&lt;/p&gt;</content><category term="misc"></category><category term="Shell"></category></entry><entry><title>Use strict mode while running bash scripts</title><link href="https://rednafi.github.io/reflections/use-strict-mode-while-running-bash-scripts.html" rel="alternate"></link><published>2021-11-08T00:00:00+06:00</published><updated>2021-11-08T00:00:00+06:00</updated><author><name>Redowan Delowar</name></author><id>tag:rednafi.github.io,2021-11-08:/reflections/use-strict-mode-while-running-bash-scripts.html</id><summary type="html">&lt;p&gt;Use unofficial bash strict mode while writing scripts. Bash has a few gotchas and this
+helps you to avoid that. For example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="ch"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nb"&gt;set&lt;/span&gt; -euo pipefail
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Hello&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Where,&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="w"&gt;              &lt;/span&gt;&lt;span class="n"&gt;Exit&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;immediately&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;command&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;exits&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;with&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;non&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;zero&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="w"&gt;              &lt;/span&gt;&lt;span class="n"&gt;Treat&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;unset&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;variables&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;an&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;when …&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;Use unofficial bash strict mode while writing scripts. Bash has a few gotchas and this
+helps you to avoid that. For example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="ch"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nb"&gt;set&lt;/span&gt; -euo pipefail
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Hello&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Where,&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="w"&gt;              &lt;/span&gt;&lt;span class="n"&gt;Exit&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;immediately&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;command&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;exits&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;with&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;non&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;zero&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="w"&gt;              &lt;/span&gt;&lt;span class="n"&gt;Treat&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;unset&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;variables&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;as&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;an&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;when&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;substituting&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;o&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;pipefail&lt;/span&gt;&lt;span class="w"&gt;     &lt;/span&gt;&lt;span class="n"&gt;The&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;pipeline&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;is&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;last&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;command&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;exit&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;with&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;non&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;zero&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;                &lt;/span&gt;&lt;span class="ow"&gt;or&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;zero&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;no&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;command&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;exited&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;with&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;non&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;zero&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;status&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The idea is a less radical version of this
+&lt;a href="http://redsymbol.net/articles/unofficial-bash-strict-mode/"&gt;post&lt;/a&gt;. I don't recommend
+messing with the IFS without a valid reason.&lt;/li&gt;
+&lt;/ul&gt;</content><category term="misc"></category><category term="Shell"></category></entry></feed>

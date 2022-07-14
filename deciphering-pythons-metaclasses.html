@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.prod.9e9d5ce754.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+        <meta name="google-site-verification" content="<meta name='google-site-verification' content='N5QEPRj-LpgoEY0Hf3uVMmZq8kjDwTFjd54IgvLmRBc' />" />        <meta name="author" content="Redowan Delowar" />
+
+        <meta name="description" content="Updated on 2022-02-13: Use inspect to inspect object types. In Python, metaclass is one of the few tools that enables you to inject metaprogramming capabilities into your code. The term metaprogramming refers to the potential for a program to manipulate itself in a self referential manner. However, messing with metaclasses …
+" />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="Python, python, " />
+
+<meta property="og:title" content="Deciphering Python&#39;s metaclasses "/>
+<meta property="og:url" content="./deciphering-pythons-metaclasses.html" />
+<meta property="og:description" content="Updated on 2022-02-13: Use inspect to inspect object types. In Python, metaclass is one of the few tools that enables you to inject metaprogramming capabilities into your code. The term metaprogramming refers to the potential for a program to manipulate itself in a self referential manner. However, messing with metaclasses …" />
+<meta property="og:site_name" content="Redowan&#39;s Reflections" />
+<meta property="og:article:author" content="Redowan Delowar" />
+<meta property="og:article:published_time" content="2020-06-26T00:00:00+06:00" />
+<meta name="twitter:title" content="Deciphering Python&#39;s metaclasses ">
+<meta name="twitter:description" content="Updated on 2022-02-13: Use inspect to inspect object types. In Python, metaclass is one of the few tools that enables you to inject metaprogramming capabilities into your code. The term metaprogramming refers to the potential for a program to manipulate itself in a self referential manner. However, messing with metaclasses …">
+<meta property="og:image" content="https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png" />
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png" >
+
+        <title>Deciphering Python&#39;s metaclasses  · Redowan&#39;s Reflections
+</title>
+        <link href="https://rednafi.github.io/reflections/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Redowan&#39;s Reflections - Full Atom Feed" />
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-217287505-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    </head>
+    <body>
+        <div id="content">
+            <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <a class="brand" href="./"><span class=site-name>Redowan's Reflections</span></a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-right top-menu">
+                                <li >
+                                    <a href=
+                                       .
+                                    >Home</a>
+                                </li>
+                                <li ><a href="./pages/contact.html">Contact</a></li>
+                                <li ><a href="./categories.html">Categories</a></li>
+                                <li ><a href="./tags.html">Tags</a></li>
+                                <li ><a href="./archives.html">Archives</a></li>
+                                <li>
+                                  <form action="https://www.google.com/search" class="navbar-search" method="get" name="searchform" target="_blank">
+                                    <input name="sitesearch" type="hidden"
+                                    value="rednafi.github.io/reflections">
+                                    <input autocomplete="on" class="search-query" name="q" placeholder="Search"
+                                    required="required"  type="text">
+                                    <input type="submit" value="Search" style="visibility: hidden;" /></form>
+                                  </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span1"></div>
+                    <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+        <h1>
+            <a href="./deciphering-pythons-metaclasses.html">
+                Deciphering Python's metaclasses
+            </a>
+        </h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+            
+            <p><strong><em>Updated on 2022-02-13</em></strong>: <em>Use <code>inspect</code> to inspect object types.</em></p>
+<p>In Python, metaclass is one of the few tools that enables you to inject metaprogramming
+capabilities into your code. The term metaprogramming refers to the potential for a
+program to manipulate itself in a self referential manner. However, messing with
+metaclasses is often considered an arcane art that's beyond the grasp of the
+proletariats. Heck, even
+<a href="https://en.wikipedia.org/wiki/Tim_Peters_(software_engineer)">Tim Peters</a> advices you
+to tread carefully while dealing with these.</p>
+<blockquote>
+<p>Metaclasses are deeper magic than 99% of users should ever worry about. If you wonder
+whether you need them, you don’t (the people who actually need them know with
+certainty that they need them, and don’t need an explanation about why).</p>
+</blockquote>
+<p>Metaclasses are an esoteric OOP concept, lurking behind virtually all Python code. Every
+Python class that you create is attached to a default metaclass and Python cleverly
+abstracts away all the meta-magics. So, you're indirectly using them all the time
+whether you are aware of it or not. For the most part, you don’t need to be aware of it.
+Most Python programmers rarely, if ever, have to think about metaclasses. This makes
+metaclasses exciting for me and I want to explore them in this post to formulate my own
+judgement. Let's dive in.</p>
+<h2>Metaclasses</h2>
+<p>A metaclass is a class whose instances are classes. Like an "ordinary" class defines the
+behavior of the instances of the class, a metaclass defines the behavior of classes and
+their instances.</p>
+<p><img alt="image.png" src="https://media.geeksforgeeks.org/wp-content/uploads/metaclass-hierarchy-Page-1-1024x370.jpeg" /></p>
+<p>Metaclasses aren't supported by every object oriented programming language. Those
+programming language, which support metaclasses, considerably vary in way they implement
+them. Python provides you a way to get under the hood and define custom metaclasses.</p>
+<h2>Understanding type and class</h2>
+<p>In Python, everything is an object. Classes are objects as well. As a result, all
+classes must have corresponding types. You deal with built in types like <code>int</code>, <code>float</code>,
+<code>list</code> etc all the time. Consider this example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">a</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&lt;class &#39;int&#39;&gt;
+&lt;class &#39;type&#39;&gt;
+</code></pre></div>
+
+<p>In the above example, variable <code>a</code> is an instance of the built in class <code>int</code>. Type of
+<code>a</code> is <code>int</code> and the type of <code>int</code> is <code>type</code>. User defined classes also show similar
+behavior. For example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">Foo</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&lt;class &#39;__main__.Foo&#39;&gt;
+&lt;class &#39;type&#39;&gt;
+</code></pre></div>
+
+<p>Here, I've defined another class named <code>Foo</code> and created an instance <code>a</code> of the class.
+Applying <code>type</code> on instance <code>a</code> reveals its type as <code>__main__.Foo</code> and applying <code>type</code>
+on class <code>Foo</code> reveals the type as <code>type</code>. So here, we can use the term <code>class</code> and
+<code>type</code> interchangeably. This brings up the question:</p>
+<blockquote>
+<p>What on earth this <code>type</code> (function? class?) thing actually is and what is the type of
+<code>type</code>?</p>
+</blockquote>
+<p>Let's apply <code>type</code> on <code>type</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">type</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&lt;class &#39;type&#39;&gt;
+</code></pre></div>
+
+<p>Whaaaat? The type of any class (not instance of a class) in Python is <code>type</code> and the
+type of <code>type</code> is also <code>type</code>. By now, you've probably guessed that <code>type</code> is a very
+special class in Python that can reveal the type of itself and of any other class or
+object. In fact, <code>type</code> is a metaclass and all the classes in Python are instances of
+it. You can inspect that easily:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="k">for</span> <span class="n">klass</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">Foo</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">klass</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">Foo</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&lt;class &#39;type&#39;&gt;
+&lt;class &#39;type&#39;&gt;
+&lt;class &#39;type&#39;&gt;
+&lt;class &#39;type&#39;&gt;
+&lt;class &#39;type&#39;&gt;
+&lt;class &#39;type&#39;&gt;
+True
+True
+</code></pre></div>
+
+<p>The the last line of the above code snippet demonstrates that <code>type</code> is also an instance
+of metaclass <code>type</code>. Normally, you can't write self referential classes like that in
+pure Python. However, you can circumvent this limitation by subclassing from <code>type</code>.
+This enables you to write custom metaclasses that you can use to dictate and mutate the
+way classes are created and instantiated. From now on, I'll be referring to the instance
+class of a metaclass as <em>target class</em>. Let's create a custom metaclass that just prints
+the name of the target class while creating it:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PrintMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;__new__ gets executed before the target is created.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metacls : PrintMeta</span>
+<span class="sd">            Instance of the the PrintMeta class itself</span>
+<span class="sd">        cls : str</span>
+<span class="sd">            Name of the class being defined (Point in this example)</span>
+<span class="sd">        bases : tuple</span>
+<span class="sd">            Base classes of the constructed class, empty tuple in this case</span>
+<span class="sd">        classdict : dict</span>
+<span class="sd">            Dict containing methods and fields defined in the class</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            instance class of this metaclass</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Name of this class is: </span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">PrintMeta</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>Name of this class is A
+</code></pre></div>
+
+<p>Despite the fact that we haven't called class <code>A</code> or created an instance of it, the
+<code>__new__</code> method of metaclass <code>PrintMeta</code> was executed and printed the name of the
+target class. In the return statement of <code>__new__</code> method, <code>super()</code> was used to call
+the <code>__new__</code> method of the base class (<code>type</code>) of the metaclass <code>PrintMeta</code>.</p>
+<h2>Special methods used by metaclasses</h2>
+<p>Type <code>type</code>, as the default metaclass in Python, defines a few special methods that new
+metaclasses can override to implement unique code generation behavior. Here is a brief
+overview of these "magic" methods that exist on a metaclass:</p>
+<ul>
+<li><code>__new__</code>: This method is called on the Metaclass before an instance of a class based
+on the metaclass is created</li>
+<li><code>__init__</code>: This method is called to set up values after the instance/object is created</li>
+<li><code>__prepare__</code>: Defines the class namespace in a mapping that stores the attributes</li>
+<li><code>__call__</code>: This method is called when the constructor of the new class is to be used
+to create an object</li>
+</ul>
+<p>These are the methods to override in your custom metaclass to give your classes
+behaviors different from that of <code>type</code>. The following example shows the default
+behaviors of these special methods and their execution order.</p>
+<blockquote>
+<p>Some people immediately think of <code>__init__</code>, and I’ve occasionally called it “the
+constructor” myself; but in actuality, as its name indicates, it’s an initializer and
+by the time it’s invoked, the object has already been created, seeing as it’s passed
+in as self. The real constructor is a far less famous function: <code>__new__</code>. The reason
+you might never hear about it or use it- is that allocation doesn’t mean that much in
+Python, which manages memory on its own. So if you do override <code>__new__</code>, it’d be just
+like your <code>__init__</code> —except you’ll have to call into Python to actually create the
+object, and then return that object afterward.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ExampleMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simple metaclass showing the execution flow of the</span>
+<span class="sd">    special methods.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="fm">__prepare__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Defines the class namespace in a mapping that stores</span>
+<span class="sd">        the attributes</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cls : str</span>
+<span class="sd">            Name of the class being defined (Point in this example)</span>
+<span class="sd">        bases : tuple</span>
+<span class="sd">            Base classes for constructed class, empty tuple in this case</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calling __prepare__ method of </span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__prepare__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;__new__ is a classmethod, even without @classmethod decorator</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cls : str</span>
+<span class="sd">            Name of the class being defined (Point in this example)</span>
+<span class="sd">        bases : tuple</span>
+<span class="sd">            Base classes for constructed class, empty tuple in this case</span>
+<span class="sd">        classdict : dict</span>
+<span class="sd">            Dict containing methods and fields defined in the class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calling __new__ method of </span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method is called to set up values after the</span>
+<span class="sd">        instance/object is created.&quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calling __init__ method of </span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method is called when the constructor of the new class</span>
+<span class="sd">        is to be used to create an object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        args : tuple</span>
+<span class="sd">            Position only arguments of the new class</span>
+<span class="sd">        kwargs : dict</span>
+<span class="sd">            Keyward only arguments of the new class</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calling __call__ method of </span><span class="si">{</span><span class="nb">super</span><span class="p">()</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Printing </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> args:&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Printing </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> kwargs&quot;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ExampleMeta</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calling __init__ method of </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>Calling __prepare__ method of &lt;super: &lt;class &#39;ExampleMeta&#39;&gt;, &lt;ExampleMeta object&gt;&gt;!
+Calling __new__ method of &lt;super: &lt;class &#39;ExampleMeta&#39;&gt;, &lt;ExampleMeta object&gt;&gt;!
+Calling __init__ method of &lt;super: &lt;class &#39;ExampleMeta&#39;&gt;, &lt;ExampleMeta object&gt;&gt;!
+Calling __call__ method of &lt;super: &lt;class &#39;ExampleMeta&#39;&gt;, &lt;ExampleMeta object&gt;&gt;!
+Printing &lt;class &#39;__main__.A&#39;&gt; args: (1, 3)
+Printing &lt;class &#39;__main__.A&#39;&gt; kwargs {}
+Calling __init__ method of &lt;__main__.A object at 0x7febe710a130&gt;
+</code></pre></div>
+
+<p>Pay attention to the execution order of the special methods of the custom metaclass
+<code>ExampleMeta</code>. The <code>__prepare__</code> method is called first and is followed by <code>__new__</code>,
+<code>__init__</code> and <code>__call__</code> respectively. Only after that the first method <code>__init__</code> of
+the target class <code>A</code> is called. This is important since it'll help you to decide how
+you'll mutate and change the behavior of your target class.</p>
+<h2>Metaclass conflicts</h2>
+<p>Note that the metaclass argument is singular – you can’t attach more than one metaclass
+to a class. However, through multiple inheritance you can accidentally end up with more
+than one metaclass, and this produces a conflict which must be resolved.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FirstMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">SecondMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">First</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">FirstMeta</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Second</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">SecondMeta</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Third</span><span class="p">(</span><span class="n">First</span><span class="p">,</span> <span class="n">Second</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="n">third</span> <span class="o">=</span> <span class="n">Third</span><span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="o">---------------------------------------------------------------------------</span><span class="w"></span>
+
+<span class="n">TypeError</span><span class="w">                                 </span><span class="n">Traceback</span><span class="w"> </span><span class="p">(</span><span class="n">most</span><span class="w"> </span><span class="n">recent</span><span class="w"> </span><span class="n">call</span><span class="w"> </span><span class="kr">last</span><span class="p">)</span><span class="w"></span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="n">input</span><span class="o">-</span><span class="mi">340</span><span class="o">-</span><span class="mi">6</span><span class="n">afe6bc8f8bc</span><span class="o">&gt;</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="o">&lt;</span><span class="kr">module</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="mi">11</span><span class="w">     </span><span class="n">pass</span><span class="w"></span>
+<span class="w">        </span><span class="mi">12</span><span class="w"></span>
+<span class="o">---&gt;</span><span class="w"> </span><span class="mi">13</span><span class="w"> </span><span class="n">class</span><span class="w"> </span><span class="n">Third</span><span class="p">(</span><span class="kr">First</span><span class="p">,</span><span class="w"> </span><span class="n">Second</span><span class="p">)</span><span class="o">:</span><span class="w"></span>
+<span class="w">        </span><span class="mi">14</span><span class="w">     </span><span class="n">pass</span><span class="w"></span>
+<span class="w">        </span><span class="mi">15</span><span class="w"></span>
+
+
+<span class="n">TypeError</span><span class="o">:</span><span class="w"> </span><span class="n">metaclass</span><span class="w"> </span><span class="n">conflict</span><span class="o">:</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">metaclass</span><span class="w"> </span><span class="kr">of</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">derived</span><span class="w"> </span><span class="n">class</span><span class="w"> </span><span class="n">must</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">(</span><span class="n">non</span><span class="o">-</span><span class="n">strict</span><span class="p">)</span><span class="w"></span>
+<span class="n">subclass</span><span class="w"> </span><span class="kr">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">metaclasses</span><span class="w"> </span><span class="kr">of</span><span class="w"> </span><span class="kr">all</span><span class="w"> </span><span class="n">its</span><span class="w"> </span><span class="n">bases</span><span class="w"></span>
+</code></pre></div>
+
+<p>Class <code>First</code> and <code>Second</code> are attached to different metaclasses and class <code>Third</code>
+inherits from both of them. Since metaclasses trickle down to subclasses, class <code>Third</code>
+is now effective attached to two metaclasses (<code>FirstMeta</code> and <code>SecondMeta</code>). This will
+raise <code>TypeError</code>. Attachment with only one metaclass is allowed here.</p>
+<h2>Examples in the wild</h2>
+<p>In this section, I'll go through a few real life examples where metaclasses can provide
+viable solutions to several tricky problems that you might encounter during software
+development. The solutions might appear over-engineered in some cases and almost all of
+them can be solved without using metaclasses. However, the purpose is to peek into the
+inner wirings of metaclasses and see how they can offer alternative solutions.</p>
+<h3>Simple logging with metaclasses</h3>
+<p>The goal here is to log a few basic information about a class without directly adding
+any logging statements to it. Instead, you can whip up a custom metaclass to perform
+some metaprogramming and add those statements to the target class without mutating it
+explicitly.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">LittleMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;classname: </span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;baseclasses: </span><span class="si">{</span><span class="n">bases</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;classdict: </span><span class="si">{</span><span class="n">classdict</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Point</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">LittleMeta</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Point(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">INFO</span><span class="o">:</span><span class="n">root</span><span class="o">:</span><span class="n">classname</span><span class="o">:</span><span class="w"> </span><span class="n">Point</span><span class="w"></span>
+<span class="n">INFO</span><span class="o">:</span><span class="n">root</span><span class="o">:</span><span class="n">baseclasses</span><span class="o">:</span><span class="w"> </span><span class="o">()</span><span class="w"></span>
+<span class="n">INFO</span><span class="o">:</span><span class="n">root</span><span class="o">:</span><span class="n">attrs</span><span class="o">:</span><span class="w"> </span><span class="o">{</span><span class="s1">&#39;__module__&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;__main__&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;__qualname__&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Point&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;__init__&#39;</span><span class="o">:</span><span class="w"></span>
+<span class="o">&lt;</span><span class="kd">function</span><span class="w"> </span><span class="n">Point</span><span class="o">.</span><span class="na">__init__</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="mh">0x7f436c2db790</span><span class="o">&gt;,</span><span class="w"> </span><span class="s1">&#39;__repr__&#39;</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="kd">function</span><span class="w"> </span><span class="n">Point</span><span class="o">.</span><span class="na">__repr__</span><span class="w"> </span><span class="n">at</span><span class="w"></span>
+<span class="mh">0x7f436c2db4c0</span><span class="o">&gt;}</span><span class="w"></span>
+
+
+<span class="n">Point</span><span class="o">(</span><span class="mi">5</span><span class="o">,</span><span class="w"> </span><span class="mi">10</span><span class="o">)</span><span class="w"></span>
+</code></pre></div>
+
+<p>In the above example, I've created a metaclass called <code>LittleMeta</code> and added the
+necessary logging statements to record the information about the target class. Since
+the logging statements are residing in the <code>__new__</code> method of the metaclass, these
+information will be logged before the creation of the target class. In the target class
+<code>Point</code>, <code>LittleMeta</code> replaces the default <code>type</code> metaclass and produces the desired
+result by mutating the class.</p>
+<h3>Returning class attributes in a custom list</h3>
+<p>In this case, I want to dynamically attach a new attribute to the target class called
+<code>__attrs_ordered__</code>. Accessing this attribute from the target class (or instance) will
+give out an alphabetically sorted list of the attribute names. Here, the <code>__prepare__</code>
+method inside the metaclass <code>AttrsListMeta</code> returns an <code>OrderDict</code> instead of a simple
+<code>dict</code> - so all attributes gathered before the <code>__new__</code> method call will be ordered.
+Just like the previous example, here, the <code>__new__</code> method inside the metaclass
+implements the logic required to get the sorted list of the attribute names.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+
+<span class="k">class</span> <span class="nc">AttrsListMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="fm">__prepare__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">attrs_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">classdict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="n">attrs_names_ordered</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">attrs_names</span><span class="p">)</span>
+        <span class="n">classdict</span><span class="p">[</span><span class="s2">&quot;__attrs_ordered__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attrs_names_ordered</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">AttrsListMeta</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">__attrs_ordered__</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>[&#39;__init__&#39;, &#39;__module__&#39;, &#39;__qualname__&#39;]
+</code></pre></div>
+
+<p>You can access the <code>__attrs_ordered__</code> attribute from both class <code>A</code> and an instance of
+class <code>A</code>. Try removing the <code>sorted()</code> function inside the <code>__new__</code> method of the
+metaclass and see what happens!</p>
+<h3>Creating a singleton class</h3>
+<p>In OOP term, a singleton class is a class that can have only one object (an instance of
+the class) at a time.</p>
+<p>After the first time, if you try to instantiate a Singleton class, it will basically
+return the same instance of the class that was created before. So any modifications
+done to this apparently new instance will mutate the original instance since they're
+basically the same instance.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Singleton</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="n">_instance</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">Singleton</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+
+<span class="n">a</span> <span class="ow">is</span> <span class="n">b</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>True
+</code></pre></div>
+
+<p>In the above example, at first, I've created a singleton class <code>A</code> by attaching the
+<code>Singleton</code> metaclass to it. Secondly, I've instantiated class <code>A</code> and assigned the
+instance of the class to a variable <code>a</code>. Thirdly, I've instantiated the class again and
+assigned variable a <code>b</code> to this seemingly new instance. Checking the identity of the
+two variables <code>a</code> and <code>b</code> reveals that both of them are actually the same object.</p>
+<h3>Implementing a class that can't be subclassed</h3>
+<p>Suppose you want to create a base class where the users of your class won't be able to
+create any subclasses from the base class. In that case, you can write a metaclass and
+attach that your base class. The base class will raise <code>RuntimeError</code> if someone tries
+to create a subclass from it.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">TerminateMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="n">type_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">base</span><span class="p">)</span> <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="n">type_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">typ</span> <span class="ow">is</span> <span class="n">metacls</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Subclassing a class that has &quot;</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metacls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> metaclass is prohibited&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">TerminateMeta</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="o">---------------------------------------------------------------------------</span><span class="w"></span>
+
+<span class="n">RuntimeError</span><span class="w">                              </span><span class="n">Traceback</span><span class="w"> </span><span class="p">(</span><span class="n">most</span><span class="w"> </span><span class="n">recent</span><span class="w"> </span><span class="n">call</span><span class="w"> </span><span class="kr">last</span><span class="p">)</span><span class="w"></span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="n">input</span><span class="o">-</span><span class="mi">438</span><span class="o">-</span><span class="n">ccba42f1f95b</span><span class="o">&gt;</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="o">&lt;</span><span class="kr">module</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="mi">20</span><span class="w"></span>
+<span class="w">        </span><span class="mi">21</span><span class="w"></span>
+<span class="o">---&gt;</span><span class="w"> </span><span class="mi">22</span><span class="w"> </span><span class="n">class</span><span class="w"> </span><span class="n">B</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">:</span><span class="w"></span>
+<span class="w">        </span><span class="mi">23</span><span class="w">     </span><span class="n">pass</span><span class="w"></span>
+<span class="w">        </span><span class="mi">24</span><span class="w"></span>
+
+<span class="p">...</span><span class="w"></span>
+
+<span class="n">RuntimeError</span><span class="o">:</span><span class="w"> </span><span class="n">Subclassing</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">class</span><span class="w"> </span><span class="n">that</span><span class="w"> </span><span class="n">has</span><span class="w"> </span><span class="n">TerminateMeta</span><span class="w"> </span><span class="n">metaclass</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">prohibited</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Disallowing multiple inheritance</h3>
+<p>Multiple inheritance can be fragile and error prone. So, if you don't want to allow the
+users to use a base class with any other base classes to form multiple inheritance, you
+can do so by attaching a metaclass to that target base class.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">NoMultiMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bases</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Inherited multiple base classes!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">NoMultiMeta</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="c1"># no error is raised</span>
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="c1"># no error is raised</span>
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="c1"># This will raise an error!</span>
+<span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="o">---------------------------------------------------------------------------</span><span class="w"></span>
+
+<span class="n">TypeError</span><span class="w">                                 </span><span class="n">Traceback</span><span class="w"> </span><span class="p">(</span><span class="n">most</span><span class="w"> </span><span class="n">recent</span><span class="w"> </span><span class="n">call</span><span class="w"> </span><span class="kr">last</span><span class="p">)</span><span class="w"></span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="n">input</span><span class="o">-</span><span class="mi">404</span><span class="o">-</span><span class="mi">36</span><span class="n">c323db1ea0</span><span class="o">&gt;</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="o">&lt;</span><span class="kr">module</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="mi">18</span><span class="w"></span>
+<span class="w">        </span><span class="mi">19</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="n">This</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">raise</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="nf">error</span><span class="o">!</span><span class="w"></span>
+<span class="o">---&gt;</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="n">class</span><span class="w"> </span><span class="n">C</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="p">)</span><span class="o">:</span><span class="w"></span>
+<span class="w">        </span><span class="mi">21</span><span class="w">     </span><span class="n">pass</span><span class="w"></span>
+
+<span class="p">...</span><span class="w"></span>
+
+<span class="n">TypeError</span><span class="o">:</span><span class="w"> </span><span class="n">Inherited</span><span class="w"> </span><span class="n">multiple</span><span class="w"> </span><span class="n">base</span><span class="w"> </span><span class="n">classes</span><span class="o">!</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Timing classes with metaclasses</h3>
+<p>Suppose you want to measure the execution time of different methods of a class. One way
+ of doing that is to define a timer decorator and decorating all the methods to measure
+and show the execution time. However, by using a metaclass, you can avoid decorating
+the methods in the class individually and the metaclass will dynamically apply the
+timer decorator to all of the methods of your target class. This can reduce code
+repetition and improve code readability.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+
+<span class="k">def</span> <span class="nf">timefunc</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">run_time</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2"> took </span><span class="si">{</span><span class="n">run_time</span><span class="si">}</span><span class="s2"> seconds.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+
+<span class="k">class</span> <span class="nc">TimerMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="n">new_cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+
+        <span class="c1"># key is attribute name and val is attribute value in attribute dict</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">classdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethoddescriptor</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">new_cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">timefunc</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">new_cls</span>
+
+
+<span class="k">class</span> <span class="nc">Shouter</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">TimerMeta</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">intro</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I shout!&quot;</span><span class="p">)</span>
+
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">Shouter</span><span class="p">()</span>
+<span class="n">s</span><span class="o">.</span><span class="n">intro</span><span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>Executing Shouter.__init__ took 9.5367431640625e-07 seconds.
+I shout!
+Executing Shouter.intro took 1.0011515617370605 seconds.
+</code></pre></div>
+
+<h3>Registering plugins with metaclasses</h3>
+<p>Suppose a specific single class represents a plugin in your code. You can write a
+metaclass to keep track of all of the plugins so than you don't have to count them
+manually.</p>
+<div class="highlight"><pre><span></span><code><span class="n">registry</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">class</span> <span class="nc">RegisterMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="n">new_cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+        <span class="n">registry</span><span class="p">[</span><span class="n">new_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_cls</span>
+        <span class="k">return</span> <span class="n">new_cls</span>
+
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">RegisterMeta</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">D</span><span class="p">(</span><span class="n">B</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">registry</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>{&#39;A&#39;: __main__.A, &#39;B&#39;: __main__.B, &#39;C&#39;: __main__.C, &#39;D&#39;: __main__.D}
+</code></pre></div>
+
+<h3>Debugging methods with metaclasses</h3>
+<p>Debugging a class often involves inspecting the individual methods and adding extra
+debugging logic to those. However, this can get tedious if you've do this over an over
+again. Instead, you can write an inspection decorator and use a metaclass to
+dynamically apply the decorator to all of the methods of your target class. Later on,
+you can simply detach the metaclass once you're done with debugging and don't want the
+extra logic in your target class.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+
+<span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decorator for debugging passed function.&quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Full name of this method:&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+
+<span class="k">class</span> <span class="nc">DebugMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="n">new_cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+
+        <span class="c1"># key is attribute name and val is attribute value in the attrs dict</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">classdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethoddescriptor</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">new_cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">debug</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">new_cls</span>
+
+
+<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">DebugMeta</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Calc</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+
+<span class="k">class</span> <span class="nc">CalcAdv</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+
+
+<span class="n">mycal</span> <span class="o">=</span> <span class="n">CalcAdv</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mycal</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>Full name of this method: CalcAdv.mul
+6
+</code></pre></div>
+
+<h3>Exception handling with metaclasses</h3>
+<p>Sometimes you need to handle exceptions in multiple methods of a class in a generic
+manner. That means all the methods of the class have the same exception handling,
+logging logic etc. Metaclasses can help you avoid adding repetitive exception handling
+and logging logics to your methods.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+
+<span class="k">def</span> <span class="nf">exc_handler</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decorator for custom exception handling.&quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception Occured!&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method name: </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Args: </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">, Kwargs: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+
+<span class="k">class</span> <span class="nc">ExceptionMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="n">new_cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+
+        <span class="c1"># key is attribute name and val is attribute value in attribute dict</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">classdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethoddescriptor</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">new_cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">exc_handler</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">new_cls</span>
+
+
+<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ExceptionMeta</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Calc</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+
+<span class="k">class</span> <span class="nc">CalcAdv</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+
+
+<span class="n">mycal</span> <span class="o">=</span> <span class="n">CalcAdv</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mycal</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">Exception</span><span class="w"> </span><span class="n">Occured</span><span class="o">!</span><span class="w"></span>
+<span class="n">Method</span><span class="w"> </span><span class="n">name</span><span class="o">:</span><span class="w"> </span><span class="n">CalcAdv</span><span class="p">.</span><span class="n">div</span><span class="w"></span>
+<span class="n">Args</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="o">&lt;</span><span class="n">__main__</span><span class="p">.</span><span class="n">CalcAdv</span><span class="w"> </span><span class="n">object</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="mh">0x7febe692d1c0</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">Kwargs</span><span class="o">:</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+
+<span class="o">---------------------------------------------------------------------------</span><span class="w"></span>
+
+<span class="n">ZeroDivisionError</span><span class="w">                         </span><span class="n">Traceback</span><span class="w"> </span><span class="p">(</span><span class="n">most</span><span class="w"> </span><span class="n">recent</span><span class="w"> </span><span class="n">call</span><span class="w"> </span><span class="kr">last</span><span class="p">)</span><span class="w"></span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="n">input</span><span class="o">-</span><span class="mi">467</span><span class="o">-</span><span class="n">accaebe919a8</span><span class="o">&gt;</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="o">&lt;</span><span class="kr">module</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="mi">43</span><span class="w"></span>
+<span class="w">        </span><span class="mi">44</span><span class="w"> </span><span class="n">mycal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CalcAdv</span><span class="p">()</span><span class="w"></span>
+<span class="o">---&gt;</span><span class="w"> </span><span class="mi">45</span><span class="w"> </span><span class="n">print</span><span class="p">(</span><span class="n">mycal</span><span class="p">.</span><span class="n">div</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span><span class="w"></span>
+
+<span class="p">...</span><span class="w"></span>
+
+<span class="n">ZeroDivisionError</span><span class="o">:</span><span class="w"> </span><span class="n">division</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">zero</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Abstract base classes</h3>
+<p>An abstract class can be regarded as a blueprint for other classes. It allows you to
+provide a set of methods that must be implemented within any child classes built from
+the abstract class. Abstract classes usually house multiple abstract methods. An
+abstract method is a method that has a declaration but does not have an implementation.</p>
+<p>When you want to provide a common interface for different implementations of a
+component, abstract classes are the way to go. You can't directly initialize or use an
+abstract class. Rather, you've to subclass the abstract base class and provide concrete
+implementations of all the abstract methods. Python has a dedicated <code>abc</code> module to
+help you create abstract classes. Let's see how you can define a simple abstract class
+that provides four abstract methods:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+
+<span class="k">class</span> <span class="nc">ICalc</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interface for a simple calculator.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<span class="n">intrf</span> <span class="o">=</span> <span class="n">ICalc</span><span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="o">---------------------------------------------------------------------------</span><span class="w"></span>
+
+<span class="n">TypeError</span><span class="w">                                 </span><span class="n">Traceback</span><span class="w"> </span><span class="p">(</span><span class="n">most</span><span class="w"> </span><span class="n">recent</span><span class="w"> </span><span class="n">call</span><span class="w"> </span><span class="kr">last</span><span class="p">)</span><span class="w"></span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="n">input</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">7</span><span class="n">be58e3a2a92</span><span class="o">&gt;</span><span class="w"> </span><span class="kr">in</span><span class="w"> </span><span class="o">&lt;</span><span class="kr">module</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="mi">21</span><span class="w"></span>
+<span class="w">        </span><span class="mi">22</span><span class="w"></span>
+<span class="o">---&gt;</span><span class="w"> </span><span class="mi">23</span><span class="w"> </span><span class="n">intrf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ICalc</span><span class="p">()</span><span class="w"></span>
+
+
+<span class="n">TypeError</span><span class="o">:</span><span class="w"> </span><span class="n">Can</span><span class="s">&#39;t instantiate abstract class ICalc with abstract methods add, div, mul, sub</span>
+</code></pre></div>
+
+<p>Although it seems like interface <code>ICalc</code> is simply inheriting from the class <code>ABC</code>, in
+fact, <code>ABC</code> is attaching a metaclass <code>ABCMeta</code> to <code>ICalc</code>. This metaclass transforms
+the <code>ICalc</code> class into an abstract class. You can see that the class <code>ICalc</code> gives
+<code>TypeError</code> when you take an attempt to initialize it. The only way to use this
+interface is via creating subclasses from <code>ICalc</code> base class and implementing all the
+abstract methods there. The snippet below shows that:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Calc</span><span class="p">(</span><span class="n">ICalc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete class that uses Icalc interface.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
+
+
+<span class="n">calc</span> <span class="o">=</span> <span class="n">Calc</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">3</span><span class="w"></span>
+<span class="o">-</span><span class="mf">1</span><span class="w"></span>
+<span class="mf">12</span><span class="w"></span>
+<span class="mf">0.8</span><span class="w"></span>
+</code></pre></div>
+
+<h3>Metaclasses &amp; dataclasses</h3>
+<p>Data classes were introduced to python in version 3.7. Basically they can be regarded
+as code generators that reduce the amount of boilerplate you need to write while
+generating generic classes. Dataclasses automatically create <code>__init__</code>, <code>__repr__</code>,
+<code>__eq__</code>, <code>__gt__</code>, <code>__lt__</code> etc methods without you having to add them explicitly.
+This can be very handy when you need to create custom collections for your data. You
+can create dataclasses in the following manner:</p>
+<h4>Creating multiple dataclasses</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">unsafe_hash</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Event</span><span class="p">:</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">unsafe_hash</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">InvoiceIssued</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="n">invoice_uuid</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">customer_uuid</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">total_amount</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">due_date</span><span class="p">:</span> <span class="n">datetime</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">unsafe_hash</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">InvoiceOverdue</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="n">invoice_uuid</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">customer_uuid</span><span class="p">:</span> <span class="nb">int</span>
+
+
+<span class="n">inv</span> <span class="o">=</span> <span class="n">InvoiceIssued</span><span class="p">(</span>
+    <span class="o">**</span><span class="p">{</span>
+        <span class="s2">&quot;invoice_uuid&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+        <span class="s2">&quot;customer_uuid&quot;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span>
+        <span class="s2">&quot;total_amount&quot;</span><span class="p">:</span> <span class="mf">100.0</span><span class="p">,</span>
+        <span class="s2">&quot;due_date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">19</span><span class="p">),</span>
+        <span class="s2">&quot;created_at&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">inv</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>InvoiceIssued(created_at=datetime.datetime(2020, 6, 20, 1, 3, 24, 967633),
+invoice_uuid=22, customer_uuid=34, total_amount=100.0, due_date=datetime.datetime(2020,
+6, 19, 0, 0))
+</code></pre></div>
+
+<h4>Avoiding dataclass decorator with metaclasses</h4>
+<p>Now, one thing that I find cumbersome while creating multiple dataclasses is having to
+attach the <code>@dataclasses.dataclass</code> decorator to each of the dataclasses. Also, the
+decorator takes multiple arguments to customize the dataclass behavior and it can
+quickly get cumbersome when you've to create multiple dataclasses with custom behavior.
+Moreover, this goes against the DRY (Don't Repeat Yourself) principle in software
+engineering.</p>
+<p>To avoid this, you can write a metaclass that will automatically apply the customized
+dataclass decorator to all of the target classes implicitly. All you have to do is to
+attach the metaclass to a base dataclass and inherit from it in the later dataclasses
+that need to be created.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+
+<span class="k">class</span> <span class="nc">EventMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;__new__ is a classmethod, even without @classmethod decorator</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cls : str</span>
+<span class="sd">            Name of the class being defined (Event in this example)</span>
+<span class="sd">        bases : tuple</span>
+<span class="sd">            Base classes of the constructed class, empty tuple in this case</span>
+<span class="sd">        attrs : dict</span>
+<span class="sd">            Dict containing methods and fields defined in the class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dataclass</span><span class="p">(</span><span class="n">unsafe_hash</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">new_cls</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">EventMeta</span><span class="p">):</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
+
+
+<span class="k">class</span> <span class="nc">InvoiceIssued</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="n">invoice_uuid</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">customer_uuid</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">total_amount</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">due_date</span><span class="p">:</span> <span class="n">datetime</span>
+
+
+<span class="k">class</span> <span class="nc">InvoiceOverdue</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="n">invoice_uuid</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">customer_uuid</span><span class="p">:</span> <span class="nb">int</span>
+
+
+<span class="n">inv</span> <span class="o">=</span> <span class="n">InvoiceIssued</span><span class="p">(</span>
+    <span class="o">**</span><span class="p">{</span>
+        <span class="s2">&quot;invoice_uuid&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+        <span class="s2">&quot;customer_uuid&quot;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span>
+        <span class="s2">&quot;total_amount&quot;</span><span class="p">:</span> <span class="mf">100.0</span><span class="p">,</span>
+        <span class="s2">&quot;due_date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">19</span><span class="p">),</span>
+        <span class="s2">&quot;created_at&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">inv</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>InvoiceIssued(created_at=datetime.datetime(2020, 6, 24, 12, 57, 22, 543328),
+invoice_uuid=22, customer_uuid=34, total_amount=100.0, due_date=datetime.datetime(2020,
+6, 19, 0, 0))
+</code></pre></div>
+
+<h2>Should you use it?</h2>
+<p>Almost all of the problems you've encountered above can be solved without using
+metaclasses. Decorators can also be exclusively used to perform metaprogramming in a
+more manageable and subjectively cleaner way. One case where you absolutely have to use
+metaclasses is to avoid applying decorators to multiple classes or methods repetitively.</p>
+<p>Also, metaclasses can easily veer into the realm of being a <em>“solution in search of a
+problem“.</em> If the problem at hand can be solved in a simpler way, it probably should
+be. However, I still think that you should at least try to understand how metaclasses
+work to have a better grasp on how Python classes work in general and can recognize
+when a metaclass really is the appropriate tool to use.</p>
+<h2>Remarks</h2>
+<p>Wrapping your mind around metaclasses can be tricky. So, to avoid any unnecessary
+confusion, I've entirely evaded any discussion regarding the behavioral difference
+between <em>old style classes</em> and <em>new style classes</em> in Python. Also, I've intentionally
+excluded mentioning the differences between <code>type</code> in Python 2 and <code>type</code> in Python 3
+entirely. Python 2.x has reached its EOL. Save yourself some trouble and switch to
+Python 3.x if you already haven't done so.</p>
+<p>This article assumes familiarity with decorators, dataclasses etc. If your knowledge on
+them is rusty, checkout these posts on <a href="https://rednafi.github.io/digressions/python/2020/05/13/python-decorators.html">decorators</a> and <a href="https://rednafi.github.io/digressions/python/2020/03/12/python-dataclasses.html">dataclasses</a>.</p>
+<h2>References</h2>
+<ul>
+<li><a href="https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/">Understanding Python's metaclasses</a></li>
+<li><a href="https://stackoverflow.com/questions/100003/what-are-metaclasses-in-python">What are metaclasses in Python - Stackoverflow</a></li>
+<li><a href="https://realpython.com/python-metaclasses/">Python metaclasses - Real Python</a></li>
+<li><a href="https://www.geeksforgeeks.org/abstract-classes-in-python/">Metaprogramming with metaclasses in Python - Geeksforgeeks</a></li>
+<li><a href="https://www.python-course.eu/python3_metaclasses.php">Metaclasses - Python course EU</a></li>
+<li><a href="https://breadcrumbscollector.tech/when-to-use-metaclasses-in-python-5-interesting-use-cases/">When to use metaclasses in Python</a></li>
+<li><a href="https://jakevdp.github.io/blog/2012/12/01/a-primer-on-python-metaclasses/">A primer on Python metaclasses</a></li>
+</ul>
+
+
+             
+ 
+            
+            
+            
+
+
+
+
+
+
+
+            <hr/>
+        </div>
+        <section id="article-sidebar" class="span2">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2020-06-26T00:00:00+06:00">Fri 26 June 2020</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#python-ref">python</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#python-ref">Python
+                    <span class="superscript">58</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+<div id="sidebar-social-link">
+    <a href="mailto:redowan.nafi@gmail.com" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Mail" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#328cff"/><path d="m250 186c-46 0-69 35-69 74 0 44 29 72 68 72 43 0 73-32 73-75 0-44-34-71-72-71zm-1-37c30 0 57 13 77 33 0-22 35-22 35 1v150c-1 10 10 16 16 9 25-25 54-128-14-187-64-56-149-47-195-15-48 33-79 107-49 175 33 76 126 99 182 76 28-12 41 26 12 39-45 19-168 17-225-82-38-68-36-185 67-248 78-46 182-33 244 32 66 69 62 197-2 246-28 23-71 1-71-32v-11c-20 20-47 32-77 32-57 0-108-51-108-108 0-58 51-110 108-110" fill="#fff"/></svg>
+    </a>
+    <a href="https://github.com/rednafi" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="GitHub" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1B1817"/><path fill="#fff" d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+    </a>
+    <a href="https://twitter.com/rednafi" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Twitter" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1da1f3"/><path fill="#fff" d="M437 152a72 72 0 0 1-40 12 72 72 0 0 0 32-40 72 72 0 0 1-45 17 72 72 0 0 0-122 65 200 200 0 0 1-145-74 72 72 0 0 0 22 94 72 72 0 0 1-32-7 72 72 0 0 0 56 69 72 72 0 0 1-32 1 72 72 0 0 0 67 50 200 200 0 0 1-105 29 200 200 0 0 0 309-179 200 200 0 0 0 35-37"/></svg>
+    </a>
+    <a href="https://www.goodreads.com/user/show/53485837-redowan-delowar" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg height="512" viewBox="0 0 512 512" width="512" xmlns="http://www.w3.org/2000/svg"><rect fill="#EAE6CF" height="512" rx="64" width="512"/><path d="m254.92444 336.92444c43.2889-.36 74.07112-22.01333 92.33334-64.95111h.95556v65.48889c0 4.88-.32 12.44889-.95556 22.73333-1.30222 10.64445-4.78222 22.10223-10.42666 34.36889-5.65778 11.54667-14.79112 21.38667-27.37778 29.49778-12.44889 8.84-29.81778 13.44-52.12001 13.80444-21.48444 0-39.65333-5.59555-54.52444-16.77777-15.2-11.00889-24.08001-28.87111-26.65778-53.58667h-18.89778c1.93778 32.11111 12.18667 55.02667 30.76444 68.74222 18.08889 13.16445 41.04001 19.75556 68.83556 19.75556 27.45778 0 48.87112-5.14223 64.21778-15.43111 15.18223-9.92 26.08445-22.28445 32.71556-37.08 6.62222-14.79111 10.58222-28.86667 11.86667-42.21334.98222-13.35555 1.45778-22.91555 1.45778-28.68889v-270.088875h-18.90667v59.537775h-.95556c-7.27555-21.82667-19.30666-38.333335-36.12-49.524445-16.96-11.00445-35.70222-16.51111-56.21333-16.51111-35.72001.72444-62.85779 14.52444-81.43112 41.40889-19.07111 26.697775-28.59556 59.631105-28.59556 98.782195 0 40.23557 9.04445 73.52001 27.13334 99.86224 18.27555 26.88889 45.89778 40.51111 82.90222 40.87111zm-68.34222-224.89777c14.85333-24.359995 37.63111-36.986665 68.34222-37.888885 31.50223.90666 54.83556 13.17333 70.03556 36.808885 15.18223 23.64 22.77778 52.05331 22.77778 85.25331s-7.59555 61.43112-22.77778 84.70668c-15.2 24.72444-38.53333 37.34667-70.03556 37.88889-29.72889-.54667-52.36-12.81778-67.86222-36.80889-15.67556-23.27556-23.50667-51.87112-23.50667-85.79112-.004-31.75556 7.67111-59.81332 23.02667-84.16887z" fill="#743901"/></svg>
+    </a>
+    <a href="/reflections/feeds/all.atom.xml" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="RSS" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#f80"/><circle cx="145" cy="367" r="35" fill="#fff"/><path fill="none" stroke="#fff" stroke-width="60" d="M109 241c89 0 162 73 162 162M109 127c152 0 276 124 276 276"/></svg>
+    </a>
+</div>
+            
+
+
+
+
+
+            
+
+
+
+
+
+        </section>
+</div>
+</article>
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe.
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides.
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>                    </div>
+                    <div class="span1"></div>
+                </div>
+            </div>
+        </div>
+<footer>
+
+
+
+    <div id="fpowered">
+
+            © 2020-2022 • Redowan Delowar • All Rights Reserved
+
+
+    </div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="./theme/js/elegant.prod.9e9d5ce754.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    <script>
+    (function () {
+        if (window.location.hash.match(/^#comment-\d+$/)) {
+            $('#comment_thread').collapse('show');
+        }
+    })();
+    window.onhashchange=function(){
+        if (window.location.hash.match(/^#comment-\d+$/))
+            window.location.reload(true);
+    }
+    $('#comment_thread').on('shown', function () {
+        var link = document.getElementById('comment-accordion-toggle');
+        var old_innerHTML = link.innerHTML;
+        $(link).fadeOut(200, function() {
+            $(this).text('Click here to hide comments').fadeIn(200);
+        });
+        $('#comment_thread').on('hidden', function () {
+            $(link).fadeOut(200, function() {
+                $(this).text(old_innerHTML).fadeIn(200);
+            });
+        })
+    })
+</script>
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+        License : MIT -->
+</html>

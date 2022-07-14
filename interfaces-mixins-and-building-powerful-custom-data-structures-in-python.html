@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.prod.9e9d5ce754.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+        <meta name="google-site-verification" content="<meta name='google-site-verification' content='N5QEPRj-LpgoEY0Hf3uVMmZq8kjDwTFjd54IgvLmRBc' />" />        <meta name="author" content="Redowan Delowar" />
+
+        <meta name="description" content="Imagine a custom set-like data structure that doesn&#39;t perform hashing and trades performance for tighter memory footprint. Or imagine a dict-like data structure that automatically stores data in a PostgreSQL or Redis database the moment you initialize it; also it lets you to get-set-delete key-value pairs using the usual retrieval-assignment-deletion …
+" />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="Python, python, " />
+
+<meta property="og:title" content="Interfaces, mixins and building powerful custom data structures in Python "/>
+<meta property="og:url" content="./interfaces-mixins-and-building-powerful-custom-data-structures-in-python.html" />
+<meta property="og:description" content="Imagine a custom set-like data structure that doesn&#39;t perform hashing and trades performance for tighter memory footprint. Or imagine a dict-like data structure that automatically stores data in a PostgreSQL or Redis database the moment you initialize it; also it lets you to get-set-delete key-value pairs using the usual retrieval-assignment-deletion …" />
+<meta property="og:site_name" content="Redowan&#39;s Reflections" />
+<meta property="og:article:author" content="Redowan Delowar" />
+<meta property="og:article:published_time" content="2020-07-03T00:00:00+06:00" />
+<meta name="twitter:title" content="Interfaces, mixins and building powerful custom data structures in Python ">
+<meta name="twitter:description" content="Imagine a custom set-like data structure that doesn&#39;t perform hashing and trades performance for tighter memory footprint. Or imagine a dict-like data structure that automatically stores data in a PostgreSQL or Redis database the moment you initialize it; also it lets you to get-set-delete key-value pairs using the usual retrieval-assignment-deletion …">
+<meta property="og:image" content="https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png" />
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png" >
+
+        <title>Interfaces, mixins and building powerful custom data structures in Python  · Redowan&#39;s Reflections
+</title>
+        <link href="https://rednafi.github.io/reflections/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Redowan&#39;s Reflections - Full Atom Feed" />
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-217287505-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    </head>
+    <body>
+        <div id="content">
+            <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <a class="brand" href="./"><span class=site-name>Redowan's Reflections</span></a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-right top-menu">
+                                <li >
+                                    <a href=
+                                       .
+                                    >Home</a>
+                                </li>
+                                <li ><a href="./pages/contact.html">Contact</a></li>
+                                <li ><a href="./categories.html">Categories</a></li>
+                                <li ><a href="./tags.html">Tags</a></li>
+                                <li ><a href="./archives.html">Archives</a></li>
+                                <li>
+                                  <form action="https://www.google.com/search" class="navbar-search" method="get" name="searchform" target="_blank">
+                                    <input name="sitesearch" type="hidden"
+                                    value="rednafi.github.io/reflections">
+                                    <input autocomplete="on" class="search-query" name="q" placeholder="Search"
+                                    required="required"  type="text">
+                                    <input type="submit" value="Search" style="visibility: hidden;" /></form>
+                                  </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span1"></div>
+                    <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+        <h1>
+            <a href="./interfaces-mixins-and-building-powerful-custom-data-structures-in-python.html">
+                Interfaces, mixins and building powerful custom data structures in Python
+            </a>
+        </h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+            
+            <p>Imagine a custom <em>set-like</em> data structure that doesn't perform hashing and trades
+performance for tighter memory footprint. Or imagine a <em>dict-like</em> data structure that
+automatically stores data in a PostgreSQL or Redis database the moment you initialize
+it; also it lets you to <em>get-set-delete</em> key-value pairs using the usual
+<em>retrieval-assignment-deletion</em> syntax associated with built-in dictionaries. Custom
+data structures can give you the power of choice and writing them will make you
+understand how the built-in data structures in Python are constructed.</p>
+<p>One way to understand how built-in objects like dictionary, list, set etc work is to
+build custom data structures based on them. Python provides several mixin classes in
+the <code>collection.abc</code> module to design custom data structures that look and act like
+built-in structures with additional functionalities baked in.</p>
+<h2>Concept edifice</h2>
+<p>To understand how all these work, you'll need a fair bit of knowledge about Interfaces,
+ Abstract Base Classes, Mixin Classes etc. I'll build the concept edifice layer by layer
+ where you'll learn about interfaces first and how they can be created and used via the
+<code>abc.ABC</code> class. Then you'll learn how abstract base classes differ from interfaces.
+After that I'll introduce mixins and explain how all these concepts can be knitted
+together to architect custom data structures with amazing capabilities. Let's dive in.</p>
+<h2>Interfaces</h2>
+<p>Python interfaces can help you write classes based on common structures. They ensure
+that classes that provide similar functionalities will also have similar footprints.
+Interfaces are not as popular in Python as they are in other statically typed language.
+The dynamic nature and duck-typing capabilities of Python often make them redundant.</p>
+<p>However, in larger applications, interfaces can make you avoid writing code that is
+poorly encapsulated or build classes that look awfully similar but provide completely
+unrelated functionalities. Moreover, interfaces implicitly spawn other powerful
+techniques like mixin classes which can help you achieve DRY nirvana.</p>
+<h3>Overview</h3>
+<p>At a high level, an interface acts as a blueprint for designing classes. In Python, an
+interface is basically a specialized abstract class that defines one or more abstract
+methods. Abstract classes differs from concrete classes in the sense that they aren't
+intended to stand on their own and the methods they define shouldn't have any
+implementation.</p>
+<p>Usually, you inherit from an interface and implement the methods defined in the
+abstract class in a concrete subclass. Interfaces provide the skeletons and concrete
+classes provide the implementation of the methods based on those skeletons. Depending
+on the ways you can architect interfaces, they can be segmented into two primary
+categories.</p>
+<ul>
+<li>Informal Interfaces</li>
+<li>Formal Interfaces</li>
+</ul>
+<h2>Informal interfaces</h2>
+<p>Informal interfaces are classes which define methods that can be overridden, but
+there’s no strict enforcement.</p>
+<p>Let's write an informal interface for a simple calculator class:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ICalc</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Informal Interface: Abstract calculator class.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</code></pre></div>
+
+<p>Notice that the <code>ICalc</code> class has four different methods that don't give you any
+implementation. It's an informal interface because you can still instantiate the class
+but the methods will raise <code>NotImplementedError</code> if you try to apply them. You've to
+subclass the interface to use it. Let's do it:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Calc</span><span class="p">(</span><span class="n">ICalc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete Class: Calculator&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
+
+
+<span class="c1"># Using the class</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">Calc</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">3</span><span class="w"></span>
+<span class="o">-</span><span class="mf">1</span><span class="w"></span>
+<span class="mf">20</span><span class="w"></span>
+<span class="mf">0.8333333333333334</span><span class="w"></span>
+</code></pre></div>
+
+<p>Now, you might be wondering why you even need all of these boilerplate code and
+inheritance when you can directly define the concrete <code>Calc</code> class and call it a day.</p>
+<p>Consider the following scenario where you want to add additional functionalities to
+each of the method of the <code>Calc</code> class. Here, you've two options. Either you can mutate
+the original class and add those extra functionalities to the methods or you can create
+another class with similar footprint and implement all the methods with the added
+functionalities.</p>
+<p>The first option isn't always viable and can cause regression in real life scenario.
+The second approach ensures modularity and is generally quicker to implement since you
+won't have to worry about messing up the original concrete class. However, figuring out
+which methods you'll need to implement in the extended class can be hard because the
+concrete class might have additional methods that you don't want in the extended class.</p>
+<p>In this case, instead of figuring out the methods from the concrete <code>Calc</code> class, it's
+easier to do so from an established structure defined in the <code>ICalc</code> interface.
+Interfaces make the process of extending class functionalities more tractable. Let's
+make another class that will add logging to all of the methods of the <code>Calc</code> class:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CalcLog</span><span class="p">(</span><span class="n">ICalc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete Class: Calculator with logging&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operation: Addition, Arguments: </span><span class="si">{</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operation: Subtraction, Arguments: </span><span class="si">{</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operation: Multiplication, Arguments: </span><span class="si">{</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operation: Division, Arguments: </span><span class="si">{</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
+
+
+<span class="c1"># Using the class</span>
+<span class="n">clog</span> <span class="o">=</span> <span class="n">CalcLog</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clog</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clog</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clog</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clog</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">INFO</span><span class="o">:</span><span class="n">root</span><span class="o">:</span><span class="n">Operation</span><span class="o">:</span><span class="w"> </span><span class="n">Addition</span><span class="o">,</span><span class="w"> </span><span class="n">Arguments</span><span class="o">:</span><span class="w"> </span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="w"> </span><span class="mi">2</span><span class="o">)</span><span class="w"></span>
+<span class="n">INFO</span><span class="o">:</span><span class="n">root</span><span class="o">:</span><span class="n">Operation</span><span class="o">:</span><span class="w"> </span><span class="n">Subtraction</span><span class="o">,</span><span class="w"> </span><span class="n">Arguments</span><span class="o">:</span><span class="w"> </span><span class="o">(</span><span class="mi">2</span><span class="o">,</span><span class="w"> </span><span class="mi">3</span><span class="o">)</span><span class="w"></span>
+<span class="n">INFO</span><span class="o">:</span><span class="n">root</span><span class="o">:</span><span class="n">Operation</span><span class="o">:</span><span class="w"> </span><span class="n">Multiplication</span><span class="o">,</span><span class="w"> </span><span class="n">Arguments</span><span class="o">:</span><span class="w"> </span><span class="o">(</span><span class="mi">4</span><span class="o">,</span><span class="w"> </span><span class="mi">5</span><span class="o">)</span><span class="w"></span>
+<span class="n">INFO</span><span class="o">:</span><span class="n">root</span><span class="o">:</span><span class="n">Operation</span><span class="o">:</span><span class="w"> </span><span class="n">Division</span><span class="o">,</span><span class="w"> </span><span class="n">Arguments</span><span class="o">:</span><span class="w"> </span><span class="o">(</span><span class="mi">5</span><span class="o">,</span><span class="w"> </span><span class="mi">6</span><span class="o">)</span><span class="w"></span>
+
+
+<span class="mi">3</span><span class="w"></span>
+<span class="o">-</span><span class="mi">1</span><span class="w"></span>
+<span class="mi">20</span><span class="w"></span>
+<span class="mf">0.8333333333333334</span><span class="w"></span>
+</code></pre></div>
+
+<p>In the above class, I've defined another class called <code>CalcLog</code> that basically extends
+the functionalities of the previously defined <code>Calc</code> class. Here, I've inherited from
+the informal interface <code>ICalc</code> and implemented all the methods with additional info
+logging capability.</p>
+<p>Although writing informal interfaces is trivial, there are multiple issues that plagues
+them. The user of the interface class can still instantiate it like a normal class and
+won't be able to tell the difference between a it and a concrete class until she tries
+to use any of the methods define inside the interface. Only then the methods will throw
+exceptions. This can have unintended side effects.</p>
+<p>Moreover, informal interfaces won't compel you to implement all the methods in the
+subclasses. You can easily get away without implementing a particular method defined in
+the interface. It won't complain about the unimplemented methods in the subclasses.
+However, if you try to use a method that hasn't been implemented in the subclass,
+you'll get an error. This means even if <code>issubclass(ConcreteSubClass, Interface)</code> shows
+<code>True</code>, you can't rely on it since it doesn't give you the guarantee that the
+<code>ConcreteSubClass</code> has implemented all the methods defined in the <code>Interface</code>.</p>
+<p>Let's create another class <code>FakeCalc</code> an only implement one method defined in the
+<code>ICalc</code> abstract class:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FakeCalc</span><span class="p">(</span><span class="n">ICalc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete Class: Fake calculator that doesn&#39;t implement all the methods</span>
+<span class="sd">    defined in the interface.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+
+<span class="c1"># Using the class</span>
+<span class="n">cfake</span> <span class="o">=</span> <span class="n">FakeCalc</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cfake</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cfake</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">3</span><span class="w"></span>
+
+<span class="o">---------------------------------------------------------------------------</span><span class="w"></span>
+
+<span class="ow">Not</span><span class="n">ImplementedError</span><span class="w">                       </span><span class="n">Traceback</span><span class="w"> </span><span class="p">(</span><span class="n">most</span><span class="w"> </span><span class="n">recent</span><span class="w"> </span><span class="n">call</span><span class="w"> </span><span class="n">last</span><span class="p">)</span><span class="w"></span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="kr">input</span><span class="o">-</span><span class="mf">48</span><span class="o">-</span><span class="mf">035</span><span class="n">c519cee55</span><span class="o">&gt;</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="mf">10</span><span class="w"> </span><span class="n">cfake</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FakeCalc</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="mf">11</span><span class="w"> </span><span class="kr">print</span><span class="p">(</span><span class="n">cfake</span><span class="mf">.</span><span class="n">add</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span><span class="w"></span>
+<span class="o">---&gt;</span><span class="w"> </span><span class="mf">12</span><span class="w"> </span><span class="kr">print</span><span class="p">(</span><span class="n">cfake</span><span class="mf">.</span><span class="n">sub</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">))</span><span class="w"></span>
+
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="kr">input</span><span class="o">-</span><span class="mf">45</span><span class="o">-</span><span class="mf">255</span><span class="n">c6a2093b0</span><span class="o">&gt;</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">sub</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="mf">6</span><span class="w"></span>
+<span class="w">        </span><span class="mf">7</span><span class="w">     </span><span class="kd">def</span><span class="w"> </span><span class="n">sub</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">):</span><span class="w"></span>
+<span class="o">----&gt;</span><span class="w"> </span><span class="mf">8</span><span class="w">         </span><span class="n">raise</span><span class="w"> </span><span class="ow">Not</span><span class="n">ImplementedError</span><span class="w"></span>
+<span class="w">        </span><span class="mf">9</span><span class="w"></span>
+<span class="w">        </span><span class="mf">10</span><span class="w">     </span><span class="kd">def</span><span class="w"> </span><span class="n">mul</span><span class="p">(</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">):</span><span class="w"></span>
+
+
+<span class="ow">Not</span><span class="n">ImplementedError</span><span class="p">:</span><span class="w"></span>
+</code></pre></div>
+
+<p>Despite not implementing all the methods defined in the <code>ICalc</code> class, I was still able
+to instantiate the <code>FakeCalc</code> concrete class. However, when I tried to apply a method
+<code>sub</code> that wasn't implemented in the concrete class, it gave me an error. Also,
+<code>issubclass(FakeCalc, ICalc)</code> returns <code>True</code> which can mislead you into thinking that
+all the methods of the subclass <code>FakeCalc</code> are usable. It can cause subtle bugs can be
+difficult to detect. Formal interfaces try to overcome these issues.</p>
+<h2>Formal interfaces</h2>
+<p>Formal interfaces do not suffer from the problems that plague informal interfaces. So
+if you want to implement an interface that the users can't initiate independently and
+that forces them to implement all the methods in the concrete sub classes, formal
+interface is the way to go. In Python, the idiomatic way to define formal interfaces is
+via the <code>abc</code> module. Let's transform the previously mentioned <code>ICalc</code> interface into a
+formal one:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+
+<span class="k">class</span> <span class="nc">ICalc</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Formal interface: Abstract calculator class.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">pass</span>
+</code></pre></div>
+
+<p>Here, I've imported <code>ABC</code> class and <code>abstractmethod</code> decorator from the <code>abc</code> module of
+Python's standard library. The name <code>ABC</code> stands for <em>Abstract Base Class</em>. The
+interface class needs to inherit from this <code>ABC</code>class and all the abstract methods need
+to be decorated using the <code>abstractmethod</code> decorator. If your knowledge on decorators
+are fuzzy, checkout this in-depth article on <a href="https://rednafi.github.io/digressions/python/2020/05/13/python-decorators.html">python decorators</a>.</p>
+<p>Although, it seems like <code>ICalc</code> has merely inherited from the <code>ABC</code> class, under the
+hood, a <a href="">metaclass</a> <code>ABCMeta</code> gets attached to the interface which essentially makes
+sure that you can't instantiate this class independently. Let's try to do so and see
+what happens:</p>
+<div class="highlight"><pre><span></span><code><span class="n">i</span> <span class="o">=</span> <span class="n">ICalc</span><span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="nb">---------------------------------------------------------------------------</span><span class="c"></span>
+<span class="c">TypeError                                 Traceback (most recent call last)</span>
+<span class="nv">&lt;</span><span class="c">ipython</span><span class="nb">-</span><span class="c">input</span><span class="nb">-</span><span class="c">118</span><span class="nb">-</span><span class="c">a3cb2945d943</span><span class="nv">&gt;</span><span class="c"> in </span><span class="nv">&lt;</span><span class="c">module</span><span class="nv">&gt;</span><span class="c"></span>
+<span class="nb">----</span><span class="nv">&gt;</span><span class="c"> 1 i = ICalc()</span>
+
+<span class="c">TypeError: Can&#39;t instantiate abstract class ICalc with abstract methods add</span><span class="nt">,</span><span class="c"> div</span><span class="nt">,</span><span class="c"> mul</span><span class="nt">,</span><span class="c"></span>
+<span class="c">sub</span>
+</code></pre></div>
+
+<p>The error message clearly states that you can't instantiate the class <code>ICalc</code> directly
+at all. You've make a subclass of <code>ICalc</code> and implement all the abstract methods and
+only then you'll be able to make an instance of the subclass. The subclassing and
+implementation part is same as before.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Calc</span><span class="p">(</span><span class="n">ICalc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete calculator class&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
+
+
+<span class="c1"># Using the class</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">Calc</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</code></pre></div>
+
+<p>In the case of formal interface, failing to implement even one abstract method in the
+subclass will raise <code>TypeError</code>. So you can never write something the like the
+<code>FakeCalc</code> with a formal interface. This approach is more explicit and if there is an
+issue, it fails early.</p>
+<h3>Interfaces vs abstract base classes</h3>
+<p>You've probably seen the term <em>Interface</em> and <em>Abstract Base Class</em> being used
+interchangeably. However, conceptually they're different. Interfaces can be thought of
+as a special case of Abstract Base Classes.</p>
+<p>It's imperative that all the methods of an interface are abstract methods and the
+classes don't store any state (instance variables). However, in case of abstract base
+classes, the methods are generally abstract but there can also be methods that provide
+implementation (concrete methods) and also, these classes can have instance variables.
+This generic abstract base classes can get very interesting and they can be used as
+<em>mixins</em> but more on that in the later sections.</p>
+<p>Both interfaces and abstract base classes are similar in the sense that they can't
+stand on their own, that means these classes aren't meant to be instantiated
+independently. Pay attention to the following snippet to understand how interfaces and
+abstract base classes differ.</p>
+<p><strong>Interface</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+
+<span class="k">class</span> <span class="nc">InterfaceExample</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">method_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">method_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</code></pre></div>
+
+<p>Here, all the methods must have to be abstract.</p>
+<p><strong>Abstract Base Class</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+
+<span class="k">class</span> <span class="nc">AbstractBaseClassExample</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">method_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">method_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">method_c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># implement something</span>
+        <span class="k">pass</span>
+</code></pre></div>
+
+<p>Notice how <code>method_c</code> in the above class is a concrete method and can have implementation.</p>
+<p>The two examples above establish the fact that</p>
+<blockquote>
+<p>All interfaces are abstract base classes but not all abstract base classes are
+interfaces.</p>
+</blockquote>
+<h3>A complete example</h3>
+<p>Before moving on to the next section, let's see another contrived example to get the
+idea about the cases where interfaces can come handy. I'll define an interface called
+<code>AutoMobile</code> and create three concrete classes called <code>Car</code>, <code>Truck</code> and <code>Bus</code> from it.
+The interface defines three abstract methods <code>start</code>, <code>accelerate</code> and <code>stop</code> that the
+concrete classes will need to implement later.</p>
+<p><img alt="python-interface" src="https://user-images.githubusercontent.com/30027932/86243108-96bbd680-bbc7-11ea-9ddb-9fe46b4a17a1.png" /></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+
+<span class="k">class</span> <span class="nc">Automobile</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Formal interface: Abstract automobile class.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">accelerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Car</span><span class="p">(</span><span class="n">Automobile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete Class: Car&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;The car is starting&quot;</span>
+
+    <span class="k">def</span> <span class="nf">accelerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;The car is accelerating&quot;</span>
+
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;The car is stopping&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">Truck</span><span class="p">(</span><span class="n">Automobile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete Class: Truck&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;The truck is starting&quot;</span>
+
+    <span class="k">def</span> <span class="nf">accelerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;The truck is accelerating&quot;</span>
+
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;The truck is stopping&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">Bus</span><span class="p">(</span><span class="n">Automobile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete Class: Bus&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;The bus is starting&quot;</span>
+
+    <span class="k">def</span> <span class="nf">accelerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;The bus is accelerating&quot;</span>
+
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;The bus is stopping&quot;</span>
+
+
+<span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="p">()</span>
+<span class="n">truck</span> <span class="o">=</span> <span class="n">Truck</span><span class="p">()</span>
+<span class="n">bus</span> <span class="o">=</span> <span class="n">Bus</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">car</span><span class="o">.</span><span class="n">start</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">car</span><span class="o">.</span><span class="n">accelerate</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">car</span><span class="o">.</span><span class="n">stop</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">truck</span><span class="o">.</span><span class="n">start</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">truck</span><span class="o">.</span><span class="n">accelerate</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">truck</span><span class="o">.</span><span class="n">stop</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">start</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">accelerate</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">stop</span><span class="p">())</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>The car is starting
+The car is accelerating
+The car is stopping
+The truck is starting
+The truck is accelerating
+The truck is stopping
+The bus is starting
+The bus is accelerating
+The bus is stopping
+</code></pre></div>
+
+<p>The above example delineates the use cases for interfaces. When you need to create
+multiple similar classes, interfaces can provide a basic foundation for the subclasses
+to build upon. In the next section, I'll be using formal interfaces to create Mixin
+classes. So, before understanding mixin classes and how they can be used to inject
+additional plugins to your classes, it's important that you understand interfaces and
+abstract base classes properly.</p>
+<h2>Mixins</h2>
+<p>Imagine you're baking chocolate brownies. Now, you can have them without any extra
+fluff which is fine or you can top them with cream cheese, caramel sauce, chocolate
+chips etc. Usually you don't make the extra toppings yourself, rather you prepare the
+brownies and use off the shelf toppings. This also gives you the ability to mix and
+match different combinations of toppings to spruce up the flavors quickly. However,
+making the the toppings from scratch would be a lengthy process and doing it over an
+over again can ruin the fun of baking.</p>
+<p>While creating software, there’s sometimes a limit to the depth we should go. When
+pieces of what we’d like to achieve have already been executed well by others, it makes
+a lot of sense to reuse them. One way to achieve modularity and reusability in
+object-oriented programming is through a concept called a mixin. Different languages
+implement the concept of mixin in different ways. In Python, mixins are supported via
+multiple inheritance.</p>
+<h3>Overview</h3>
+<p>In the context of Python especially, a mixin is a parent class that provides
+functionality to subclasses but is not intended to be instantiated itself. This should
+already incite deja vu in you since <strong>classes that aren't intended to be instantiated</strong>
+and can have both concrete and abstract methods are basically <strong>abstract base
+classes</strong>. Mixins can be regarded as a specific strain of abstract base classes where
+they can house both concrete and abstract methods but don't keep any internal states.</p>
+<p>These can help you when -</p>
+<ul>
+<li>You want to provide a lot of optional features for a class.</li>
+<li>You want to provide a lot of not-optional features for a class, but you want the
+features in separate classes so that each of them is about one feature (behavior).</li>
+<li>You want to use one particular feature in many different classes</li>
+</ul>
+<p>Let's see a contrived example. Consider
+<a href="https://werkzeug.palletsprojects.com/en/1.0.x/">Werkzeug's</a> request and response
+system. Werkzeug is the low-level framework that
+<a href="https://flask.palletsprojects.com/en/1.1.x/">Flask</a> micro-framework is built upon. I
+can make a plain old request object by saying:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">werkzeug</span> <span class="kn">import</span> <span class="n">BaseRequest</span>
+
+
+<span class="k">class</span> <span class="nc">Request</span><span class="p">(</span><span class="n">BaseRequest</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+
+<p>If I want to add accept header support, I would make that:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">werkzeug</span> <span class="kn">import</span> <span class="n">BaseRequest</span><span class="p">,</span> <span class="n">AcceptMixin</span>
+
+
+<span class="k">class</span> <span class="nc">Request</span><span class="p">(</span><span class="n">AcceptMixin</span><span class="p">,</span> <span class="n">BaseRequest</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+
+<p>If I wanted to make a request object that supports accept headers, etags, user agent
+and authentication support, I could do this:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">werkzeug</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseRequest</span><span class="p">,</span>
+    <span class="n">AcceptMixin</span><span class="p">,</span>
+    <span class="n">ETagRequestMixin</span><span class="p">,</span>
+    <span class="n">UserAgentMixin</span><span class="p">,</span>
+    <span class="n">AuthenticationMixin</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Request</span><span class="p">(</span>
+    <span class="n">AcceptMixin</span><span class="p">,</span>
+    <span class="n">ETagRequestMixin</span><span class="p">,</span>
+    <span class="n">UserAgentMixin</span><span class="p">,</span>
+    <span class="n">AuthenticationMixin</span><span class="p">,</span>
+    <span class="n">BaseRequest</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+
+<p>The above example might cause you to say, "that's just multiple inheritance, not really
+a mixin", which is can be true in a special case. Indeed, the differences between plain
+old multiple inheritance and mixin based inheritance collapse when the parent class can
+be instantiated. Understanding the subtlety in the differences between a mixin class,
+an abstract base class, an interface and the scope of multiple inheritance is
+important, so I'll explore them in a dedicated section.</p>
+<h3>Differences between interfaces, abstract classes and mixins</h3>
+<p>In order to better understand mixins, it's be useful to compare mixins with abstract
+classes and interfaces from a code/implementation perspective:</p>
+<p><strong>Interfaces</strong></p>
+<p>Interfaces can contain abstract methods only, no concrete methods and no internal
+states (instance variables).</p>
+<p><strong>Abstract Classes</strong></p>
+<p>Abstract classes can contain abstract methods, concrete methods and internal state.</p>
+<p><strong>Mixins</strong></p>
+<p>Like interfaces, mixins do not contain any internal state. But like abstract classes,
+they can contain one or more concrete methods. <strong><em>So mixins are basically abstract
+classes without any internal states.</em></strong></p>
+<p>In Python, these are just conventions because all of the above are defined as classes.
+However, one trait that is common among <em>interfaces</em>, <em>abstract classes</em> and <em>mixins</em>
+is that they shouldn't exist on their own, i.e. shouldn't be instantiated independently.</p>
+<h3>A complete example</h3>
+<p>Before diving into the real-life examples and how mixins can be used to construct
+custom data structures, let's have a look at a self-contained example of a mixin class
+at work:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+
+
+<span class="k">class</span> <span class="nc">DisplayFactorMult</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Mixin class that reveals factor calculation details.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">multiply_show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Factor: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="si">}</span><span class="s2">, Argument: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">,  Result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">class</span> <span class="nc">FactorMult</span><span class="p">(</span><span class="n">DisplayFactorMult</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete class that uses the DisplayFactorMult mixin.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
+
+    <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>
+
+
+<span class="c1"># Putting the FactorMult class to use</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">FactorMult</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">multiply_show</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="c1"># Use the inspect.getmembers method to inspect the methods</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">Factor</span><span class="o">:</span><span class="w"> </span><span class="mi">10</span><span class="o">,</span><span class="w"> </span><span class="n">Argument</span><span class="o">:</span><span class="w"> </span><span class="mi">20</span><span class="o">,</span><span class="w">  </span><span class="n">Result</span><span class="o">:</span><span class="w"> </span><span class="mi">200</span><span class="w"></span>
+<span class="o">[(</span><span class="s1">&#39;__init__&#39;</span><span class="o">,</span><span class="w"></span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">bound</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="n">FactorMult</span><span class="o">.</span><span class="na">__init__</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="o">&lt;</span><span class="n">__main__</span><span class="o">.</span><span class="na">FactorMult</span><span class="w"> </span><span class="n">object</span><span class="w"> </span><span class="n">at</span><span class="w"></span>
+<span class="w">    </span><span class="mh">0x7f0f0546bf40</span><span class="o">&gt;&gt;),</span><span class="w"></span>
+<span class="w">    </span><span class="o">(</span><span class="s1">&#39;multiply&#39;</span><span class="o">,</span><span class="w"></span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">bound</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="n">FactorMult</span><span class="o">.</span><span class="na">multiply</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="o">&lt;</span><span class="n">__main__</span><span class="o">.</span><span class="na">FactorMult</span><span class="w"> </span><span class="n">object</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="mh">0x7f0f0546bf40</span><span class="o">&gt;&gt;),</span><span class="w"></span>
+<span class="w">    </span><span class="o">(</span><span class="s1">&#39;multiply_show&#39;</span><span class="o">,</span><span class="w"></span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">bound</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="n">DisplayFactorMult</span><span class="o">.</span><span class="na">multiply_show</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="o">&lt;</span><span class="n">__main__</span><span class="o">.</span><span class="na">FactorMult</span><span class="w"> </span><span class="n">object</span><span class="w"> </span><span class="n">at</span><span class="w"></span>
+<span class="w">    </span><span class="mh">0x7f0f0546bf40</span><span class="o">&gt;&gt;)]</span><span class="w"></span>
+</code></pre></div>
+
+<p>The <code>FactorMult</code> class takes in a number as a factor and the <code>multiply</code> method simply
+multiplies an argument with the factor. The mixin class <code>DisplayFactorMult</code> provides an
+additional method <code>multiply_show</code> that enhances the <code>multiply</code> method of the concrete
+class. Method <code>multiply_show</code> prints the value of the factor, arguments an the result
+before returning the result. Here, <code>DisplayFactoryMult</code> is a mixin since it houses an
+abstract method <code>multiply</code>, a concrete method <code>multiply_show</code> and doesn't store any
+instance variable.</p>
+<p>If you really want to dive deeper into mixins and their real-life use cases, checkout
+the codebase of the famous <a href="https://github.com/psf/requests/blob/8149e9fe54c36951290f198e90d83c8a0498289c/requests/models.py#L60">Requests</a>
+library. It defines and employs many powerful mixin classes to bestow superpowers upon
+different concrete classes.</p>
+<h2>Building powerful custom data structures with mixins</h2>
+<p>You've reached the hall of fame where I'll be building custom data structures using the
+mixin classes from the <code>collections.abc</code> module.</p>
+<h3>Verbose tuple</h3>
+<p>This is a tuple-like data structure that acts exactly like the built-in tuple but with
+one exception. It'll print out the special methods underneath when you perform any
+operation with it.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
+
+
+<span class="k">class</span> <span class="nc">VerboseTuple</span><span class="p">(</span><span class="n">Sequence</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom class that is exactly like a tuple but does some</span>
+<span class="sd">    extra magic.</span>
+
+<span class="sd">    Sequence:</span>
+<span class="sd">    -------------------</span>
+<span class="sd">    Inherits From: Reversible, Collection</span>
+<span class="sd">    Abstract Methods: __getitem__, __len__</span>
+<span class="sd">    Mixin Methods: __contains__, __iter__, __reversed__, index,</span>
+<span class="sd">            and count</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_classname</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># This method just returns the name of the class</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __getitem__, Index: </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __len__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_classname</span><span class="p">()</span><span class="si">}{</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="n">vt</span> <span class="o">=</span> <span class="n">VerboseTuple</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">vt</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Abstract Methods: </span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">Sequence</span><span class="o">.</span><span class="n">__abstractmethods__</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Mixin Methods: </span><span class="si">{</span> <span class="p">{</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">Sequence</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">v</span><span class="p">)}</span> <span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>VerboseTuple(1, 3, 4)
+Abstract Methods: {&#39;__len__&#39;, &#39;__getitem__&#39;}
+Mixin Methods: {&#39;__iter__&#39;, &#39;__contains__&#39;, &#39;index&#39;, &#39;count&#39;, &#39;__getitem__&#39;,
+&#39;__reversed__&#39;}
+</code></pre></div>
+
+<p>To build the <code>VerboseTuple</code> data structure, first, I've inherited the <code>Sequence</code> mixin
+class from the <code>collections.abc</code> module. The docstring mentions all the abstract and
+mixin methods provided by the <code>Sequence</code> class. To build the new data structure, you'll
+have to implement all the abstract methods defined in the <code>Sequence</code> class and you'll
+get all the mixin methods implemented automatically. Notice that the print statement
+above also reveals the abstract and the mixin methods.</p>
+<p>In the following snippet I've used some of the functionalities offered by tuple and
+printed them in a way that will reveal the special methods when they perform any action.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># check __getitem__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __getitem__ ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vt</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="c1"># check __len__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __len__ ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vt</span><span class="p">))</span>
+
+<span class="c1"># check __contains__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __contains__ ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="mi">3</span> <span class="ow">in</span> <span class="n">vt</span><span class="p">)</span>
+
+<span class="c1"># check __len__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __iter__ ====&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">vt</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+
+<span class="c1"># check reverse</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking reverse ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">vt</span><span class="p">)))</span>
+
+<span class="c1"># check count</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking count ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vt</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>    ==== Checking __getitem__ ====
+Method: __getitem__, Index: 2
+4
+
+    ==== Checking __len__ ====
+Method: __len__
+3
+
+    ==== Checking __contains__ ====
+Method: __getitem__, Index: 0
+Method: __getitem__, Index: 1
+True
+
+    ==== Checking __iter__ ====
+Method: __getitem__, Index: 0
+1
+Method: __getitem__, Index: 1
+3
+Method: __getitem__, Index: 2
+4
+Method: __getitem__, Index: 3
+
+    ==== Checking reverse ====
+Method: __len__
+Method: __getitem__, Index: 2
+Method: __getitem__, Index: 1
+Method: __getitem__, Index: 0
+[4, 3, 1]
+
+    ==== Checking count ====
+Method: __getitem__, Index: 0
+Method: __getitem__, Index: 1
+Method: __getitem__, Index: 2
+Method: __getitem__, Index: 3
+1
+</code></pre></div>
+
+<p>The printed statements reveal the corresponding special methods used internally when a
+particular tuple operation occurs.</p>
+<h3>Verbose list</h3>
+<p>This is a list-like data structure that acts exactly like the built-in list but with
+one exception. Like <code>VerboseTuple</code>, it'll also print out the special methods underneath
+when you perform any operation on or with it.`</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableSequence</span>
+
+
+<span class="k">class</span> <span class="nc">VerboseList</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom class that is exactly like a list but does some</span>
+<span class="sd">    extra magic.</span>
+
+<span class="sd">    MutableSequence:</span>
+<span class="sd">    -----------------</span>
+<span class="sd">    Inherits From: Sequence</span>
+<span class="sd">    Abstract Methods: __getitem__, __setitem__, __delitem__,</span>
+<span class="sd">            __len__, insert</span>
+<span class="sd">    Mixin Methods: Inherited Sequence methods and append, reverse,</span>
+<span class="sd">            extend, pop, remove, and __iadd__</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_classname</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># This method just returns the name of the class</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __getitem__, Index: </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __setitem__, Index: </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">, Value: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __delitem__, Index: </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __len__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_classname</span><span class="p">()</span><span class="si">}{</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+<span class="n">vl</span> <span class="o">=</span> <span class="n">VerboseList</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">vl2</span> <span class="o">=</span> <span class="n">VerboseList</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Abstract Methods: </span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">MutableSequence</span><span class="o">.</span><span class="n">__abstractmethods__</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Mixin Methods: </span><span class="si">{</span> <span class="p">{</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">MutableSequence</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">v</span><span class="p">)}</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>VerboseList(4, 5, 6)
+Abstract Methods: {&#39;__delitem__&#39;, &#39;__len__&#39;, &#39;__getitem__&#39;, &#39;insert&#39;, &#39;__setitem__&#39;}
+Mixin Methods: {&#39;__iadd__&#39;, &#39;__setitem__&#39;, &#39;pop&#39;, &#39;append&#39;, &#39;extend&#39;, &#39;__delitem__&#39;,
+&#39;reverse&#39;, &#39;insert&#39;, &#39;clear&#39;, &#39;remove&#39;}
+</code></pre></div>
+
+<p>In the above segment, I've inherited the <code>MutableSequence</code> mixin class from the
+<code>collections.abc</code> module. This ensures that the <code>VerboseList</code> object will be mutable.
+All the abstract methods mentioned in the docstring have been implemented and the
+output print statements reveal the structure of the custom data structure as well as
+all the abstract and mixin methods.</p>
+<p>In the following snippet, I've used some of the functionalities offered by list and
+printed them in a way that will reveal the special methods when they perform any action.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># check __setitem__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __setitem__ ====&quot;</span><span class="p">)</span>
+<span class="n">vl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">44</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+<span class="c1"># check remove (__delitem__)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking remove ====&quot;</span><span class="p">)</span>
+<span class="n">vl</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+<span class="c1"># check extend</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking extend ====&quot;</span><span class="p">)</span>
+<span class="n">vl</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+<span class="c1"># check pop</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking pop ====&quot;</span><span class="p">)</span>
+<span class="n">vl</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+
+<span class="c1"># check __iadd__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __iadd__&quot;</span><span class="p">)</span>
+<span class="n">vl</span> <span class="o">+=</span> <span class="n">vl2</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>    ==== Checking __setitem__ ====
+Method: __setitem__, Index: 1, Value: 44
+VerboseList(4, 44, 6)
+
+    ==== Checking remove ====
+Method: __getitem__, Index: 0
+Method: __getitem__, Index: 1
+Method: __getitem__, Index: 2
+Method: __delitem__, Index: 2
+VerboseList(4, 44)
+
+    ==== Checking extend ====
+Method: __len__
+Method: __len__
+VerboseList(4, 44, 0, 0)
+
+    ==== Checking pop ====
+Method: __getitem__, Index: -1
+Method: __delitem__, Index: -1
+VerboseList(4, 44, 0)
+
+    ==== Checking __iadd__
+Method: __getitem__, Index: 0
+Method: __len__
+Method: __getitem__, Index: 1
+Method: __len__
+Method: __getitem__, Index: 2
+Method: __len__
+Method: __getitem__, Index: 3
+VerboseList(4, 44, 0, 7, 8, 9)
+</code></pre></div>
+
+<h3>Verbose frozen dict</h3>
+<p>Here, <code>VerboseFrozenDict</code> is an immutable data structure that is similar to the
+built-in dictionaries. Like the previous structures, this also reveals the internal
+special methods while performing different operations.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
+
+
+<span class="k">class</span> <span class="nc">VerboseFrozenDict</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom class that is exactly like an immutable dict but does</span>
+<span class="sd">    some extra magic.</span>
+
+<span class="sd">    Mapping:</span>
+<span class="sd">    -----------------</span>
+<span class="sd">    Inherits From: Collection</span>
+<span class="sd">    Abstract Methods: __getitem__, __iter__, __len__</span>
+<span class="sd">    Mixin Methods: __contains__, keys, items, values, get, __eq__,</span>
+<span class="sd">            and __ne__</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_classname</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># This method just returns the name of the class</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __getitem__, Key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __iter__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __len__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_classname</span><span class="p">()</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+
+<span class="n">vf</span> <span class="o">=</span> <span class="n">VerboseFrozenDict</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="s2">&quot;apple&quot;</span><span class="p">})</span>
+<span class="n">vf2</span> <span class="o">=</span> <span class="n">VerboseFrozenDict</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="s2">&quot;mango&quot;</span><span class="p">})</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">vf</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Abstract Methods: </span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">Mapping</span><span class="o">.</span><span class="n">__abstractmethods__</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Mixin Methods: </span><span class="si">{</span> <span class="p">{</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">Mapping</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">v</span><span class="p">)}</span> <span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>VerboseFrozenDict({&#39;a&#39;: &#39;apple&#39;})
+Abstract Methods: {&#39;__len__&#39;, &#39;__getitem__&#39;, &#39;__iter__&#39;}
+Mixin Methods: {&#39;items&#39;, &#39;__contains__&#39;, &#39;values&#39;, &#39;__eq__&#39;, &#39;keys&#39;, &#39;get&#39;,
+&#39;__getitem__&#39;}
+</code></pre></div>
+
+<p>In the above segment, I've inherited the <code>Mapping</code> mixin class from the <code>collections.
+abc</code> module. This ensures that the output sequence will be immutable. Just like before,
+all the abstract methods mentioned in the docstring have been implemented and the
+output print statements reveal the structure of the custom data structure, all the
+abstract and mixin methods.</p>
+<p>Below the printed output will reveal the special methods used internally when the
+<code>VerboseFrozenDict</code> objects perform any operation.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># check __getitem__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __getitem__ ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vf</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">])</span>
+
+<span class="c1"># check __iter__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __iter__ ====&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">vf</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+
+<span class="c1"># check __len__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __len__ ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vf</span><span class="p">))</span>
+
+<span class="c1"># check __contains__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __iter__ ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;a&quot;</span> <span class="ow">in</span> <span class="n">vf</span><span class="p">)</span>
+
+<span class="c1"># check keys, values</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking items, keys, values ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vf</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vf</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vf</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+<span class="c1"># check get</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking get ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+<span class="c1"># check eq &amp; nq</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __eq__, __nq__ ====&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vf</span> <span class="o">==</span> <span class="n">vf2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vf</span> <span class="o">!=</span> <span class="n">vf2</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>    ==== Checking __getitem__ ====
+Method: __getitem__, Key: a
+apple
+
+    ==== Checking __iter__ ====
+Method: __iter__
+a
+
+    ==== Checking __len__ ====
+Method: __len__
+1
+
+    ==== Checking __iter__ ====
+Method: __getitem__, Key: a
+True
+
+    ==== Checking items, keys, values ====
+ItemsView(VerboseFrozenDict({&#39;a&#39;: &#39;apple&#39;}))
+KeysView(VerboseFrozenDict({&#39;a&#39;: &#39;apple&#39;}))
+ValuesView(VerboseFrozenDict({&#39;a&#39;: &#39;apple&#39;}))
+
+    ==== Checking get ====
+Method: __getitem__, Key: b
+None
+
+    ==== Checking __eq__, __nq__ ====
+Method: __iter__
+Method: __getitem__, Key: a
+Method: __iter__
+Method: __getitem__, Key: b
+Method: __getitem__, Key: c
+False
+Method: __iter__
+Method: __getitem__, Key: a
+Method: __iter__
+Method: __getitem__, Key: b
+Method: __getitem__, Key: c
+True
+</code></pre></div>
+
+<h3>Verbose dict</h3>
+<p>The <code>VerboseDict</code> data structure is the mutable version of <code>VerboseFrozedDict</code>. It
+supports all the operations of <code>VerboseFrozenDict</code> with some additional features like
+adding and deleting key-value pairs, updating values corresponding to different keys
+etc.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
+
+
+<span class="k">class</span> <span class="nc">VerboseDict</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom class that is exactly like a dict but does some</span>
+<span class="sd">    extra magic.</span>
+
+<span class="sd">    MutableMapping:</span>
+<span class="sd">    -----------------</span>
+<span class="sd">    Inherits From: Mapping</span>
+<span class="sd">    Abstract Methods: __getitem__, __setitem__, __delitem__, __iter__,</span>
+<span class="sd">                __len__</span>
+<span class="sd">    Mixin Methods: Inherited Mapping methods and pop, popitem, clear,</span>
+<span class="sd">                update, and setdefault</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_classname</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># This method just returns the name of the class</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __getitem__, Key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __setitem__, Key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __delitem__, Key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __iter__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Method: __len__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_classname</span><span class="p">()</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+
+<span class="n">vd</span> <span class="o">=</span> <span class="n">VerboseDict</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="s2">&quot;apple&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="s2">&quot;ball&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="s2">&quot;cat&quot;</span><span class="p">})</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">vd</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Abstract Methods: </span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">MutableMapping</span><span class="o">.</span><span class="n">__abstractmethods__</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Mixin Methods: </span><span class="si">{</span> <span class="p">{</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">MutableMapping</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">v</span><span class="p">)}</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>VerboseDict({&#39;a&#39;: &#39;apple&#39;, &#39;b&#39;: &#39;ball&#39;, &#39;c&#39;: &#39;cat&#39;})
+Abstract Methods: {&#39;__delitem__&#39;, &#39;__len__&#39;, &#39;__iter__&#39;, &#39;__getitem__&#39;, &#39;__setitem__&#39;}
+Mixin Methods: {&#39;__setitem__&#39;, &#39;pop&#39;, &#39;popitem&#39;, &#39;__delitem__&#39;, &#39;setdefault&#39;, &#39;update&#39;,
+&#39;clear&#39;}
+</code></pre></div>
+
+<p>The output statements reveal the structure of the <code>VeboseDict</code> class and the abstract
+and mixin methods associated with it. The following snippet will print the special
+methods used internally by the custom data structure (also in the built-in one) while
+performing different operations.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># check __getitem__</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking __setitem__ ====&quot;</span><span class="p">)</span>
+<span class="n">vd</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;orange&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vd</span><span class="p">)</span>
+
+<span class="c1"># check popitem</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking popitem ====&quot;</span><span class="p">)</span>
+<span class="n">vd</span><span class="o">.</span><span class="n">popitem</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vd</span><span class="p">)</span>
+
+<span class="c1"># check update</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking update ====&quot;</span><span class="p">)</span>
+<span class="n">vd</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="s2">&quot;dog&quot;</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vd</span><span class="p">)</span>
+
+<span class="c1"># check clear</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking clear ====&quot;</span><span class="p">)</span>
+<span class="n">vd</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vd</span><span class="p">)</span>
+
+<span class="c1"># check setdefault</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==== Checking setdefault ====&quot;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;pepsi&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vd</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>    ==== Checking __setitem__ ====
+Method: __setitem__, Key: a
+VerboseDict({&#39;a&#39;: &#39;orange&#39;, &#39;b&#39;: &#39;ball&#39;, &#39;c&#39;: &#39;cat&#39;})
+
+    ==== Checking popitem ====
+Method: __iter__
+Method: __getitem__, Key: a
+Method: __delitem__, Key: a
+VerboseDict({&#39;b&#39;: &#39;ball&#39;, &#39;c&#39;: &#39;cat&#39;})
+
+    ==== Checking update ====
+Method: __setitem__, Key: d
+VerboseDict({&#39;b&#39;: &#39;ball&#39;, &#39;c&#39;: &#39;cat&#39;, &#39;d&#39;: &#39;dog&#39;})
+
+    ==== Checking clear ====
+Method: __iter__
+Method: __getitem__, Key: b
+Method: __delitem__, Key: b
+Method: __iter__
+Method: __getitem__, Key: c
+Method: __delitem__, Key: c
+Method: __iter__
+Method: __getitem__, Key: d
+Method: __delitem__, Key: d
+Method: __iter__
+VerboseDict({})
+
+    ==== Checking setdefault ====
+Method: __getitem__, Key: a
+Method: __setitem__, Key: a
+pepsi
+VerboseDict({&#39;a&#39;: &#39;pepsi&#39;})
+</code></pre></div>
+
+<h2>Going ballistic with custom data structures</h2>
+<p>This section discusses two advanced data structures that I mentioned at the beginning
+of the post.</p>
+<ul>
+<li>BitSet : Mutable set-like data structure that doesn't perform hashing.</li>
+<li>SQLAlchemyDict: Mutable dict-like data structure that can store key-value pairs in
+any SQLAlchemy supported relational database.</li>
+</ul>
+<h3>BitSet</h3>
+<p>This mutable set-like data structure doesn't perform hashing to store data. It can
+store integers in a fixed range. While storing integers, <code>BitSet</code> objects use less
+memory compared to built-in sets.</p>
+<p>However, since no hashing happens, it's slower to perform addition and retrieval
+compared to built-in sets. The following code snippet was taken directly from
+<a href="https://twitter.com/raymondh">Raymond Hettinger</a>'s 2019 PyCon Russia
+<a href="https://www.youtube.com/watch?v=S_ipdVNSFlo">talk</a> on advanced data structures.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableSet</span>
+
+
+<span class="k">class</span> <span class="nc">BitSet</span><span class="p">(</span><span class="n">MutableSet</span><span class="p">):</span>
+    <span class="s2">&quot;Ordered set with compact storage for integers in a fixed range&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="n">num_bytes</span> <span class="o">=</span> <span class="p">(</span><span class="n">limit</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">num_bytes</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">|=</span> <span class="n">iterable</span>
+
+    <span class="k">def</span> <span class="nf">_get_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">elem</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">elem</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">elem</span><span class="si">!r}</span><span class="s2"> must be in range 0 &lt;= elem &lt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">):</span>
+        <span class="n">bytenum</span><span class="p">,</span> <span class="n">bitnum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_location</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">bytenum</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">bitnum</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">):</span>
+        <span class="n">bytenum</span><span class="p">,</span> <span class="n">bitnum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_location</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">bytenum</span><span class="p">]</span> <span class="o">|=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">bitnum</span>
+
+    <span class="k">def</span> <span class="nf">discard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">):</span>
+        <span class="n">bytenum</span><span class="p">,</span> <span class="n">bitnum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_location</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">bytenum</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">bitnum</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">elem</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(limit=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="si">}</span><span class="s2">, iterable=</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_from_iterable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">,</span> <span class="n">iterable</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Let's inspect the above data structure to understand exactly how much memory we can
+save. I'll digress a little here. Normally, you'd use <code>sys.getsizeof</code> to measure the
+memory footprint of an object where the function reveals the size in bytes.</p>
+<p>But there's a problem. The function <code>sys.getsizeof</code> only reveals the size of the target
+object, excluding the objects the target objects might be referring to. To understand
+what I mean, consider the following situation:</p>
+<p>Suppose, you have a nested list that looks like this:</p>
+<div class="highlight"><pre><span></span><code><span class="n">lst</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+</code></pre></div>
+
+<p>When you apply <code>sys.getsizeof</code> function on the list, it shows 96 bytes. This means only
+the outermost list consumes 96 bytes of memory. Here, <code>sys.getsizeof</code> doesn't include
+the size of the nested lists.</p>
+<p>The same is true for other data structures. In case of nested dictionaries,
+<code>sys.getsizeof</code> will not include the size of nested data structures. I'll only reveal
+the size of the outermost dictionary object. The following snippet will traverse through
+the reference tree of a nested object and reveal the <em>true</em> size of it.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Container</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">getsizeof</span>
+
+
+<span class="k">def</span> <span class="nf">deep_getsizeof</span><span class="p">(</span><span class="n">o</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">ids</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Find the memory footprint of a Python object.</span>
+
+<span class="sd">    This is a recursive function that drills down a Python object graph</span>
+<span class="sd">    like a dictionary holding nested dictionaries with lists of lists</span>
+<span class="sd">    and tuples and sets.</span>
+
+<span class="sd">    The sys.getsizeof function does a shallow size of only. It counts each</span>
+<span class="sd">    object inside a container as pointer only regardless of how big it</span>
+<span class="sd">    really is.</span>
+
+<span class="sd">    Params</span>
+<span class="sd">    ------</span>
+<span class="sd">     o: object</span>
+<span class="sd">        The object</span>
+<span class="sd">     ids: None</span>
+<span class="sd">        Later an iterable is assigned to store the object ids</span>
+
+<span class="sd">     Returns</span>
+<span class="sd">     --------</span>
+<span class="sd">     int</span>
+<span class="sd">        Returns the size of object in bytes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="n">deep_getsizeof</span>
+    <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">getsizeof</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="n">ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">r</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">r</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">o</span><span class="o">.</span><span class="n">iteritems</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">Container</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">r</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">o</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">r</span>
+</code></pre></div>
+
+<p>Let's use the <code>deep_getsizeof</code> to inspect the size differences between built-in set and
+<code>BitSet</code> objects.</p>
+<div class="highlight"><pre><span></span><code><span class="n">bs</span> <span class="o">=</span> <span class="n">BitSet</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">iterable</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">s</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Normal Set object: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BitSet object: </span><span class="si">{</span><span class="n">bs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Size of a normal Set object: </span><span class="si">{</span><span class="n">deep_getsizeof</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Size of a BitSet object: </span><span class="si">{</span><span class="n">deep_getsizeof</span><span class="p">(</span><span class="n">bs</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>Normal Set object: {0, 4}
+BitSet object: BitSet(limit=5, iterable=[0, 4])
+Size of a normal Set object: 268 bytes
+Size of a BitSet object: 100 bytes
+</code></pre></div>
+
+<p>The output of the print statements reveal that the <code>BitSet</code> object uses less than half
+the memory compared to its built-in counterpart!</p>
+<h3>SQLAlchemyDict</h3>
+<p>Here goes the second type of custom data structure that I mentioned in the
+introduction. It's also a mutable dict-like structure that can automatically store
+key-value pairs to any SQLAlchemy supported relational database when initialized.</p>
+<p>I was inspired to write this one from the same Raymond Hettinger talk that I mentioned
+before. For demonstration purposes, I've chosen <code>SQLite</code> databse to store the key value
+pairs.</p>
+<p>This structure gives you immense power since you can abstract away the entire process
+of database communication inside the custom object. You'll perform <code>get-set-delete</code>
+operations on the object just like you'd do so with built-in dictionary objects and the
+custom object will take care of storing and updating the data to the target database.</p>
+<p>Before running the code snippet below, you'll need to install SQLAlchemy as an external
+dependency.</p>
+<div class="highlight"><pre><span></span><code><span class="n">sqla_dict</span><span class="o">.</span><span class="n">py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This is a self contained custom data structure with dict like</span>
+<span class="sd">key-value storage capabilities.</span>
+<span class="sd">* Can store the key-value pairs in any sqlalchemy supported db</span>
+<span class="sd">* Employs thread safe transactional scope</span>
+<span class="sd">* Modular, just change the session_scope to use a different db</span>
+<span class="sd">* This example uses sqlite db for demonstration purpose</span>
+<span class="sd">The code is inspired by Raymond Hettinger&#39;s talk `Build powerful,</span>
+<span class="sd">new data structures with Python&#39;s abstract base classes`.</span>
+<span class="sd">https://www.youtube.com/watch?v=S_ipdVNSFlo</span>
+<span class="sd">MIT License</span>
+<span class="sd">Copyright (c) 2020 Redowan Delowar</span>
+<span class="sd">Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">in the Software without restriction, including without limitation the rights</span>
+<span class="sd">to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">furnished to do so, subject to the following conditions:</span>
+<span class="sd">The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">copies or substantial portions of the Software.</span>
+<span class="sd">THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">SOFTWARE.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">text</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.exc</span> <span class="kn">import</span> <span class="n">OperationalError</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">sessionmaker</span>
+
+
+<span class="k">def</span> <span class="nf">create_transaction_session</span><span class="p">(</span><span class="n">dburl</span><span class="p">):</span>
+    <span class="c1"># an engine, which the Session will use for connection resources</span>
+    <span class="n">some_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">dburl</span><span class="p">)</span>
+
+    <span class="c1"># create a configured &quot;Session&quot; class</span>
+    <span class="n">Session</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">some_engine</span><span class="p">)</span>
+
+    <span class="nd">@contextmanager</span>
+    <span class="k">def</span> <span class="nf">session_scope</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;Provide a transactional scope around a series of operations.&quot;&quot;&quot;</span>
+
+        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">session</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="n">OperationalError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">session_scope</span>
+
+
+<span class="n">session_scope</span> <span class="o">=</span> <span class="n">create_transaction_session</span><span class="p">(</span><span class="s2">&quot;sqlite:///foo.db&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">SQLAlechemyDict</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">session_scope</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbname</span> <span class="o">=</span> <span class="n">dbname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_scope</span> <span class="o">=</span> <span class="n">session_scope</span>
+
+        <span class="k">if</span> <span class="n">items</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE Dict (key text, value text)&quot;</span><span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE UNIQUE INDEX KIndx ON Dict (key)&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="n">text</span><span class="p">(</span><span class="s2">&quot;INSERT INTO  Dict VALUES (:key, :value)&quot;</span><span class="p">),</span>
+                <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="n">text</span><span class="p">(</span><span class="s2">&quot;SELECT value FROM Dict WHERE key=:key&quot;</span><span class="p">),</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="n">text</span><span class="p">(</span><span class="s2">&quot;DELETE FROM Dict WHERE key=:key&quot;</span><span class="p">),</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">}</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT COUNT(*) FROM Dict&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT key FROM Dict&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">r</span><span class="o">.</span><span class="n">fetchall</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(dbname=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dbname</span><span class="si">!r}</span><span class="s2">, items=</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="nf">vacuum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;VACUUM;&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># test the struct</span>
+    <span class="n">sqladict</span> <span class="o">=</span> <span class="n">SQLAlechemyDict</span><span class="p">(</span>
+        <span class="n">dbname</span><span class="o">=</span><span class="s2">&quot;foo.db&quot;</span><span class="p">,</span> <span class="n">session_scope</span><span class="o">=</span><span class="n">session_scope</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;hello&quot;</span><span class="p">:</span> <span class="s2">&quot;world&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">sqladict</span><span class="p">)</span>
+    <span class="n">sqladict</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;val&quot;</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">sqladict</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="c1"># &gt;&gt;&gt; SQLAlechemyDict(dbname=&#39;foo.db&#39;, items=[(&#39;hello&#39;, &#39;world&#39;), (&#39;key&#39;, &#39;val&#39;)])</span>
+    <span class="c1"># &gt;&gt;&gt; hello</span>
+    <span class="c1"># &gt;&gt;&gt; key</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>SQLAlechemyDict(dbname=&#39;foo.db&#39;, items=[(&#39;hello&#39;, &#39;world&#39;), (&#39;key&#39;, &#39;val&#39;)])
+hello
+key
+</code></pre></div>
+
+<p>Running the above code snippet will create a SQLite database named <code>foo.db</code> in your
+current working directory. You can inspect the database with any database viewer and
+find your key-value pairs there. Everything else is the same as a built-in dictionary
+object.</p>
+<h2>References</h2>
+<ul>
+<li><a href="https://realpython.com/python-interface/">Implementing an Interface in Python - Real Python</a></li>
+<li><a href="https://stackoverflow.com/questions/533631/what-is-a-mixin-and-why-are-they-useful">What is a mixin, and why are they useful? - Stack Overflow</a></li>
+<li><a href="https://easyaspython.com/mixins-for-fun-and-profit-cb9962760556">Mixins for Fun and Profit - Dan Hillard</a></li>
+<li><a href="https://github.com/psf/requests/blob/8149e9fe54c36951290f198e90d83c8a0498289c/requests/models.py#L60">Mixins in the Requests Library</a></li>
+<li><a href="https://www.youtube.com/watch?v=S_ipdVNSFlo">Build powerful, new data structures with Python's abstract base classes - Raymond Hettinger</a></li>
+</ul>
+
+
+             
+ 
+            
+            
+            
+
+
+
+
+
+
+
+            <hr/>
+        </div>
+        <section id="article-sidebar" class="span2">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2020-07-03T00:00:00+06:00">Fri 03 July 2020</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#python-ref">python</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#python-ref">Python
+                    <span class="superscript">58</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+<div id="sidebar-social-link">
+    <a href="mailto:redowan.nafi@gmail.com" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Mail" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#328cff"/><path d="m250 186c-46 0-69 35-69 74 0 44 29 72 68 72 43 0 73-32 73-75 0-44-34-71-72-71zm-1-37c30 0 57 13 77 33 0-22 35-22 35 1v150c-1 10 10 16 16 9 25-25 54-128-14-187-64-56-149-47-195-15-48 33-79 107-49 175 33 76 126 99 182 76 28-12 41 26 12 39-45 19-168 17-225-82-38-68-36-185 67-248 78-46 182-33 244 32 66 69 62 197-2 246-28 23-71 1-71-32v-11c-20 20-47 32-77 32-57 0-108-51-108-108 0-58 51-110 108-110" fill="#fff"/></svg>
+    </a>
+    <a href="https://github.com/rednafi" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="GitHub" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1B1817"/><path fill="#fff" d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+    </a>
+    <a href="https://twitter.com/rednafi" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Twitter" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1da1f3"/><path fill="#fff" d="M437 152a72 72 0 0 1-40 12 72 72 0 0 0 32-40 72 72 0 0 1-45 17 72 72 0 0 0-122 65 200 200 0 0 1-145-74 72 72 0 0 0 22 94 72 72 0 0 1-32-7 72 72 0 0 0 56 69 72 72 0 0 1-32 1 72 72 0 0 0 67 50 200 200 0 0 1-105 29 200 200 0 0 0 309-179 200 200 0 0 0 35-37"/></svg>
+    </a>
+    <a href="https://www.goodreads.com/user/show/53485837-redowan-delowar" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg height="512" viewBox="0 0 512 512" width="512" xmlns="http://www.w3.org/2000/svg"><rect fill="#EAE6CF" height="512" rx="64" width="512"/><path d="m254.92444 336.92444c43.2889-.36 74.07112-22.01333 92.33334-64.95111h.95556v65.48889c0 4.88-.32 12.44889-.95556 22.73333-1.30222 10.64445-4.78222 22.10223-10.42666 34.36889-5.65778 11.54667-14.79112 21.38667-27.37778 29.49778-12.44889 8.84-29.81778 13.44-52.12001 13.80444-21.48444 0-39.65333-5.59555-54.52444-16.77777-15.2-11.00889-24.08001-28.87111-26.65778-53.58667h-18.89778c1.93778 32.11111 12.18667 55.02667 30.76444 68.74222 18.08889 13.16445 41.04001 19.75556 68.83556 19.75556 27.45778 0 48.87112-5.14223 64.21778-15.43111 15.18223-9.92 26.08445-22.28445 32.71556-37.08 6.62222-14.79111 10.58222-28.86667 11.86667-42.21334.98222-13.35555 1.45778-22.91555 1.45778-28.68889v-270.088875h-18.90667v59.537775h-.95556c-7.27555-21.82667-19.30666-38.333335-36.12-49.524445-16.96-11.00445-35.70222-16.51111-56.21333-16.51111-35.72001.72444-62.85779 14.52444-81.43112 41.40889-19.07111 26.697775-28.59556 59.631105-28.59556 98.782195 0 40.23557 9.04445 73.52001 27.13334 99.86224 18.27555 26.88889 45.89778 40.51111 82.90222 40.87111zm-68.34222-224.89777c14.85333-24.359995 37.63111-36.986665 68.34222-37.888885 31.50223.90666 54.83556 13.17333 70.03556 36.808885 15.18223 23.64 22.77778 52.05331 22.77778 85.25331s-7.59555 61.43112-22.77778 84.70668c-15.2 24.72444-38.53333 37.34667-70.03556 37.88889-29.72889-.54667-52.36-12.81778-67.86222-36.80889-15.67556-23.27556-23.50667-51.87112-23.50667-85.79112-.004-31.75556 7.67111-59.81332 23.02667-84.16887z" fill="#743901"/></svg>
+    </a>
+    <a href="/reflections/feeds/all.atom.xml" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="RSS" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#f80"/><circle cx="145" cy="367" r="35" fill="#fff"/><path fill="none" stroke="#fff" stroke-width="60" d="M109 241c89 0 162 73 162 162M109 127c152 0 276 124 276 276"/></svg>
+    </a>
+</div>
+            
+
+
+
+
+
+            
+
+
+
+
+
+        </section>
+</div>
+</article>
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe.
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides.
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>                    </div>
+                    <div class="span1"></div>
+                </div>
+            </div>
+        </div>
+<footer>
+
+
+
+    <div id="fpowered">
+
+            © 2020-2022 • Redowan Delowar • All Rights Reserved
+
+
+    </div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="./theme/js/elegant.prod.9e9d5ce754.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    <script>
+    (function () {
+        if (window.location.hash.match(/^#comment-\d+$/)) {
+            $('#comment_thread').collapse('show');
+        }
+    })();
+    window.onhashchange=function(){
+        if (window.location.hash.match(/^#comment-\d+$/))
+            window.location.reload(true);
+    }
+    $('#comment_thread').on('shown', function () {
+        var link = document.getElementById('comment-accordion-toggle');
+        var old_innerHTML = link.innerHTML;
+        $(link).fadeOut(200, function() {
+            $(this).text('Click here to hide comments').fadeIn(200);
+        });
+        $('#comment_thread').on('hidden', function () {
+            $(link).fadeOut(200, function() {
+                $(this).text(old_innerHTML).fadeIn(200);
+            });
+        })
+    })
+</script>
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+        License : MIT -->
+</html>

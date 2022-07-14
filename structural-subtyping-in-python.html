@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.prod.9e9d5ce754.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+        <meta name="google-site-verification" content="<meta name='google-site-verification' content='N5QEPRj-LpgoEY0Hf3uVMmZq8kjDwTFjd54IgvLmRBc' />" />        <meta name="author" content="Redowan Delowar" />
+
+        <meta name="description" content="I love using Go&#39;s interface feature to declaratively define my public API structure. Consider this example: package main import ( &#34;fmt&#34; ) // Declare the interface. type Geometry interface { area() float64 perim() float64 } // Struct that represents a rectangle. type rect struct { width, height float64 } // Method to calculate the area of a rectangle instance …
+" />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="Python, Typing, python, " />
+
+<meta property="og:title" content="Structural subtyping in Python "/>
+<meta property="og:url" content="./structural-subtyping-in-python.html" />
+<meta property="og:description" content="I love using Go&#39;s interface feature to declaratively define my public API structure. Consider this example: package main import ( &#34;fmt&#34; ) // Declare the interface. type Geometry interface { area() float64 perim() float64 } // Struct that represents a rectangle. type rect struct { width, height float64 } // Method to calculate the area of a rectangle instance …" />
+<meta property="og:site_name" content="Redowan&#39;s Reflections" />
+<meta property="og:article:author" content="Redowan Delowar" />
+<meta property="og:article:published_time" content="2021-12-04T00:00:00+06:00" />
+<meta name="twitter:title" content="Structural subtyping in Python ">
+<meta name="twitter:description" content="I love using Go&#39;s interface feature to declaratively define my public API structure. Consider this example: package main import ( &#34;fmt&#34; ) // Declare the interface. type Geometry interface { area() float64 perim() float64 } // Struct that represents a rectangle. type rect struct { width, height float64 } // Method to calculate the area of a rectangle instance …">
+<meta property="og:image" content="https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png" />
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png" >
+
+        <title>Structural subtyping in Python  · Redowan&#39;s Reflections
+</title>
+        <link href="https://rednafi.github.io/reflections/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Redowan&#39;s Reflections - Full Atom Feed" />
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-217287505-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    </head>
+    <body>
+        <div id="content">
+            <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <a class="brand" href="./"><span class=site-name>Redowan's Reflections</span></a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-right top-menu">
+                                <li >
+                                    <a href=
+                                       .
+                                    >Home</a>
+                                </li>
+                                <li ><a href="./pages/contact.html">Contact</a></li>
+                                <li ><a href="./categories.html">Categories</a></li>
+                                <li ><a href="./tags.html">Tags</a></li>
+                                <li ><a href="./archives.html">Archives</a></li>
+                                <li>
+                                  <form action="https://www.google.com/search" class="navbar-search" method="get" name="searchform" target="_blank">
+                                    <input name="sitesearch" type="hidden"
+                                    value="rednafi.github.io/reflections">
+                                    <input autocomplete="on" class="search-query" name="q" placeholder="Search"
+                                    required="required"  type="text">
+                                    <input type="submit" value="Search" style="visibility: hidden;" /></form>
+                                  </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span1"></div>
+                    <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+        <h1>
+            <a href="./structural-subtyping-in-python.html">
+                Structural subtyping in Python
+            </a>
+        </h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+            
+            <p>I love using Go's interface feature to declaratively define my public API structure.
+Consider this example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nx">main</span><span class="w"></span>
+
+<span class="kn">import</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;fmt&quot;</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+
+<span class="c1">// Declare the interface.</span><span class="w"></span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">Geometry</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">area</span><span class="p">()</span><span class="w"> </span><span class="kt">float64</span><span class="w"></span>
+<span class="w">    </span><span class="nx">perim</span><span class="p">()</span><span class="w"> </span><span class="kt">float64</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// Struct that represents a rectangle.</span><span class="w"></span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">rect</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">width</span><span class="p">,</span><span class="w"> </span><span class="nx">height</span><span class="w"> </span><span class="kt">float64</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// Method to calculate the area of a rectangle instance.</span><span class="w"></span>
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">rect</span><span class="p">)</span><span class="w"> </span><span class="nx">area</span><span class="p">()</span><span class="w"> </span><span class="kt">float64</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">width</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">height</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// Method to calculate the perimeter of a rectange instance.</span><span class="w"></span>
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">rect</span><span class="p">)</span><span class="w"> </span><span class="nx">perim</span><span class="p">()</span><span class="w"> </span><span class="kt">float64</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">width</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// Notice that we&#39;re calling the methods on the interface,</span><span class="w"></span>
+<span class="c1">// not on the instance of the Rectangle struct directly.</span><span class="w"></span>
+<span class="kd">func</span><span class="w"> </span><span class="nx">measure</span><span class="p">(</span><span class="nx">g</span><span class="w"> </span><span class="nx">Geometry</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">g</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">area</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">g</span><span class="p">.</span><span class="nx">perim</span><span class="p">())</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nx">r</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">rect</span><span class="p">{</span><span class="nx">width</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nx">height</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nx">measure</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can play around with the example <a href="https://go.dev/play/p/RG82v5Ubdlc">here</a>.
+Running the example will print:</p>
+<div class="highlight"><pre><span></span><code>&amp;{3 4}
+12
+14
+</code></pre></div>
+
+<p>Even if you don't speak Go, you can just take a look at the <code>Geometry</code> interface and
+instantly know that the function <code>measure</code> expects a struct that implements the
+<code>Geometry</code> interface where the <code>Geometry</code> interface is satisfied when the struct
+implements two methods—<code>area</code> and <code>perim</code>. The function <code>measure</code> doesn't care whether
+the struct is a rectangle, a circle, or a square. As long as it implements the interface
+<code>Geometry</code>, <code>measure</code> can work on it and calculate the area and the perimeter.</p>
+<p>This is extremely powerful as it allows you to achieve polymorphism like dynamic
+languages without letting go of type safety. If you try to pass a struct that doesn't
+fully implement the interface, the compiler will throw a type error.</p>
+<p>In the world of Python, this polymorphism is achieved dynamically. Consider this example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span> <span class="n">needle</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">needle</span> <span class="ow">in</span> <span class="n">haystack</span>
+</code></pre></div>
+
+<p>Here, the type of the <code>haystack</code> can be anything that supports the <code>in</code> operation. It
+can be a <code>list</code>, <code>tuple</code>, <code>set</code>, or <code>dict</code>; basically, any type that has the
+<code>__contains__</code> method. Python's duck typing is more flexible than any static typing as
+you won't have to tell the function anything about the type of the parameters and it'll
+work spectacularly; it's a dynamically typed language, duh! The only problem is the lack
+of type safety. Since there's no compilation step in Python, it won't stop you from
+accidentally putting a type that <code>haystack</code> doesn't support and Python will only raise a
+<code>TypeError</code> when your try to run the code.</p>
+<p>In bigger codebases, this can often become tricky as it's difficult to tell the types of
+these uber-dynamic function parameters without reading through all the methods that are
+being called on them. In this situation, we want the best of the both world; we want the
+flexibility of dynamic polymorphism and at the same time, we want some sort of type
+safety. Moreover, the Go code is self-documented to some extent and I'd love this kind
+of <code>polymorphic | type-safe | self-documented</code> trio in Python. Let's try to use nominal
+type hinting to statically type the following example:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># src.py</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">haystack</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">needle</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">needle</span> <span class="ow">in</span> <span class="n">haystack</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">haystack</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+    <span class="n">needle</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">contains</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span> <span class="n">needle</span><span class="p">))</span>
+</code></pre></div>
+
+<p>In this snippet, we're declaring <code>haystack</code> to be a <code>dict</code> and then passing a <code>set</code> to
+the function parameter. If you try to run this function, it'll happily print <code>True</code>.
+However, if you run <a href="https://mypy.readthedocs.io/en/stable/">mypy</a> against this file,
+it'll complain as follows:</p>
+<div class="highlight"><pre><span></span><code><span class="n">src</span><span class="p">.</span><span class="nl">py</span><span class="p">:</span><span class="mi">17</span><span class="err">:</span><span class="w"> </span><span class="nl">error</span><span class="p">:</span><span class="w"> </span><span class="n">Argument</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="ss">&quot;find&quot;</span><span class="w"> </span><span class="n">has</span><span class="w"> </span><span class="n">incompatible</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="ss">&quot;Set[int]&quot;</span><span class="p">;</span><span class="w"> </span><span class="n">expected</span><span class="w"></span>
+<span class="ss">&quot;Dict[Any, Any]&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="k">print</span><span class="p">(</span><span class="k">contains</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span><span class="w"> </span><span class="n">needle</span><span class="p">))</span><span class="w"></span>
+<span class="w">                       </span><span class="o">^</span><span class="w"></span>
+<span class="k">Found</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">file</span><span class="w"> </span><span class="p">(</span><span class="n">checked</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="n">files</span><span class="p">)</span><span class="w"></span>
+<span class="nl">make</span><span class="p">:</span><span class="w"> </span><span class="o">***</span><span class="w"> </span><span class="o">[</span><span class="n">makefile:61: mypy</span><span class="o">]</span><span class="w"> </span><span class="n">Error</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+</code></pre></div>
+
+<p>That's because mypy expects the type to be a dict but we're passing a <code>set</code> which is
+incompatible. During runtime, Python doesn't raise any error because the <code>set</code> that
+we're passing as the value of <code>haystack</code>, supports <code>in</code> operation. But we're not
+communicating that with the type checker properly and mypy isn't happy about that. To
+fix this mypy error, we can use Union type.</p>
+<div class="highlight"><pre><span></span><code><span class="o">...</span>
+
+
+<span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="n">haystack</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">set</span><span class="p">,</span> <span class="n">needle</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">needle</span> <span class="ow">in</span> <span class="n">haystack</span>
+
+
+<span class="o">...</span>
+</code></pre></div>
+
+<p>This will make mypy happy. However, it's still not bulletproof. If you try to pass a
+<code>list</code> object as the value of <code>haystack</code>, mypy will complain again. So, nominal typing
+can get a bit tedious in this kind of situation, as you'd have to explicitly tell the
+type checker about every type that a variable can expect. There's a better way!</p>
+<p>Enter <a href="https://www.python.org/dev/peps/pep-0544/#nominal-vs-structural-subtyping">structural subtyping</a>.
+We know that the value of <code>haystack</code> can be anything that has the <code>__contains__</code> method.
+So, instead of explicitly defining the name of all the allowed types—we can create a
+class, add the <code>__contains__</code> method to it, and signal mypy the fact that <code>haystack</code> can
+be anything that has the <code>__contains__</code> method. Python's <code>typing.Protocol</code> class allows
+us to do that. Let's use that:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># src.py</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">runtime_checkable</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">ProtoHaystack</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="o">...</span>
+
+
+<span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">haystack</span><span class="p">:</span> <span class="n">ProtoHaystack</span><span class="p">,</span> <span class="n">needle</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">needle</span> <span class="ow">in</span> <span class="n">haystack</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">haystack</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+    <span class="n">needle</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">find</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span> <span class="n">needle</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ProtoHaystack</span><span class="p">,</span> <span class="n">haystack</span><span class="p">))</span>
+</code></pre></div>
+
+<p>Here, the <code>ProtoHaystack</code> class statically defines the structure of the type of objects
+that are allowed to be passed as the value of <code>haystack</code>. The instance method
+<code>__contains__</code> accepts an object (obj) as the second parameter and returns a boolean
+value based on the fact whether that <code>obj</code> exists in the <code>self</code> instance or not. Now if
+you run mypy on this snippet, it'll be satisfied.</p>
+<p>The <code>runtime_checkable</code> decorator on the <code>ProtoHaystack</code> class allows you to check
+whether a target object is an instance of the <code>ProtoHaystack</code> class in runtime via the
+<code>isinstance()</code> function. Without the decorator, you'll only be able to test the
+conformity of an object to <code>ProtoHaystack</code> statically but not in runtime.</p>
+<p>This pattern of strurctural duck typing is so common, that the mixins in the
+<code>collections.abc</code> module are now compatible with structural type checking. So, in this
+case, instead of creating a <code>ProtoHaystack</code> class, you can directly use the <code>collections.
+abc.Container</code> class from the standard library and it'll do the same job.</p>
+<div class="highlight"><pre><span></span><code><span class="o">...</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Container</span>
+
+
+<span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">haystack</span><span class="p">:</span> <span class="n">Container</span><span class="p">,</span> <span class="n">needle</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">needle</span> <span class="ow">in</span> <span class="n">haystack</span>
+
+
+<span class="o">...</span>
+</code></pre></div>
+
+<h2>Avoid <code>abc</code> inheritance</h2>
+<p>Abstract base classes in Python let you validate the structure of subclasses in runtime.
+Python's standard library APIs uses <code>abc.ABC</code> in many places. See this example:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># src.py</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">abstractclassmethod</span><span class="p">,</span> <span class="n">abstractproperty</span>
+
+
+<span class="k">class</span> <span class="nc">FooInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractclassmethod</span>
+    <span class="k">def</span> <span class="nf">baz</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">qux</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Foo</span><span class="p">(</span><span class="n">FooInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Foo implements FooInterface.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;from instance method&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">baz</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;from class method&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">qux</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;from property method&quot;</span>
+</code></pre></div>
+
+<p>Here, the class <code>FooInterface</code> inherits from <code>abc.ABC</code> and then the methods are
+decorated with <code>abstract*</code> decorators. The combination of <code>abc.ABC</code> class and these
+decorators make sure that any class that inherits from <code>FooInterface</code> will have to
+implement the <code>bar</code>, <code>baz</code>, and <code>qux</code> methods. Failing to do so will raise a
+<code>TypeError</code>. The <code>Foo</code> class implements the <code>FooInterface</code>.</p>
+<p>This works well in theory and practice but often time, people inadvertently start to use
+the <code>*Interface</code> classes to share implementation methods with the subclasses. When you
+pollute your interface with implementation methods, theoretically, it no longer stays
+and <strong>interface</strong> class. Go doesn't even allow you to add implementation methods to
+interfaces. Abstract base classes have their places and often time, you can't avoid them
+if you need a dependable runtime interface conformity check.</p>
+<p>However, more often than not, using <code>Protocol</code> classes with <code>@runtime_checkable</code>
+decorator works really well. Here, the <code>Protocol</code> class implicitly (just like Go
+interfaces) makes sure that your subclasses conform to the structure that you want, and
+the decorator, along with <code>isinstance</code> check can guarantee the conformity in runtime.
+Let's replace the <code>abc.ABC</code> and the shenanigans with the decorators with
+<code>typing.Protocol</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">runtime_checkable</span>
+
+
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">ProtoFoo</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">baz</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">qux</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="o">...</span>
+
+
+<span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;from instance method&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">baz</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;from class method&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">qux</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;from property method&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">foo</span><span class="p">:</span> <span class="n">ProtoFoo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">ProtoFoo</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Foo do not conform to Protofoo interface&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="n">bar</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="n">baz</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">foo</span><span class="o">.</span><span class="n">qux</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">()</span>
+    <span class="n">run</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Notice that <code>Foo</code> is not inheriting from <code>ProtoFoo</code> and when you run mypy against the
+snippet, it'll statically check whether <code>Foo</code> conforms to the <code>ProtoFoo</code> interface or
+not. Voila, we avoided inheritance. The <code>isinstance</code> in the <code>run</code> function later checks
+whether <code>foo</code> is an instance of <code>ProtoFoo</code> or not.</p>
+<h2>Complete example with tests</h2>
+<p>This example employs static duck-typing to check the type of <code>WebhookPayload</code> where the
+class represents the structure of the payload that is going to be sent to an URL by the
+<code>send_webhook</code> function.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Placeholder python file to test the snippets</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">runtime_checkable</span>
+
+
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">ProtoPayload</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">WebhookPayload</span><span class="p">:</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;https://dummy.com/post/&quot;</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Dummy message&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+
+<span class="c1"># Notice the type accepted by the function.</span>
+<span class="c1"># Go-like static polymorphism right there!</span>
+<span class="k">def</span> <span class="nf">send_webhook</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="n">ProtoPayload</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function doesn&#39;t care what type of Payload it gets</span>
+<span class="sd">    as long as the payload conforms to &#39;ProtoPayload&#39; structure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Webhook message: </span><span class="si">{</span><span class="n">payload</span><span class="o">.</span><span class="n">json</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sending webhook to </span><span class="si">{</span><span class="n">payload</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">TestWebHookPayload</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">payload</span> <span class="o">=</span> <span class="n">WebhookPayload</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">test_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># We can do isinstance check because we decorated the</span>
+        <span class="c1"># &#39;ProtoPayload&#39; class with the &#39;runtime_checkable&#39; decorator.</span>
+        <span class="n">implements_protocol</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">payload</span><span class="p">,</span> <span class="n">ProtoPayload</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">implements_protocol</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+
+<h2>Disclaimer</h2>
+<p>All the code snippets here are using Python 3.10's type annotation syntax. However, if
+you're using <code>from __future__ import annotations</code>, you'll be able to run all of them in
+earlier Python versions, going as far back as Python 3.7.</p>
+<h2>References</h2>
+<ul>
+<li><a href="https://www.python.org/dev/peps/pep-0544/">PEP 544 -- Protocols: Structural subtyping (static duck typing)</a></li>
+</ul>
+
+
+             
+ 
+            
+            
+            
+
+
+
+
+
+
+
+            <hr/>
+        </div>
+        <section id="article-sidebar" class="span2">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2021-12-04T00:00:00+06:00">Sat 04 December 2021</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#python-ref">python</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#python-ref">Python
+                    <span class="superscript">58</span>
+</a></li>
+                <li><a href="./tags.html#typing-ref">Typing
+                    <span class="superscript">9</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+<div id="sidebar-social-link">
+    <a href="mailto:redowan.nafi@gmail.com" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Mail" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#328cff"/><path d="m250 186c-46 0-69 35-69 74 0 44 29 72 68 72 43 0 73-32 73-75 0-44-34-71-72-71zm-1-37c30 0 57 13 77 33 0-22 35-22 35 1v150c-1 10 10 16 16 9 25-25 54-128-14-187-64-56-149-47-195-15-48 33-79 107-49 175 33 76 126 99 182 76 28-12 41 26 12 39-45 19-168 17-225-82-38-68-36-185 67-248 78-46 182-33 244 32 66 69 62 197-2 246-28 23-71 1-71-32v-11c-20 20-47 32-77 32-57 0-108-51-108-108 0-58 51-110 108-110" fill="#fff"/></svg>
+    </a>
+    <a href="https://github.com/rednafi" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="GitHub" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1B1817"/><path fill="#fff" d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+    </a>
+    <a href="https://twitter.com/rednafi" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Twitter" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1da1f3"/><path fill="#fff" d="M437 152a72 72 0 0 1-40 12 72 72 0 0 0 32-40 72 72 0 0 1-45 17 72 72 0 0 0-122 65 200 200 0 0 1-145-74 72 72 0 0 0 22 94 72 72 0 0 1-32-7 72 72 0 0 0 56 69 72 72 0 0 1-32 1 72 72 0 0 0 67 50 200 200 0 0 1-105 29 200 200 0 0 0 309-179 200 200 0 0 0 35-37"/></svg>
+    </a>
+    <a href="https://www.goodreads.com/user/show/53485837-redowan-delowar" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg height="512" viewBox="0 0 512 512" width="512" xmlns="http://www.w3.org/2000/svg"><rect fill="#EAE6CF" height="512" rx="64" width="512"/><path d="m254.92444 336.92444c43.2889-.36 74.07112-22.01333 92.33334-64.95111h.95556v65.48889c0 4.88-.32 12.44889-.95556 22.73333-1.30222 10.64445-4.78222 22.10223-10.42666 34.36889-5.65778 11.54667-14.79112 21.38667-27.37778 29.49778-12.44889 8.84-29.81778 13.44-52.12001 13.80444-21.48444 0-39.65333-5.59555-54.52444-16.77777-15.2-11.00889-24.08001-28.87111-26.65778-53.58667h-18.89778c1.93778 32.11111 12.18667 55.02667 30.76444 68.74222 18.08889 13.16445 41.04001 19.75556 68.83556 19.75556 27.45778 0 48.87112-5.14223 64.21778-15.43111 15.18223-9.92 26.08445-22.28445 32.71556-37.08 6.62222-14.79111 10.58222-28.86667 11.86667-42.21334.98222-13.35555 1.45778-22.91555 1.45778-28.68889v-270.088875h-18.90667v59.537775h-.95556c-7.27555-21.82667-19.30666-38.333335-36.12-49.524445-16.96-11.00445-35.70222-16.51111-56.21333-16.51111-35.72001.72444-62.85779 14.52444-81.43112 41.40889-19.07111 26.697775-28.59556 59.631105-28.59556 98.782195 0 40.23557 9.04445 73.52001 27.13334 99.86224 18.27555 26.88889 45.89778 40.51111 82.90222 40.87111zm-68.34222-224.89777c14.85333-24.359995 37.63111-36.986665 68.34222-37.888885 31.50223.90666 54.83556 13.17333 70.03556 36.808885 15.18223 23.64 22.77778 52.05331 22.77778 85.25331s-7.59555 61.43112-22.77778 84.70668c-15.2 24.72444-38.53333 37.34667-70.03556 37.88889-29.72889-.54667-52.36-12.81778-67.86222-36.80889-15.67556-23.27556-23.50667-51.87112-23.50667-85.79112-.004-31.75556 7.67111-59.81332 23.02667-84.16887z" fill="#743901"/></svg>
+    </a>
+    <a href="/reflections/feeds/all.atom.xml" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="RSS" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#f80"/><circle cx="145" cy="367" r="35" fill="#fff"/><path fill="none" stroke="#fff" stroke-width="60" d="M109 241c89 0 162 73 162 162M109 127c152 0 276 124 276 276"/></svg>
+    </a>
+</div>
+            
+
+
+
+
+
+            
+
+
+
+
+
+        </section>
+</div>
+</article>
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe.
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides.
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>                    </div>
+                    <div class="span1"></div>
+                </div>
+            </div>
+        </div>
+<footer>
+
+
+
+    <div id="fpowered">
+
+            © 2020-2022 • Redowan Delowar • All Rights Reserved
+
+
+    </div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="./theme/js/elegant.prod.9e9d5ce754.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    <script>
+    (function () {
+        if (window.location.hash.match(/^#comment-\d+$/)) {
+            $('#comment_thread').collapse('show');
+        }
+    })();
+    window.onhashchange=function(){
+        if (window.location.hash.match(/^#comment-\d+$/))
+            window.location.reload(true);
+    }
+    $('#comment_thread').on('shown', function () {
+        var link = document.getElementById('comment-accordion-toggle');
+        var old_innerHTML = link.innerHTML;
+        $(link).fadeOut(200, function() {
+            $(this).text('Click here to hide comments').fadeIn(200);
+        });
+        $('#comment_thread').on('hidden', function () {
+            $(link).fadeOut(200, function() {
+                $(this).text(old_innerHTML).fadeIn(200);
+            });
+        })
+    })
+</script>
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+        License : MIT -->
+</html>

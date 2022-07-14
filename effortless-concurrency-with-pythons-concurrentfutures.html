@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.prod.9e9d5ce754.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+        <meta name="google-site-verification" content="<meta name='google-site-verification' content='N5QEPRj-LpgoEY0Hf3uVMmZq8kjDwTFjd54IgvLmRBc' />" />        <meta name="author" content="Redowan Delowar" />
+
+        <meta name="description" content="Writing concurrent code in Python can be tricky. Before you even start, you have to worry about all these icky stuff like whether the task at hand is I/O or CPU bound or whether putting the extra effort to achieve concurrency is even going to give you the boost …
+" />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="Python, python, " />
+
+<meta property="og:title" content="Effortless concurrency with Python&#39;s concurrent.futures "/>
+<meta property="og:url" content="./effortless-concurrency-with-pythons-concurrentfutures.html" />
+<meta property="og:description" content="Writing concurrent code in Python can be tricky. Before you even start, you have to worry about all these icky stuff like whether the task at hand is I/O or CPU bound or whether putting the extra effort to achieve concurrency is even going to give you the boost …" />
+<meta property="og:site_name" content="Redowan&#39;s Reflections" />
+<meta property="og:article:author" content="Redowan Delowar" />
+<meta property="og:article:published_time" content="2020-04-21T00:00:00+06:00" />
+<meta name="twitter:title" content="Effortless concurrency with Python&#39;s concurrent.futures ">
+<meta name="twitter:description" content="Writing concurrent code in Python can be tricky. Before you even start, you have to worry about all these icky stuff like whether the task at hand is I/O or CPU bound or whether putting the extra effort to achieve concurrency is even going to give you the boost …">
+<meta property="og:image" content="https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png" />
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png" >
+
+        <title>Effortless concurrency with Python&#39;s concurrent.futures  · Redowan&#39;s Reflections
+</title>
+        <link href="https://rednafi.github.io/reflections/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Redowan&#39;s Reflections - Full Atom Feed" />
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-217287505-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    </head>
+    <body>
+        <div id="content">
+            <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <a class="brand" href="./"><span class=site-name>Redowan's Reflections</span></a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-right top-menu">
+                                <li >
+                                    <a href=
+                                       .
+                                    >Home</a>
+                                </li>
+                                <li ><a href="./pages/contact.html">Contact</a></li>
+                                <li ><a href="./categories.html">Categories</a></li>
+                                <li ><a href="./tags.html">Tags</a></li>
+                                <li ><a href="./archives.html">Archives</a></li>
+                                <li>
+                                  <form action="https://www.google.com/search" class="navbar-search" method="get" name="searchform" target="_blank">
+                                    <input name="sitesearch" type="hidden"
+                                    value="rednafi.github.io/reflections">
+                                    <input autocomplete="on" class="search-query" name="q" placeholder="Search"
+                                    required="required"  type="text">
+                                    <input type="submit" value="Search" style="visibility: hidden;" /></form>
+                                  </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span1"></div>
+                    <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+        <h1>
+            <a href="./effortless-concurrency-with-pythons-concurrentfutures.html">
+                Effortless concurrency with Python's concurrent.futures
+            </a>
+        </h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+            
+            <p>Writing concurrent code in Python can be tricky. Before you even start, you have to
+worry about all these icky stuff like whether the task at hand is I/O or CPU bound or
+whether putting the extra effort to achieve concurrency is even going to give you the
+boost you need. Also, the presence of Global Interpreter Lock,
+<a href="https://wiki.python.org/moin/GlobalInterpreterLock">GIL</a> foists further limitations on
+writing truly concurrent code. But for the sake of sanity, you can oversimplify it like
+this without being blatantly incorrect:</p>
+<blockquote>
+<p>In Python, if the task at hand is I/O bound, you can use use standard library's
+<code>threading</code> module or if the task is CPU bound then <code>multiprocessing</code> module can be
+your friend. These APIs give you a lot of control and flexibility but they come at the
+cost of having to write relatively low-level verbose code that adds extra layers of
+complexity on top of your core logic. Sometimes when the target task is complicated,
+it's often impossible to avoid complexity while adding concurrency. However, a lot of
+simpler tasks can be made concurrent without adding too much verbosity.</p>
+</blockquote>
+<p>Python standard library also houses a module called the <code>concurrent.futures</code>. This
+module was added in Python 3.2 for providing the developers a high-level interface to
+launch asynchronous tasks. It's a generalized abstraction layer on top of <code>threading</code>
+and <code>multiprocessing</code> modules for providing an interface to run tasks concurrently using
+pools of threads or processes. It's the perfect tool when you just want to run a piece
+of eligible code concurrently and don't need the added modularity that the <code>threading</code>
+and <code>multiprocessing</code> APIs expose.</p>
+<h2>Anatomy of concurrent.futures</h2>
+<p>From the official docs,</p>
+<blockquote>
+<p>The concurrent.futures module provides a high-level interface for asynchronously
+executing callables.</p>
+</blockquote>
+<p>What it means is you can run your subroutines asynchronously using either threads or
+processes through a common high-level interface. Basically, the module provides an
+abstract class called <code>Executor</code>. You can't instantiate it directly, rather you need to
+use one of two subclasses that it provides to run your tasks.</p>
+<div class="highlight"><pre><span></span><code>Executor (Abstract Base Class)
+│
+├── ThreadPoolExecutor
+│
+│   │A concrete subclass of the Executor class to
+│   │manage I/O bound tasks with threading underneath
+│
+├── ProcessPoolExecutor
+│
+│   │A concrete subclass of the Executor class to
+│   │manage CPU bound tasks with multiprocessing underneath
+</code></pre></div>
+
+<p>Internally, these two classes interact with the pools and manage the workers. <code>Future</code>s
+are used for managing results computed by the workers. To use a pool of workers, an
+application creates an instance of the appropriate executor class and then submits them
+for it to run. When each task is started, a <code>Future</code> instance is returned. When the
+result of the task is needed, an application can use the <code>Future</code> object to block until
+the result is available. Various APIs are provided to make it convenient to wait for
+tasks to complete, so that the <code>Future</code> objects do not need to be managed directly.</p>
+<h2>Executor objects</h2>
+<p>Since both <code>ThreadPoolExecutor</code> and <code>ProcessPoolExecutor</code> have the same API interface,
+in both cases I'll primarily talk about two methods that they provide. Their
+descriptions have been collected from the official docs verbatim.</p>
+<h3>submit(fn, <em>args, *</em>kwargs)</h3>
+<p>Schedules the callable, <code>fn</code>, to be executed as <code>fn(*args **kwargs)</code> and returns a
+<code>Future</code> object representing the execution of the callable.</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+    <span class="n">future</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="nb">pow</span><span class="p">,</span> <span class="mi">323</span><span class="p">,</span> <span class="mi">1235</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+</code></pre></div>
+
+<h3>map(func, *iterables, timeout=None, chunksize=1)</h3>
+<p>Similar to <code>map(func, *iterables)</code> except:</p>
+<ul>
+<li>the iterables are collected immediately rather than lazily;</li>
+<li>
+<p>func is executed asynchronously and several calls to func may be made concurrently.</p>
+<p>The returned iterator raises a <code>concurrent.futures.TimeoutError</code> if <code>__next__()</code>
+is called and the result isn’t available after timeout seconds from the original
+call to <code>Executor.map()</code>. Timeout can be an <code>int</code> or a <code>float</code>. If timeout is not
+specified or <code>None</code>, there is no limit to the wait time.</p>
+<p>If a func call raises an exception, then that exception will be raised when its
+value is retrieved from the iterator.</p>
+<p>When using <code>ProcessPoolExecutor</code>, this method chops iterables into a number of
+chunks which it submits to the pool as separate tasks. The (approximate) size of
+these chunks can be specified by setting <code>chunksize</code> to a positive integer. For very
+long iterables, using a large value for <code>chunksize</code> can significantly improve
+performance compared to the default size of 1. With ThreadPoolExecutor, <code>chunksize</code>
+has no effect.</p>
+</li>
+</ul>
+<h2>Generic workflows for running tasks concurrently</h2>
+<p>A lot of my scripts contains some variants of the following:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">get_tasks</span><span class="p">():</span>
+    <span class="n">perform</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Here, <code>get_tasks</code> returns an iterable that contains the target tasks or arguments on
+which a particular task function needs to applied. Tasks are usually blocking callables
+and they run one after another, with only one task running at a time. The logic is
+simple to reason with because of its sequential execution flow. This is fine when the
+number of tasks is small or the execution time requirement and complexity of the
+individual tasks is low. However, this can quickly get out of hands when the number of
+tasks is huge or the individual tasks are time consuming.</p>
+<p>A general rule of thumb is using <code>ThreadPoolExecutor</code> when the tasks are primarily I/O
+bound like - sending multiple http requests to many urls, saving a large number of files
+to  disk etc. <code>ProcessPoolExecutor</code> should be used in tasks that are primarily CPU bound
+like - running callables that are computation heavy, applying pre-process methods over a
+large number of images, manipulating many text files at once etc.</p>
+<h3>Running tasks with executor.submit</h3>
+<p>When you have a number of tasks, you can schedule them in one go and wait for them all
+to complete and then you can collect the results.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">concurrent.futures</span>
+
+
+<span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">Executor</span><span class="p">()</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+    <span class="n">futures</span> <span class="o">=</span> <span class="p">{</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">perform</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">get_tasks</span><span class="p">()}</span>
+
+    <span class="k">for</span> <span class="n">fut</span> <span class="ow">in</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The outcome is </span><span class="si">{</span><span class="n">fut</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Here you start by creating an Executor, which manages all the tasks that are running–
+either in separate processes or threads. Using the with statement creates a context
+manager, which ensures any stray threads or processes get cleaned up via calling the
+<code>executor.shutdown()</code> method implicitly when you’re done.</p>
+<p>In real code, you'd would need to replace the <code>Executor</code> with <code>ThreadPoolExecutor</code> or a
+<code>ProcessPoolExecutor</code> depending on the nature of the callables. Then a set comprehension
+has been used here to start all the tasks. The <code>executor.submit()</code> method schedules each
+task. This creates a Future object, which represents the task to be done. Once all the
+tasks have been scheduled, the method <code>concurrent.futures_as_completed()</code> is called,
+which yields the futures as they’re done – that is, as each task completes. The
+<code>fut.result()</code> method gives you the return value of <code>perform(task)</code>, or throws an
+exception in case of failure.</p>
+<p>The <code>executor.submit()</code> method schedules the tasks asynchronously and doesn't hold any
+contexts regarding the original tasks. So if you want to map the results with the
+original tasks, you need to track those yourself.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">concurrent.futures</span>
+
+
+<span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">Executor</span><span class="p">()</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+    <span class="n">futures</span> <span class="o">=</span> <span class="p">{</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">perform</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span> <span class="n">task</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">get_tasks</span><span class="p">()}</span>
+
+    <span class="k">for</span> <span class="n">fut</span> <span class="ow">in</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">):</span>
+        <span class="n">original_task</span> <span class="o">=</span> <span class="n">futures</span><span class="p">[</span><span class="n">fut</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The result of </span><span class="si">{</span><span class="n">original_task</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><span class="n">fut</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Notice the variable <code>futures</code> where the original tasks are mapped with their
+corresponding futures using a dictionary.</p>
+<h3>Running tasks with executor.map</h3>
+<p>Another way the results can be collected in the same order they're scheduled is via
+using <code>executor.map()</code> method.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">concurrent.futures</span>
+
+
+<span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">Executor</span><span class="p">()</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">get_tasks</span><span class="p">(),</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">perform</span><span class="p">,</span> <span class="n">get_tasks</span><span class="p">())):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The result of </span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><span class="n">res</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Notice how the map function takes the entire iterable at once. It spits out the results
+immediately rather than lazily and in the same order they're scheduled. If any unhandled
+exception occurs during the operation, it'll also be raised immediately and the
+execution won't go any further.</p>
+<p>In Python 3.5+, <code>executor.map()</code> receives an optional argument: <code>chunksize</code>. While using
+<code>ProcessPoolExecutor</code>, for very long iterables, using a large value for chunksize can
+significantly improve performance compared to the default size of 1. With
+<code>ThreadPoolExecutor</code>, chunksize has no effect.</p>
+<h2>A few real world examples</h2>
+<p>Before proceeding with the examples, let's write a small
+<a href="https://www.python.org/dev/peps/pep-0318/">decorator</a> that'll be helpful to measure and
+compare the execution time between concurrent and sequential code.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+
+<span class="k">def</span> <span class="nf">timeit</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">{</span><span class="p">(</span><span class="n">end_time</span><span class="o">-</span><span class="n">start_time</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span>
+</code></pre></div>
+
+<p>The decorator can be used like this:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@timeit</span>
+<span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+</code></pre></div>
+
+<p>This will print out the name of the method and how long it took to execute it.</p>
+<h3>Download &amp; save files from URLs with multi-threading</h3>
+<p>First, let's download some pdf files from a bunch of URLs and save them to the disk.
+This is presumably an I/O bound task and we'll be using the <code>ThreadPoolExecutor</code> class
+to carry out the operation. But before that, let's do this sequentially first.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+
+<span class="k">def</span> <span class="nf">download_one</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads the specified URL and saves it to disk</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">fullpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">fullpath</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">fullpath</span><span class="o">.</span><span class="n">suffix</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;URL does not contain an extension&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Finished downloading </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">msg</span>
+
+
+<span class="nd">@timeit</span>
+<span class="k">def</span> <span class="nf">download_all</span><span class="p">(</span><span class="n">urls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">download_one</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">]</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040a.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040ez.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040es.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040sb.pdf&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">download_all</span><span class="p">(</span><span class="n">urls</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">download_all</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mf">22850.6863117218</span><span class="w"> </span><span class="n">ms</span><span class="w"></span>
+<span class="o">...</span><span class="w"> </span><span class="n">Finished</span><span class="w"> </span><span class="n">downloading</span><span class="w"> </span><span class="n">f1040</span><span class="o">.</span><span class="n">pdf</span><span class="w"></span>
+<span class="o">...</span><span class="w"> </span><span class="n">Finished</span><span class="w"> </span><span class="n">downloading</span><span class="w"> </span><span class="n">f1040a</span><span class="o">.</span><span class="n">pdf</span><span class="w"></span>
+<span class="o">...</span><span class="w"> </span><span class="n">Finished</span><span class="w"> </span><span class="n">downloading</span><span class="w"> </span><span class="n">f1040ez</span><span class="o">.</span><span class="n">pdf</span><span class="w"></span>
+<span class="o">...</span><span class="w"> </span><span class="n">Finished</span><span class="w"> </span><span class="n">downloading</span><span class="w"> </span><span class="n">f1040es</span><span class="o">.</span><span class="n">pdf</span><span class="w"></span>
+<span class="o">...</span><span class="w"> </span><span class="n">Finished</span><span class="w"> </span><span class="n">downloading</span><span class="w"> </span><span class="n">f1040sb</span><span class="o">.</span><span class="n">pdf</span><span class="w"></span>
+</code></pre></div>
+
+<p>In the above code snippet, I have primary defined two functions. The <code>download_one</code>
+function downloads a pdf file from a given URL and saves it to the disk. It checks
+whether the file in URL has an extension and in the absence of an extension, it raises
+<code>RunTimeError</code>. If an extension is found in the file name, it downloads the file chunk
+by chunk and saves to the disk. The second function <code>download_all</code> just iterates through
+a sequence of URLs and applies the <code>download_one</code> function on each of them. The
+sequential code takes about 22.8 seconds to run. Now let's see how our threaded version
+of the same code performs.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">as_completed</span>
+
+
+<span class="k">def</span> <span class="nf">download_one</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads the specified URL and saves it to disk</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">fullpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">fullpath</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">fullpath</span><span class="o">.</span><span class="n">suffix</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;URL does not contain an extension&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Finished downloading </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">msg</span>
+
+
+<span class="nd">@timeit</span>
+<span class="k">def</span> <span class="nf">download_all</span><span class="p">(</span><span class="n">urls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a thread pool and download specified urls</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">download_one</span><span class="p">,</span> <span class="n">urls</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040a.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040ez.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040es.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040sb.pdf&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">download_all</span><span class="p">(</span><span class="n">urls</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">download_all</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mf">5042.651653289795</span><span class="w"> </span><span class="n">ms</span><span class="w"></span>
+<span class="o">...</span><span class="w"> </span><span class="n">Finished</span><span class="w"> </span><span class="n">downloading</span><span class="w"> </span><span class="n">f1040</span><span class="o">.</span><span class="n">pdf</span><span class="w"></span>
+<span class="o">...</span><span class="w"> </span><span class="n">Finished</span><span class="w"> </span><span class="n">downloading</span><span class="w"> </span><span class="n">f1040a</span><span class="o">.</span><span class="n">pdf</span><span class="w"></span>
+<span class="o">...</span><span class="w"> </span><span class="n">Finished</span><span class="w"> </span><span class="n">downloading</span><span class="w"> </span><span class="n">f1040ez</span><span class="o">.</span><span class="n">pdf</span><span class="w"></span>
+<span class="o">...</span><span class="w"> </span><span class="n">Finished</span><span class="w"> </span><span class="n">downloading</span><span class="w"> </span><span class="n">f1040es</span><span class="o">.</span><span class="n">pdf</span><span class="w"></span>
+<span class="o">...</span><span class="w"> </span><span class="n">Finished</span><span class="w"> </span><span class="n">downloading</span><span class="w"> </span><span class="n">f1040sb</span><span class="o">.</span><span class="n">pdf</span><span class="w"></span>
+</code></pre></div>
+
+<p>The concurrent version of the code takes only about 1/4 th the time of it's sequential
+counterpart. Notice in this concurrent version, the <code>download_one</code> function is the same
+as before but in the <code>download_all</code> function, a <code>ThreadPoolExecutor</code> context manager
+wraps the <code>executor.map()</code> method. The <code>download_one</code> function is passed into the <code>map</code>
+along with the iterable containing the URLs. The <code>timeout</code> parameter determines how long
+a thread will spend before giving up on a single task in the pipeline. The <code>max_workers</code>
+means how many worker you want to deploy to spawn and manage the threads. A general rule
+of thumb is using <code>2 * multiprocessing.cpu_count() + 1</code>. My machine has 6 physical cores
+with 12 threads. So 13 is the value I chose.</p>
+<blockquote>
+<p>Note: You can also try running the above functions with <code>ProcessPoolExecutor</code> via the
+same interface and notice that the threaded version performs slightly better than due
+to the nature of the task.</p>
+</blockquote>
+<p>There is one small problem with the example above. The <code>executor.map()</code> method returns a
+generator which allows to iterate through the results once ready. That means if any
+error occurs inside <code>map</code>, it's not possible to handle that and resume the generator
+after the exception occurs. From
+<a href="https://www.python.org/dev/peps/pep-0255/#specification-generators-and-exception-propagation">PEP255</a>:</p>
+<blockquote>
+<p>If an unhandled exception-- including, but not limited to, StopIteration --is raised
+by, or passes through, a generator function, then the exception is passed on to the
+caller in the usual way, and subsequent attempts to resume the generator function
+raise StopIteration. In other words, an unhandled exception terminates a generator's
+useful life.</p>
+</blockquote>
+<p>To get around that, you can use the <code>executor.submit()</code> method to create futures,
+accumulated the futures in a list, iterate through the futures and handle the exceptions
+manually. See the following example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+
+<span class="k">def</span> <span class="nf">download_one</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Downloads the specified URL and saves it to disk</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">fullpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">fullpath</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">fullpath</span><span class="o">.</span><span class="n">suffix</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;URL does not contain an extension&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Finished downloading </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">msg</span>
+
+
+<span class="nd">@timeit</span>
+<span class="k">def</span> <span class="nf">download_all</span><span class="p">(</span><span class="n">urls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a thread pool and download specified urls</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">futures_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+            <span class="n">futures</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">download_one</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+            <span class="n">futures_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">futures</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">futures_list</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">results</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040a.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040ez.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040es.pdf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://www.irs.gov/pub/irs-pdf/f1040sb.pdf&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">download_all</span><span class="p">(</span><span class="n">urls</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The above snippet should print out similar messages as before.</p>
+<h3>Running multiple CPU bound subroutines with multi-processing</h3>
+<p>The following example shows a CPU bound hashing function. The primary function will
+sequentially run a compute intensive hash algorithm multiple times. Then another
+function will again run the primary function multiple times. Let's run the function
+sequentially first.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">hashlib</span>
+
+
+<span class="k">def</span> <span class="nf">hash_one</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A somewhat CPU-intensive task.&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">hashlib</span><span class="o">.</span><span class="n">pbkdf2_hmac</span><span class="p">(</span><span class="s2">&quot;sha256&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">10000</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;done&quot;</span>
+
+
+<span class="nd">@timeit</span>
+<span class="k">def</span> <span class="nf">hash_all</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function that does hashing in serial.&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">hsh</span> <span class="o">=</span> <span class="n">hash_one</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;done&quot;</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">hash_all</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; hash_all =&gt; 18317.330598831177 ms
+</code></pre></div>
+
+<p>If you analyze the <code>hash_one</code> and <code>hash_all</code> functions, you can see that together, they
+are actually running two compute intensive nested <code>for</code> loops. The above code takes
+roughly 18 seconds to run in sequential mode. Now let's run it parallelly using
+<code>ProcessPoolExecutor</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ProcessPoolExecutor</span><span class="p">,</span> <span class="n">ThreadPoolExecutor</span>
+
+
+<span class="k">def</span> <span class="nf">hash_one</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A somewhat CPU-intensive task.&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">hashlib</span><span class="o">.</span><span class="n">pbkdf2_hmac</span><span class="p">(</span><span class="s2">&quot;sha256&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">10000</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;done&quot;</span>
+
+
+<span class="nd">@timeit</span>
+<span class="k">def</span> <span class="nf">hash_all</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function that does hashing in serial.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="n">ProcessPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">hash_one</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="s2">&quot;done&quot;</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">hash_all</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; hash_all =&gt; 1673.842430114746 ms
+</code></pre></div>
+
+<p>If you look closely, even in the concurrent version, the <code>for</code> loop in <code>hash_one</code>
+function is running sequentially. However, the other <code>for</code> loop in the <code>hash_all</code>
+function is being executed through multiple processes. Here, I have used 10 workers and
+a chunksize of 2. The number of workers and chunksize were adjusted to achieve maximum
+performance. As you can see the concurrent version of the above CPU intensive operation
+is about 11 times faster than its sequential counterpart.</p>
+<h2>Avoiding concurrency pitfalls</h2>
+<p>Since the <code>concurrent.futures</code> provides such a simple API, you might be tempted to apply
+concurrency to every simple tasks at hand. However, that's not a good idea. First, the
+simplicity has its fair share of constraints. In this way, you can apply concurrency
+only to the simplest of the tasks, usually mapping a function to an iterable or running
+a few subroutines simultaneously. If your task at hand requires queuing, spawning
+multiple threads from multiple processes then you will still need to resort to the lower
+level <code>threading</code> and <code>multiprocessing</code> modules.</p>
+<p>Another pitfall of using concurrency is deadlock situations that might occur while using
+<code>ThreadPoolExecutor</code>. When a callable associated with a <code>Future</code> waits on the results of
+another <code>Future</code>, they might never release their control of the threads and cause
+deadlock. Let's see a slightly modified example from the official docs.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+
+<span class="k">def</span> <span class="nf">wait_on_b</span><span class="p">():</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>  <span class="c1"># b will never complete because it is waiting on a.</span>
+    <span class="k">return</span> <span class="mi">5</span>
+
+
+<span class="k">def</span> <span class="nf">wait_on_a</span><span class="p">():</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>  <span class="c1"># a will never complete because it is waiting on b.</span>
+    <span class="k">return</span> <span class="mi">6</span>
+
+
+<span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+    <span class="c1"># here, the future from a depends on the future from b</span>
+    <span class="c1"># and vice versa</span>
+    <span class="c1"># so this is never going to be completed</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">wait_on_b</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">wait_on_a</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result from wait_on_b&quot;</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result from wait_on_a&quot;</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+</code></pre></div>
+
+<p>In the above example, function <code>wait_on_b</code> depends on the result (result of the <code>Future</code>
+object) of function <code>wait_on_a</code> and at the same time the later function's result depends
+on that of the former function. So the code block in the context manager will never
+execute due to having inter dependencies. This creates the deadlock situation. Let's
+explain another deadlock situation from the official docs.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+
+<span class="k">def</span> <span class="nf">wait_on_future</span><span class="p">():</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="nb">pow</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># This will never complete because there is only one worker thread and</span>
+    <span class="c1"># it is executing this function.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+
+
+<span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+    <span class="n">future</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">wait_on_future</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+</code></pre></div>
+
+<p>The above situation usually happens when a subroutine produces nested <code>Future</code> object
+and runs on a single thread. In the function <code>wait_on_future</code>, the
+<code>executor.submit(pow, 5, 2)</code> creates another <code>Future</code> object. Since I'm running the
+entire thing using a single thread, the internal future object is blocking the thread
+and the external <code>executor.submit()</code> method inside the context manager can not use any
+threads. This situation can be avoided using multiple threads but in general, this is a
+bad design itself.</p>
+<p>Then there're situations when you might be getting lower performance with concurrent
+code than its sequential counterpart. This could happen for multiple reasons.</p>
+<ol>
+<li>Threads were used to perform CPU bound tasks</li>
+<li>Multiprocessing were used to perform I/O bound tasks</li>
+<li>The tasks were too trivial to justify using either threads or multiple processes</li>
+</ol>
+<p>Spawning and squashing multiple threads or processes bring extra overheads. Usually
+threads are much faster than processes to spawn and squash. However, using the wrong
+type of concurrency can actually slow down your code rather than making it any
+performant. Below is a trivial example where both <code>ThreadPoolExecutor</code> and
+<code>ProcessPoolExecutor</code> perform worse than their sequential counterpart.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">math</span>
+
+<span class="n">PRIMES</span> <span class="o">=</span> <span class="p">[</span><span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">19000</span><span class="p">,</span> <span class="mi">20000</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">is_prime</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">sqrt_n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">sqrt_n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="nd">@timeit</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">PRIMES</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s2"> is prime: </span><span class="si">{</span><span class="n">is_prime</span><span class="p">(</span><span class="n">number</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; 19088 is prime: False
+... 19089 is prime: False
+... 19090 is prime: False
+... ...
+... main =&gt; 67.65174865722656 ms
+</code></pre></div>
+
+<p>The above examples verifies whether a number in a list is prime or not. We ran the
+function on 1000 numbers to determine if they're prime or not. The sequential version
+took roughly 67ms to do that. However, look below where the threaded version of the same
+code takes more than double the time (140ms) to so the same task.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ProcessPoolExecutor</span><span class="p">,</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="n">num_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">19000</span><span class="p">,</span> <span class="mi">20000</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">is_prime</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">sqrt_n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">sqrt_n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="nd">@timeit</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">number</span><span class="p">,</span> <span class="n">prime</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">PRIMES</span><span class="p">,</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">is_prime</span><span class="p">,</span> <span class="n">num_list</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s2"> is prime: </span><span class="si">{</span><span class="n">prime</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; 19088 is prime: False
+... 19089 is prime: False
+... 19090 is prime: False
+... ...
+... main =&gt; 140.17250061035156 ms
+</code></pre></div>
+
+<p>The multiprocessing version of the same code is even slower. The tasks doesn't justify
+opening so many processes.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ProcessPoolExecutor</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="n">num_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">19000</span><span class="p">,</span> <span class="mi">20000</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">is_prime</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">sqrt_n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">sqrt_n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="nd">@timeit</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">ProcessPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">number</span><span class="p">,</span> <span class="n">prime</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">PRIMES</span><span class="p">,</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">is_prime</span><span class="p">,</span> <span class="n">num_list</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s2"> is prime: </span><span class="si">{</span><span class="n">prime</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; 19088 is prime: False
+... 19089 is prime: False
+... 19090 is prime: False
+... ...
+... main =&gt; 311.3126754760742 ms
+</code></pre></div>
+
+<p>Although intuitively, it may seem like the task of checking prime numbers should be a
+CPU bound operation, it's also important to determine if the task itself is
+computationally heavy enough to justify spawning multiple threads or processes.
+Otherwise you might end up with complicated code that performs worse than the simple
+solutions.</p>
+<h2>References</h2>
+<ul>
+<li><a href="https://docs.python.org/3/library/concurrent.futures.html">concurrent.futures- the official documentation</a></li>
+<li><a href="http://pljung.de/posts/easy-concurrency-in-python/">Easy concurrency in Python</a></li>
+<li><a href="https://alexwlchan.net/2019/10/adventures-with-concurrent-futures/">Adventures in Python with concurrent.futures</a></li>
+</ul>
+
+
+             
+ 
+            
+            
+            
+
+
+
+
+
+
+
+            <hr/>
+        </div>
+        <section id="article-sidebar" class="span2">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2020-04-21T00:00:00+06:00">Tue 21 April 2020</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#python-ref">python</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#python-ref">Python
+                    <span class="superscript">58</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+<div id="sidebar-social-link">
+    <a href="mailto:redowan.nafi@gmail.com" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Mail" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#328cff"/><path d="m250 186c-46 0-69 35-69 74 0 44 29 72 68 72 43 0 73-32 73-75 0-44-34-71-72-71zm-1-37c30 0 57 13 77 33 0-22 35-22 35 1v150c-1 10 10 16 16 9 25-25 54-128-14-187-64-56-149-47-195-15-48 33-79 107-49 175 33 76 126 99 182 76 28-12 41 26 12 39-45 19-168 17-225-82-38-68-36-185 67-248 78-46 182-33 244 32 66 69 62 197-2 246-28 23-71 1-71-32v-11c-20 20-47 32-77 32-57 0-108-51-108-108 0-58 51-110 108-110" fill="#fff"/></svg>
+    </a>
+    <a href="https://github.com/rednafi" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="GitHub" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1B1817"/><path fill="#fff" d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+    </a>
+    <a href="https://twitter.com/rednafi" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Twitter" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1da1f3"/><path fill="#fff" d="M437 152a72 72 0 0 1-40 12 72 72 0 0 0 32-40 72 72 0 0 1-45 17 72 72 0 0 0-122 65 200 200 0 0 1-145-74 72 72 0 0 0 22 94 72 72 0 0 1-32-7 72 72 0 0 0 56 69 72 72 0 0 1-32 1 72 72 0 0 0 67 50 200 200 0 0 1-105 29 200 200 0 0 0 309-179 200 200 0 0 0 35-37"/></svg>
+    </a>
+    <a href="https://www.goodreads.com/user/show/53485837-redowan-delowar" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg height="512" viewBox="0 0 512 512" width="512" xmlns="http://www.w3.org/2000/svg"><rect fill="#EAE6CF" height="512" rx="64" width="512"/><path d="m254.92444 336.92444c43.2889-.36 74.07112-22.01333 92.33334-64.95111h.95556v65.48889c0 4.88-.32 12.44889-.95556 22.73333-1.30222 10.64445-4.78222 22.10223-10.42666 34.36889-5.65778 11.54667-14.79112 21.38667-27.37778 29.49778-12.44889 8.84-29.81778 13.44-52.12001 13.80444-21.48444 0-39.65333-5.59555-54.52444-16.77777-15.2-11.00889-24.08001-28.87111-26.65778-53.58667h-18.89778c1.93778 32.11111 12.18667 55.02667 30.76444 68.74222 18.08889 13.16445 41.04001 19.75556 68.83556 19.75556 27.45778 0 48.87112-5.14223 64.21778-15.43111 15.18223-9.92 26.08445-22.28445 32.71556-37.08 6.62222-14.79111 10.58222-28.86667 11.86667-42.21334.98222-13.35555 1.45778-22.91555 1.45778-28.68889v-270.088875h-18.90667v59.537775h-.95556c-7.27555-21.82667-19.30666-38.333335-36.12-49.524445-16.96-11.00445-35.70222-16.51111-56.21333-16.51111-35.72001.72444-62.85779 14.52444-81.43112 41.40889-19.07111 26.697775-28.59556 59.631105-28.59556 98.782195 0 40.23557 9.04445 73.52001 27.13334 99.86224 18.27555 26.88889 45.89778 40.51111 82.90222 40.87111zm-68.34222-224.89777c14.85333-24.359995 37.63111-36.986665 68.34222-37.888885 31.50223.90666 54.83556 13.17333 70.03556 36.808885 15.18223 23.64 22.77778 52.05331 22.77778 85.25331s-7.59555 61.43112-22.77778 84.70668c-15.2 24.72444-38.53333 37.34667-70.03556 37.88889-29.72889-.54667-52.36-12.81778-67.86222-36.80889-15.67556-23.27556-23.50667-51.87112-23.50667-85.79112-.004-31.75556 7.67111-59.81332 23.02667-84.16887z" fill="#743901"/></svg>
+    </a>
+    <a href="/reflections/feeds/all.atom.xml" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="RSS" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#f80"/><circle cx="145" cy="367" r="35" fill="#fff"/><path fill="none" stroke="#fff" stroke-width="60" d="M109 241c89 0 162 73 162 162M109 127c152 0 276 124 276 276"/></svg>
+    </a>
+</div>
+            
+
+
+
+
+
+            
+
+
+
+
+
+        </section>
+</div>
+</article>
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe.
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides.
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>                    </div>
+                    <div class="span1"></div>
+                </div>
+            </div>
+        </div>
+<footer>
+
+
+
+    <div id="fpowered">
+
+            © 2020-2022 • Redowan Delowar • All Rights Reserved
+
+
+    </div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="./theme/js/elegant.prod.9e9d5ce754.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    <script>
+    (function () {
+        if (window.location.hash.match(/^#comment-\d+$/)) {
+            $('#comment_thread').collapse('show');
+        }
+    })();
+    window.onhashchange=function(){
+        if (window.location.hash.match(/^#comment-\d+$/))
+            window.location.reload(true);
+    }
+    $('#comment_thread').on('shown', function () {
+        var link = document.getElementById('comment-accordion-toggle');
+        var old_innerHTML = link.innerHTML;
+        $(link).fadeOut(200, function() {
+            $(this).text('Click here to hide comments').fadeIn(200);
+        });
+        $('#comment_thread').on('hidden', function () {
+            $(link).fadeOut(200, function() {
+                $(this).text(old_innerHTML).fadeIn(200);
+            });
+        })
+    })
+</script>
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+        License : MIT -->
+</html>

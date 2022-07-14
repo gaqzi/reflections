@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="./theme/css/elegant.prod.9e9d5ce754.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./theme/css/custom.css" media="screen">
+
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+        <meta name="google-site-verification" content="<meta name='google-site-verification' content='N5QEPRj-LpgoEY0Hf3uVMmZq8kjDwTFjd54IgvLmRBc' />" />        <meta name="author" content="Redowan Delowar" />
+
+        <meta name="description" content="In Python, there&#39;s a saying that design patterns are anti-patterns. Also, in the realm of dynamic languages, design patterns have the notoriety of injecting additional abstraction layers to the core logic and making the flow gratuitously obscure. Python&#39;s dynamic nature and the treatment of functions as first-class objects often make …
+" />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="Python, python, " />
+
+<meta property="og:title" content="Implementing proxy pattern in Python "/>
+<meta property="og:url" content="./implementing-proxy-pattern-in-python.html" />
+<meta property="og:description" content="In Python, there&#39;s a saying that design patterns are anti-patterns. Also, in the realm of dynamic languages, design patterns have the notoriety of injecting additional abstraction layers to the core logic and making the flow gratuitously obscure. Python&#39;s dynamic nature and the treatment of functions as first-class objects often make …" />
+<meta property="og:site_name" content="Redowan&#39;s Reflections" />
+<meta property="og:article:author" content="Redowan Delowar" />
+<meta property="og:article:published_time" content="2020-06-16T00:00:00+06:00" />
+<meta name="twitter:title" content="Implementing proxy pattern in Python ">
+<meta name="twitter:description" content="In Python, there&#39;s a saying that design patterns are anti-patterns. Also, in the realm of dynamic languages, design patterns have the notoriety of injecting additional abstraction layers to the core logic and making the flow gratuitously obscure. Python&#39;s dynamic nature and the treatment of functions as first-class objects often make …">
+<meta property="og:image" content="https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png" />
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/30027932/149235389-c6b85b40-5515-4de4-a922-7b0f91efd0cf.png" >
+
+        <title>Implementing proxy pattern in Python  · Redowan&#39;s Reflections
+</title>
+        <link href="https://rednafi.github.io/reflections/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Redowan&#39;s Reflections - Full Atom Feed" />
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-217287505-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    </head>
+    <body>
+        <div id="content">
+            <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <a class="brand" href="./"><span class=site-name>Redowan's Reflections</span></a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-right top-menu">
+                                <li >
+                                    <a href=
+                                       .
+                                    >Home</a>
+                                </li>
+                                <li ><a href="./pages/contact.html">Contact</a></li>
+                                <li ><a href="./categories.html">Categories</a></li>
+                                <li ><a href="./tags.html">Tags</a></li>
+                                <li ><a href="./archives.html">Archives</a></li>
+                                <li>
+                                  <form action="https://www.google.com/search" class="navbar-search" method="get" name="searchform" target="_blank">
+                                    <input name="sitesearch" type="hidden"
+                                    value="rednafi.github.io/reflections">
+                                    <input autocomplete="on" class="search-query" name="q" placeholder="Search"
+                                    required="required"  type="text">
+                                    <input type="submit" value="Search" style="visibility: hidden;" /></form>
+                                  </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span1"></div>
+                    <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+        <h1>
+            <a href="./implementing-proxy-pattern-in-python.html">
+                Implementing proxy pattern in Python
+            </a>
+        </h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+            
+            <p>In Python, there's a saying that
+<em><a href="https://en.wikipedia.org/wiki/Design_Patterns">design patterns</a> are anti-patterns</em>.
+Also, in the realm of dynamic languages, design patterns have the notoriety of injecting
+additional abstraction layers to the core logic and making the flow gratuitously
+obscure. Python's dynamic nature and the treatment of functions as
+<a href="https://dbader.org/blog/python-first-class-functions">first-class</a> objects often make
+Java-ish design patterns redundant. Instead of littering your code with seemingly
+over-engineered patterns, you can almost always take the advantage of Python's
+first-class objects, duck-typing, monkey-patching etc to accomplish the task at hand.
+However, recently there is one design pattern that I find myself using over and over
+again to write more maintainable code and that is the Proxy pattern. So I thought I'd
+document it here for future reference.</p>
+<h2>The proxy pattern</h2>
+<p>Before diving into the academic definition, let's try to understand the Proxy pattern
+from an example.</p>
+<p>Have you ever used an access card to go through a door? There are multiple options to
+open that door i.e. it can be opened either using access card or by pressing a button
+that bypasses the security. The door's main functionality is to open but there is a
+proxy added on top of it to add some functionality. Let me better explain it using the
+code example below:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># src.py</span>
+
+
+<span class="k">class</span> <span class="nc">Door</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">open_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">SecuredDoor</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_klass</span> <span class="o">=</span> <span class="n">Door</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">open_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding security measure to the method of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_klass</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="n">secured_door</span> <span class="o">=</span> <span class="n">SecuredDoor</span><span class="p">()</span>
+<span class="n">secured_door</span><span class="o">.</span><span class="n">open_method</span><span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; Adding security measure to the method of &lt;__main__.Door object at 0x7f9dab3b6670&gt;
+</code></pre></div>
+
+<p>The above code snippet concretizes the example given before. Here, the <code>Door</code> class has
+a single method called <code>open_method</code> which denotes the action of <em>opening</em> on the <code>Door</code>
+object. This method gets extended in the <code>SecuredDoor</code> class and in this case, I've just
+added a print statement to the method of the latter class.</p>
+<p>Notice how the class <code>Door</code> was called from <code>SecuredDoor</code> via
+<a href="https://realpython.com/inheritance-composition-python/#composition-in-python">composition</a>.
+In the case of proxy pattern, you can substitute primary object with the proxy object
+without any additional changes in the code. This conforms to
+the <a href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov Substitution Principle</a>.
+It states that:</p>
+<blockquote>
+<p>Objects of a superclass shall be replaceable with objects of its subclasses without
+breaking the application. That requires the objects of your subclasses to behave in
+the same way as the objects of your superclass.</p>
+</blockquote>
+<p>The <code>Door</code> object can be replaced by the <code>SecuredDoor</code> and the <code>SecuredDoor</code> class does
+not introduce any new methods, it only extends the functionality of the <code>open_method</code> of
+the <code>Door</code> class.</p>
+<p>In plain words,</p>
+<blockquote>
+<p>Using the proxy pattern, a class represents the functionality of another class.</p>
+</blockquote>
+<p>Wikipedia says,</p>
+<blockquote>
+<p>A proxy, in its most general form, is a class functioning as an interface to something
+else. A proxy is a wrapper or agent object that is being called by the client to
+access the real serving object behind the scenes. Use of the proxy can simply be
+forwarding to the real object, or can provide additional logic. In the proxy extra
+functionality can be provided, for example caching when operations on the real object
+are resource intensive, or checking preconditions before operations on the real object
+are invoked.</p>
+</blockquote>
+<p>Pedagogically, the proxy pattern belongs to a family of patterns called the
+<a href="https://en.wikipedia.org/wiki/Structural_pattern">structural pattern</a>.</p>
+<h2>Why use it?</h2>
+<h3>Loose coupling</h3>
+<p>Proxy pattern let's you easily decouple your core logic from the added functionalities
+that might be needed on top of that. The modular nature of the code makes maintaining
+and extending the functionalities of your primary logic a lot quicker and easier.</p>
+<p>Suppose, you're defining a <code>division</code> function that takes takes two integer as arguments
+and returns the result of the division between them. It also handles edge cases like
+<code>ZeroDivisionError</code> or <code>TypeError</code> and logs them properly.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># src.py</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="n">Number</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">division</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Number</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Argument b cannot be </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Arguments must be integers/floats&quot;</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">division</span><span class="p">(</span><span class="mf">1.9</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; 0.95
+</code></pre></div>
+
+<p>You can see this function is already doing three things at once which violates the
+<a href="https://stackify.com/solid-design-principles/">Single Responsibility Principle</a>. SRP
+says that a function or class should have only one reason to change. In this case, a
+change in any of the three responsibilities can force the function to change. Also this
+means, changing or extending the function can be difficult to keep track of.</p>
+<p>Instead, you can write two classes. The primary class <code>Division</code> will only implement the
+core logic while another class <code>ProxyDivision</code> will extend the functionality of
+<code>Division</code> by adding exception handlers and loggers.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># src.py</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="n">Number</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">Division</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Number</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Number</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span>
+
+
+<span class="k">class</span> <span class="nc">ProxyDivision</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_klass</span> <span class="o">=</span> <span class="n">Division</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Number</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Number</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_klass</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Argument b cannot be </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Arguments must be integers/floats&quot;</span><span class="p">)</span>
+
+
+<span class="n">klass</span> <span class="o">=</span> <span class="n">ProxyDivision</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">klass</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; ERROR:root:Argument b cannot be 0
+    None
+</code></pre></div>
+
+<p>In the example above, since both <code>Division</code> and <code>ProxyDivision</code> class implement the same
+interface, you can swap out the <code>Division</code> class with <code>ProxyDivision</code> and vice versa.
+The second class neither inherits directly from the first  class nor it adds any new
+method to it. This means you can easily write another class to extend the
+functionalities of <code>Division</code> or <code>DivisionProxy</code> class without touching their internal</p>
+<p>logics directly.</p>
+<h3>Enhanced testability</h3>
+<p>Another great advantage of using the proxy pattern is enhanced testability. Since your
+core logic is loosely coupled with the extended functionalities, you can test them out
+separately. This makes the test more succinct and modular. It's easy to demonstrate the
+benefits with our previously mentioned <code>Division</code> and <code>ProxyDivision</code> classes. Here, the
+logic of the primary class is easy to follow and since this class only holds the core
+logic, it's crucial to write unit test for this before testing the added
+functionalities. Testing out the <code>Division</code> class is much cleaner than testing the
+previously defined <code>division</code> function that tries to do multiple things at once. Once
+you're done testing the primary class, you can proceed with the additional
+functionalities. Usually, this decoupling of core logic from the cruft and the
+encapsulation of additional functionalities result in more reliable and rigorous unit
+tests.</p>
+<h2>Proxy pattern with interface</h2>
+<p>In the real world, your class won't look like the simple <code>Division</code> class having only a
+single method. Usually your primary class will have multiple methods and they will carry
+out multiple sophisticated tasks. By now, you probably have grasped the fact that the
+proxy classes need to implement all of the methods of the primary class. While writing a
+proxy class for a complicated primary class, the author of that class might forget to
+implement all the methods of the primary class.This will lead to a violation of the
+proxy pattern. Also, it can be hard to follow all the methods of the primary class if
+the class is large and complicated.</p>
+<p>Here, the solution is an interface that can signal the author of the proxy class about
+all the methods that need to be implemented. An <em>interface</em> is nothing but an abstract
+class that dictates all the methods a concrete class needs to implement. However,
+interfaces can't be initialized independently. You'll have to make a subclass of the
+interface and implement all the methods defined there. Your subclass will raise error if
+it fails to implement any of the methods of the interface. Let's look at a minimal
+example of how you can write an interface using Python's <code>abc.ABC</code> and
+<code>abc.abstractmethod</code> and achieve proxy pattern with that.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># src.py</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+
+<span class="k">class</span> <span class="nc">Interface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interfaces of Interface, Concrete &amp; Proxy should</span>
+<span class="sd">    be the same, because the client should be able to use</span>
+<span class="sd">    Concrete or Proxy without any change in their internals.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">job_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">job_b</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Concrete</span><span class="p">(</span><span class="n">Interface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This is the main job doer. External services like</span>
+<span class="sd">    payment gateways can be a good example.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">job_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;I am doing the job_a for </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">job_b</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;I am doing the job_b for </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Proxy</span><span class="p">(</span><span class="n">Interface</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_concrete</span> <span class="o">=</span> <span class="n">Concrete</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">job_a</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;I&#39;m extending job_a for user </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">job_b</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;I&#39;m extending job_b for user </span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">klass</span> <span class="o">=</span> <span class="n">Proxy</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">klass</span><span class="o">.</span><span class="n">job_a</span><span class="p">(</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">klass</span><span class="o">.</span><span class="n">job_b</span><span class="p">(</span><span class="s2">&quot;nafi&quot;</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="nv">I</span><span class="s1">&#39;</span><span class="s">m extending job_a for user red</span>
+    <span class="nv">None</span>
+    <span class="nv">I</span><span class="s1">&#39;</span><span class="s">m extending job_b for user nafi</span>
+    <span class="nv">None</span>
+</code></pre></div>
+
+<p>It's evident from the above workflow that you'll need to define an <code>Interface</code> class
+first. Python provides abstract base classes as <code>ABC</code> in the <code>abc</code> module. Abstract
+class <code>Interface</code> inherits from <code>ABC</code> and defines all the methods that the concrete
+class will have to implement later. <code>Concrete</code> class inherits from the interface and
+implements all the methods defined in it. Notice how each method in the <code>Interface</code>
+class is decorated with the <code>@abstractmethod</code> decorator. If your knowledge on decorator
+is fuzzy, then checkout
+<a href="https://rednafi.github.io/digressions/python/2020/05/13/python-decorators">this</a>
+post on Python decorators. The <code>@abstractmethod</code> decorator turns a normal method into an
+abstract method which means that the method is nothing but a blueprint of the required
+methods that the concrete subclass will have to implement later. You can't directly
+instantiate <code>Interface</code> or use any of the abstract methods without making subclasses of
+the interface and implementing the methods.</p>
+<p>The second class <code>Concrete</code> is the actual class that inherits from the abstract base
+class (interface) <code>Interface</code> and implements all the methods mentioned as abstract
+methods. This is a real class that you can instantiate and the methods can be used
+directly. However, if you forget to implement any of the abstract methods defined in the
+<code>Interface</code> then you'll invoke <code>TypeError</code>.</p>
+<p>The third class <code>Proxy</code> extends the functionalities of the base concrete class
+<code>Concrete</code>. It calls the <code>Concrete</code> class using the composition pattern and implements
+all the methods. However, in this case, I used the results from the concrete methods and
+extended their functionalities without code duplication.</p>
+<h2>Another practical example</h2>
+<p>Let's play around with one last real-world example to concretize the concept. Suppose,
+you want to collect data from an external API endpoint. To do so, you hit the endpoint
+with <code>GET</code> requests from your http client and collect the responses in <code>json</code> format.
+Then say, you also want to inspect the response <code>header</code> and the <code>arguments</code> that were
+passed while making the request.</p>
+<p>Now, in the real world, public APIs will often impose rate limits and when you go over
+the limit with multiple get requests, your client will likely throw an http
+connection-timeout error. Say, you want to handle this exceptions outside of the core
+logic that will send the http <code>GET</code> requests.</p>
+<p>Again, let's say you also want to cache the responses if the client has seen the
+arguments in the requests before. This means, when you send requests with the same
+arguments multiple times, instead of hitting the APIs with redundant requests, the
+client will show you the responses from the cache. Caching improves API response time
+dramatically.</p>
+<p>For this demonstration, I'll be using Postman's publicly available <code>GET</code> API.</p>
+<div class="highlight"><pre><span></span><code>https://postman-echo.com/get?foo1=bar_1&amp;foo2=bar_2
+</code></pre></div>
+
+<p>This API is perfect for the demonstration since it has a rate limiter that kicks in
+arbitrarily and make the client throw <code>ConnectTimeOut</code> and <code>ReadTimeOutError</code>. See how
+this workflow is going to look like:</p>
+<ul>
+<li>
+<p>Define an interface called <code>IFetchUrl</code> that will implement three abstract methods. The
+first method <code>get_data</code> will fetch data from the URL and serialize them into <code>json</code>
+format. The second method <code>get_headers</code> will probe the data and return the header as a
+dictionary. The third method <code>get_args</code> will also probe the data like the second method
+but this time it will return the query arguments as a dictionary. However, in the
+interface, you won't be implementing anything inside the methods.</p>
+</li>
+<li>
+<p>Make a concrete class named <code>FetchUrl</code> that will derive from interface <code>IFetchUrl</code>.
+This time you'll implement all three methods defined in the abstract class. However, you
+shouldn't handle any edge cases here. The method should contain pure logic flow without
+any extra fluff.</p>
+</li>
+<li>
+<p>Make a proxy class called <code>ExcFetchUrl</code>. It will also inherit from the interface but
+this time you'll add your exception handling logics here. This class also adds logging
+functionality to all the methods. Here you call the concrete class <code>FetchUrl</code> in a
+composition format and avoid code repetition by using the methods that's been already
+implemented in the concrete class. Like the <code>FetchUrl</code> class, here too, you've to
+implement all the methods found in the abstract class.</p>
+</li>
+<li>
+<p>The fourth and the final class will extend the <code>ExcFetchUrl</code> and add caching
+functionality to the <code>get_data</code> method. It will follow the same pattern as the
+<code>ExcFetchUrl</code> class.</p>
+</li>
+</ul>
+<p>Since, by now, you're already familiar with the workflow of the proxy pattern, let's
+dump the entire 110 line solution all at once.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+
+<span class="kn">import</span> <span class="nn">httpx</span>
+<span class="kn">from</span> <span class="nn">httpx</span> <span class="kn">import</span> <span class="n">ConnectTimeout</span><span class="p">,</span> <span class="n">ReadTimeout</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="n">D</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">IFetchUrl</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract base class. You can&#39;t instantiate this independently.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">FetchUrl</span><span class="p">(</span><span class="n">IFetchUrl</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete class that doesn&#39;t handle exceptions and loggings.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">get_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">ExcFetchUrl</span><span class="p">(</span><span class="n">IFetchUrl</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This class can be swapped out with the FetchUrl class.</span>
+<span class="sd">    It provides additional exception handling and logging.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_url</span> <span class="o">=</span> <span class="n">FetchUrl</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_url</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="k">except</span> <span class="n">ConnectTimeout</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Connection time out. Try again later.&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">ReadTimeout</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Read timed out. Try again later.&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_url</span><span class="o">.</span><span class="n">get_headers</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting the headers at </span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">headers</span>
+
+    <span class="k">def</span> <span class="nf">get_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_url</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting the args at </span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">args</span>
+
+
+<span class="k">class</span> <span class="nc">CacheFetchUrl</span><span class="p">(</span><span class="n">IFetchUrl</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_url</span> <span class="o">=</span> <span class="n">ExcFetchUrl</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">()(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_url</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">get_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_url</span><span class="o">.</span><span class="n">get_headers</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">headers</span>
+
+    <span class="k">def</span> <span class="nf">get_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_url</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">args</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="c1"># url = &quot;https://postman-echo.com/get?foo1=bar_1&amp;foo2=bar_2&quot;</span>
+
+    <span class="n">fetch</span> <span class="o">=</span> <span class="n">CacheFetchUrl</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://postman-echo.com/get?foo1=bar_</span><span class="si">{</span><span class="n">arg1</span><span class="si">}</span><span class="s2">&amp;foo2=bar_</span><span class="si">{</span><span class="n">arg2</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">75</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">fetch</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cache Info: </span><span class="si">{</span><span class="n">fetch</span><span class="o">.</span><span class="n">get_data</span><span class="o">.</span><span class="n">cache_info</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">pprint</span><span class="p">(</span><span class="n">fetch</span><span class="o">.</span><span class="n">get_headers</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">pprint</span><span class="p">(</span><span class="n">fetch</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="nt">---------------------------------------------------------------------------</span><span class="w"></span>
+
+<span class="nt">INFO</span><span class="p">:</span><span class="nd">root</span><span class="p">:</span><span class="nd">Getting</span><span class="w"> </span><span class="nt">the</span><span class="w"> </span><span class="nt">headers</span><span class="w"> </span><span class="nt">at</span><span class="w"> </span><span class="nt">2022-01-31</span><span class="w"> </span><span class="nt">16</span><span class="p">:</span><span class="nd">54</span><span class="p">:</span><span class="nd">36</span><span class="p">.</span><span class="nc">214562</span><span class="w"></span>
+<span class="nt">INFO</span><span class="p">:</span><span class="nd">root</span><span class="p">:</span><span class="nd">Getting</span><span class="w"> </span><span class="nt">the</span><span class="w"> </span><span class="nt">args</span><span class="w"> </span><span class="nt">at</span><span class="w"> </span><span class="nt">2022-01-31</span><span class="w"> </span><span class="nt">16</span><span class="p">:</span><span class="nd">54</span><span class="p">:</span><span class="nd">36</span><span class="p">.</span><span class="nc">220221</span><span class="w"></span>
+<span class="nt">Cache</span><span class="w"> </span><span class="nt">Info</span><span class="o">:</span><span class="w"> </span><span class="nt">CacheInfo</span><span class="o">(</span><span class="nt">hits</span><span class="o">=</span><span class="nt">0</span><span class="o">,</span><span class="w"> </span><span class="nt">misses</span><span class="o">=</span><span class="nt">1</span><span class="o">,</span><span class="w"> </span><span class="nt">maxsize</span><span class="o">=</span><span class="nt">32</span><span class="o">,</span><span class="w"> </span><span class="nt">currsize</span><span class="o">=</span><span class="nt">1</span><span class="o">)</span><span class="w"></span>
+<span class="p">{</span><span class="err">&#39;accept&#39;:</span><span class="w"> </span><span class="err">&#39;*/*&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;accept-encoding&#39;:</span><span class="w"> </span><span class="err">&#39;gzip,</span><span class="w"> </span><span class="err">deflate&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;content-length&#39;:</span><span class="w"> </span><span class="err">&#39;0&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;host&#39;:</span><span class="w"> </span><span class="err">&#39;postman-echo.com&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;user-agent&#39;:</span><span class="w"> </span><span class="err">&#39;python-httpx/0.13.1&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;x-amzn-trace-id&#39;:</span><span class="w"> </span><span class="err">&#39;Root=1-5ee8a4eb-4341ae58365e4090660dfaa4&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;x-b3-parentspanid&#39;:</span><span class="w"> </span><span class="err">&#39;044bd10726921994&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;x-b3-sampled&#39;:</span><span class="w"> </span><span class="err">&#39;0&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;x-b3-spanid&#39;:</span><span class="w"> </span><span class="err">&#39;503e6ceaa2a4f493&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;x-b3-traceid&#39;:</span><span class="w"> </span><span class="err">&#39;77d5b03fe98fcc1a044bd10726921994&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;x-envoy-external-address&#39;:</span><span class="w"> </span><span class="err">&#39;10.100.91.201&#39;,</span><span class="w"></span>
+<span class="w">    </span><span class="err">&#39;x-forwarded-client-cert&#39;:</span><span class="w"> </span><span class="err">&#39;By=</span><span class="n">spiffe</span><span class="p">:</span><span class="o">//</span><span class="n">cluster</span><span class="o">.</span><span class="kc">local</span><span class="o">/</span><span class="n">ns</span><span class="o">/</span><span class="n">pm-echo-istio</span><span class="o">/</span><span class="n">sa</span><span class="o">/</span><span class="kc">default</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="err">Hash=2ed845a68a0968c80e6e0d0f49dec5ce15ee3c1f87408e56c938306f2129528b</span><span class="p">;</span><span class="err">Subject=&quot;&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="err">URI=</span><span class="n">spiffe</span><span class="p">:</span><span class="o">//</span><span class="n">cluster</span><span class="o">.</span><span class="kc">local</span><span class="o">/</span><span class="n">ns</span><span class="o">/</span><span class="n">istio-system</span><span class="o">/</span><span class="n">sa</span><span class="o">/</span><span class="n">istio-ingressgateway-service-account</span><span class="s1">&#39;,</span>
+<span class="s1">    &#39;</span><span class="n">x-forwarded-port</span><span class="s1">&#39;: &#39;</span><span class="mi">443</span><span class="s1">&#39;,</span>
+<span class="s1">    &#39;</span><span class="n">x-forwarded-proto</span><span class="s1">&#39;: &#39;</span><span class="n">http</span><span class="s1">&#39;,</span>
+<span class="s1">    &#39;</span><span class="n">x-request-id</span><span class="s1">&#39;: &#39;</span><span class="mi">295</span><span class="n">d0b6c-7aa0-4481-aa4d-f47f5eac7d57</span><span class="s1">&#39;}</span>
+<span class="s1">{&#39;</span><span class="n">foo1</span><span class="s1">&#39;: &#39;</span><span class="n">bar_1</span><span class="s1">&#39;, &#39;</span><span class="n">foo2</span><span class="s1">&#39;: &#39;</span><span class="n">bar_1</span><span class="err">&#39;</span><span class="p">}</span><span class="w"></span>
+
+<span class="o">....</span><span class="w"></span>
+</code></pre></div>
+
+<p>In the <code>get_data</code> method of the <code>FetchUrl</code> class, I've used the awesome
+<a href="https://github.com/encode/httpx">httpx</a> client to fetch the data from the URL. Pay
+attention to the fact that I've practically ignored all the additional logics of error
+handling and logging here. The exception handling and logging logics were added via
+<code>ExcFetchUrl</code> proxy class. Another class <code>CacheFetchUrl</code> further extents the proxy class
+<code>ExcFetchUrl</code> by adding cache functionality to the <code>get_data</code> method.</p>
+<p>In the main section, you can use any of the <code>FetchUrl</code>, <code>ExcFetchUrl</code> or <code>CacheFetchUrl</code>
+without any additional changes to the logic of these classes. The <code>FetchUrl</code> is the
+barebone class that will fail in case of the occurrence of any exceptions. The latter
+classes appends additional functionalities while maintaining the same interface.</p>
+<p>The output basically prints out the results returned by the <code>get_headers</code> and <code>get_args</code>
+methods. Also notice, how I picked the endpoint arguments to simulate caching. The
+<code>Cache Info:</code> on the third line of the output shows when data is served from the cache.
+Here <code>hits=0</code> means data is served directly from the external API. However, if you
+inspect the later outputs, you'll see when the query arguments get repeated
+([1, 2, 3, 1, 2, 3]), <code>Cache Info:</code> will show higher hit counts. This means that the
+data is being served from the cache.</p>
+<h2>Should you use it?</h2>
+<p>Well, yes obviously. But not always. You see, you need a little bit of planning before
+orchestrating declarative solution with the proxy pattern. It's not viable to write code
+in this manner in a throwaway script that you don't have to maintain in the long run.
+Also, this OOP-cursed additional layers of abstraction can make your code subjectively
+unreadable. So use the pattern wisely. On the flip side, proxy pattern can come
+extremely handy when you need to extend the functionality of some class arbitrarily as
+it can work a gateway to the El Dorado of loose coupling.</p>
+<h2>References</h2>
+<ul>
+<li><a href="https://github.com/faif/python-patterns">Python patterns</a></li>
+<li><a href="https://github.com/kamranahmedse/design-patterns-for-humans">Design patterns for humans</a></li>
+<li><a href="https://refactoring.guru/design-patterns/proxy/python/example">Design patterns- refactoring guru</a></li>
+<li><a href="https://python-3-patterns-idioms-test.readthedocs.io/en/latest/Fronting.html">Design patterns &amp; idioms</a></li>
+</ul>
+
+
+             
+ 
+            
+            
+            
+
+
+
+
+
+
+
+            <hr/>
+        </div>
+        <section id="article-sidebar" class="span2">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2020-06-16T00:00:00+06:00">Tue 16 June 2020</time>
+            <h4>Category</h4>
+            <a class="category-link" href="./categories.html#python-ref">python</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="./tags.html#python-ref">Python
+                    <span class="superscript">58</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+<div id="sidebar-social-link">
+    <a href="mailto:redowan.nafi@gmail.com" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Mail" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#328cff"/><path d="m250 186c-46 0-69 35-69 74 0 44 29 72 68 72 43 0 73-32 73-75 0-44-34-71-72-71zm-1-37c30 0 57 13 77 33 0-22 35-22 35 1v150c-1 10 10 16 16 9 25-25 54-128-14-187-64-56-149-47-195-15-48 33-79 107-49 175 33 76 126 99 182 76 28-12 41 26 12 39-45 19-168 17-225-82-38-68-36-185 67-248 78-46 182-33 244 32 66 69 62 197-2 246-28 23-71 1-71-32v-11c-20 20-47 32-77 32-57 0-108-51-108-108 0-58 51-110 108-110" fill="#fff"/></svg>
+    </a>
+    <a href="https://github.com/rednafi" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="GitHub" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1B1817"/><path fill="#fff" d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+    </a>
+    <a href="https://twitter.com/rednafi" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Twitter" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1da1f3"/><path fill="#fff" d="M437 152a72 72 0 0 1-40 12 72 72 0 0 0 32-40 72 72 0 0 1-45 17 72 72 0 0 0-122 65 200 200 0 0 1-145-74 72 72 0 0 0 22 94 72 72 0 0 1-32-7 72 72 0 0 0 56 69 72 72 0 0 1-32 1 72 72 0 0 0 67 50 200 200 0 0 1-105 29 200 200 0 0 0 309-179 200 200 0 0 0 35-37"/></svg>
+    </a>
+    <a href="https://www.goodreads.com/user/show/53485837-redowan-delowar" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg height="512" viewBox="0 0 512 512" width="512" xmlns="http://www.w3.org/2000/svg"><rect fill="#EAE6CF" height="512" rx="64" width="512"/><path d="m254.92444 336.92444c43.2889-.36 74.07112-22.01333 92.33334-64.95111h.95556v65.48889c0 4.88-.32 12.44889-.95556 22.73333-1.30222 10.64445-4.78222 22.10223-10.42666 34.36889-5.65778 11.54667-14.79112 21.38667-27.37778 29.49778-12.44889 8.84-29.81778 13.44-52.12001 13.80444-21.48444 0-39.65333-5.59555-54.52444-16.77777-15.2-11.00889-24.08001-28.87111-26.65778-53.58667h-18.89778c1.93778 32.11111 12.18667 55.02667 30.76444 68.74222 18.08889 13.16445 41.04001 19.75556 68.83556 19.75556 27.45778 0 48.87112-5.14223 64.21778-15.43111 15.18223-9.92 26.08445-22.28445 32.71556-37.08 6.62222-14.79111 10.58222-28.86667 11.86667-42.21334.98222-13.35555 1.45778-22.91555 1.45778-28.68889v-270.088875h-18.90667v59.537775h-.95556c-7.27555-21.82667-19.30666-38.333335-36.12-49.524445-16.96-11.00445-35.70222-16.51111-56.21333-16.51111-35.72001.72444-62.85779 14.52444-81.43112 41.40889-19.07111 26.697775-28.59556 59.631105-28.59556 98.782195 0 40.23557 9.04445 73.52001 27.13334 99.86224 18.27555 26.88889 45.89778 40.51111 82.90222 40.87111zm-68.34222-224.89777c14.85333-24.359995 37.63111-36.986665 68.34222-37.888885 31.50223.90666 54.83556 13.17333 70.03556 36.808885 15.18223 23.64 22.77778 52.05331 22.77778 85.25331s-7.59555 61.43112-22.77778 84.70668c-15.2 24.72444-38.53333 37.34667-70.03556 37.88889-29.72889-.54667-52.36-12.81778-67.86222-36.80889-15.67556-23.27556-23.50667-51.87112-23.50667-85.79112-.004-31.75556 7.67111-59.81332 23.02667-84.16887z" fill="#743901"/></svg>
+    </a>
+    <a href="/reflections/feeds/all.atom.xml" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="RSS" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#f80"/><circle cx="145" cy="367" r="35" fill="#fff"/><path fill="none" stroke="#fff" stroke-width="60" d="M109 241c89 0 162 73 162 162M109 127c152 0 276 124 276 276"/></svg>
+    </a>
+</div>
+            
+
+
+
+
+
+            
+
+
+
+
+
+        </section>
+</div>
+</article>
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe.
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides.
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>                    </div>
+                    <div class="span1"></div>
+                </div>
+            </div>
+        </div>
+<footer>
+
+
+
+    <div id="fpowered">
+
+            © 2020-2022 • Redowan Delowar • All Rights Reserved
+
+
+    </div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="./theme/js/elegant.prod.9e9d5ce754.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    <script>
+    (function () {
+        if (window.location.hash.match(/^#comment-\d+$/)) {
+            $('#comment_thread').collapse('show');
+        }
+    })();
+    window.onhashchange=function(){
+        if (window.location.hash.match(/^#comment-\d+$/))
+            window.location.reload(true);
+    }
+    $('#comment_thread').on('shown', function () {
+        var link = document.getElementById('comment-accordion-toggle');
+        var old_innerHTML = link.innerHTML;
+        $(link).fadeOut(200, function() {
+            $(this).text('Click here to hide comments').fadeIn(200);
+        });
+        $('#comment_thread').on('hidden', function () {
+            $(link).fadeOut(200, function() {
+                $(this).text(old_innerHTML).fadeIn(200);
+            });
+        })
+    })
+</script>
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+        License : MIT -->
+</html>
