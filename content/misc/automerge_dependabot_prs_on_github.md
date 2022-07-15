@@ -66,6 +66,7 @@ on: pull_request
 
 permissions:
   contents: write
+  pull-requests: write  # Needed if in a private repository
 
 jobs:
   dependabot:
