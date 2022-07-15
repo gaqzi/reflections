@@ -61,7 +61,7 @@ EXTRA_PATH_METADATA = {"extras/custom.css": {"path": "theme/css/custom.css"}}
 CUSTOM_CSS = "theme/css/custom.css"
 
 # Elegant theme specific
-RECENT_ARTICLES_COUNT = 11
+RECENT_ARTICLES_COUNT = 25
 SITE_DESCRIPTION = """
         Ruminations on software.
         Python, TypeScript, Django, Microservices, PostgreSQL,
